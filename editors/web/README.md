@@ -4,6 +4,20 @@ The reference editor for [Sidemark](../../SPEC.md): a static web app that opens 
 
 It is also meant to be read. All Sidemark logic comes from [`@sidemark/core`](../../packages/core/); this app only renders, maps the selection to source offsets, and keeps an undo history of source strings.
 
+## Local only
+
+**Your documents and comments never leave your device.** The editor is a static page: when you open it, your browser downloads the page's own files (HTML, JavaScript, CSS) from wherever it is hosted, and that is all it ever downloads (plus source maps, if you open the browser's developer tools). After that:
+
+- There is no server behind it, no account, and no analytics or telemetry. The code makes no network requests.
+- Files are read and written by the browser itself: the File System Access API or a file input to open, a write back to the same file or a download to save.
+- The page's Content Security Policy ([`csp.ts`](csp.ts), injected into `index.html` at build time) makes the browser enforce this: `connect-src 'none'` blocks fetch, XHR, WebSockets and beacons; `img-src 'self' data: blob:` blocks remote images; `default-src 'none'` blocks fonts, media, frames and workers from anywhere; scripts and styles load only from the page's own origin. The development server additionally allows a WebSocket back to itself for hot reload.
+- Remote images in a document are **not loaded**, because loading one would tell its server that the document is open. Each shows its description and a link you can choose to open in a new tab. Images embedded in the document as `data:` URLs are displayed. (A runtime "load remote images" switch is not possible without weakening the policy for everyone, since a policy delivered in the page cannot be relaxed later.)
+- The author name and dismissed tips are kept in `localStorage`, in this browser only.
+
+What it does not cover: links in a document open other sites when you click them (with no referrer); browser extensions can read any page; a saved or downloaded file is as private as the place you keep it.
+
+The e2e test *local only: nothing leaves the device* opens a document containing a remote image, comments, replies and saves while recording every request. It asserts that every request is a GET to the page's own origin for the page's own files, that none carries the document's text, and that the browser blocks a deliberate `fetch` and remote image with the policy.
+
 ## Run it
 
 From the repository root:
@@ -24,7 +38,7 @@ npm run test:e2e   # browser smoke tests against dist/ (Playwright; run `npx pla
 - **Reader:** full (§5 to §8), through `@sidemark/core`, including the optional Quote fallback (§8 step 3). Threads found through their Quote are highlighted, and get their anchors back on the next save.
 - **Writer:** every operation in §9: create (anchored and document-level), reply, resolve, reopen (with an optional note), edit, delete a comment, delete a thread, purge (resolved and/or orphaned, on explicit request), and maintenance on save (§9.6).
 - **Presentation (§10):** the comments table and a default `Comments` heading are hidden; threads sit beside their ranges; resolved threads are hidden until you ask; orphaned threads are listed under *Detached* with their quote; document-level threads have their own group; the author is asked for once and remembered.
-- **Security (§12):** raw HTML in the body and in comments is shown as text, never rendered (`<br>` in comments is a line break). Links become links only for `http:`, `https:`, `mailto:` and `#fragment`; images load only from `http(s)` URLs, without a referrer. Nothing is assigned to `innerHTML`, and the page ships a restrictive Content Security Policy.
+- **Security (§12):** raw HTML in the body and in comments is shown as text, never rendered (`<br>` in comments is a line break). Links become links only for `http:`, `https:`, `mailto:` and `#fragment`, and open without a referrer. Remote images are never loaded (see *Local only*). Nothing is assigned to `innerHTML`.
 
 Not supported: editing the body text, and re-attaching a detached thread to new text (the spec mentions it in §10 but defines no operation).
 
@@ -38,7 +52,8 @@ Not supported: editing the body text, and re-attaching a detached thread to new 
 |---|---|
 | `src/body/dom-map.ts` | DOM ↔ source mapping (`BodyIndex`). The part worth reading first. |
 | `src/body/render.ts` | mdast → DOM for the body (registering text with the index, splitting text into highlight marks) and for Comment cells. |
-| `src/body/sanitize.ts` | URL policy for links and images. |
+| `src/body/sanitize.ts` | URL policy for links and images (only embedded `data:` images display). |
+| `csp.ts` | The Content Security Policy, production and development. |
 | `src/model/history.ts` | Undo/redo over source strings, and the saved marker. |
 | `src/model/groups.ts` | Grouping threads for display (§10), purge counts, which nodes to hide. |
 | `src/model/layout.ts` | Margin layout: cards beside their ranges without overlapping. |

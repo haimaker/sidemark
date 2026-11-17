@@ -13,7 +13,7 @@
 import type {Definition, Nodes, Parents, PhrasingContent, Root, RootContent, TableCell} from 'mdast'
 import type {Anchor, SidemarkDocument, SourceRange} from '@sidemark/core'
 import {BodyIndex, type ValueNode} from './dom-map'
-import {safeHref, safeImageSrc} from './sanitize'
+import {embeddedImageSrc, remoteImageUrl, safeHref} from './sanitize'
 
 /** A range to highlight in the body. `id` is a thread ID (or a UI pseudo-ID). */
 export interface Highlight {
@@ -271,21 +271,45 @@ function link(ctx: Context, url: string, title: string | null, children: readonl
 
 function image(ctx: Context, node: Nodes, url: string, alt: string): HTMLElement {
   const wrapper = el(ctx, 'span', 'sm-image')
-  const src = safeImageSrc(url)
+  const src = embeddedImageSrc(url)
   if (src) {
     const img = el(ctx, 'img') as HTMLImageElement
     img.alt = alt
     img.setAttribute('src', src)
-    img.setAttribute('loading', 'lazy')
-    img.setAttribute('referrerpolicy', 'no-referrer')
     wrapper.append(img)
   } else {
+    // Not loaded: a remote image would tell its server that this document
+    // is open, and a relative one would be requested from this app's host.
     wrapper.classList.add('sm-image-placeholder')
     wrapper.append(el(ctx, 'span', null, alt ? `Image: ${alt}` : 'Image'))
-    wrapper.title = url
+    const remote = remoteImageUrl(url)
+    if (remote) {
+      const host = new URL(remote).host
+      const open = el(ctx, 'a', 'sm-image-open', `open from ${host}`) as HTMLAnchorElement
+      open.setAttribute('href', remote)
+      open.setAttribute('target', '_blank')
+      open.setAttribute('rel', 'noopener noreferrer nofollow')
+      open.title = `Not loaded, so opening this document contacted no other server. Opens ${remote} in a new tab.`
+      wrapper.append(' · ', open)
+    } else {
+      wrapper.title = `Not loaded: ${url}`
+    }
   }
   atom(ctx, wrapper, node)
   return wrapper
+}
+
+/** Images in `root` that point at an http(s) server (and so are not displayed). */
+export function countRemoteImages(root: Root): number {
+  const definitions = collectDefinitions(root)
+  let count = 0
+  const visit = (node: Nodes) => {
+    const url = node.type === 'image' ? node.url : node.type === 'imageReference' ? definitions.get(node.identifier)?.url : undefined
+    if (url !== undefined && remoteImageUrl(url)) count++
+    if ('children' in node) for (const child of node.children) visit(child as Nodes)
+  }
+  visit(root)
+  return count
 }
 
 /** Register an indivisible element and highlight it as a whole. */

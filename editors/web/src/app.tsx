@@ -16,9 +16,10 @@ import {
   setStatus,
   type SourceRange
 } from '@sidemark/core'
-import type {BodyRenderResult} from './body/render'
+import {countRemoteImages, type BodyRenderResult} from './body/render'
 import {AuthorDialog, ConfirmDialog, PurgeDialog, type ConfirmRequest} from './components/Dialogs'
 import {DocumentView} from './components/DocumentView'
+import {PrivacyPanel} from './components/PrivacyPanel'
 import {Margin, type MarginItem} from './components/Margin'
 import {SourceView} from './components/SourceView'
 import {Composer, DraftBox, ThreadCard, type ThreadActions} from './components/ThreadCard'
@@ -87,6 +88,8 @@ export function App() {
     setDraftState(next)
   }, [])
   const draftInput = useRef<HTMLTextAreaElement>(null)
+  const [privacyOpen, setPrivacyOpen] = useState(false)
+  const remoteImages = useMemo(() => countRemoteImages(doc.root), [doc])
   const [showIntro, setShowIntro] = useState(() => readPref(INTRO_DISMISSED) !== '1')
   const [rendered, setRendered] = useState<BodyRenderResult | null>(null)
   const [message, setMessage] = useState<Message | null>(null)
@@ -322,7 +325,7 @@ export function App() {
       setShowIntro(false)
       window.scrollTo(0, 0)
       const count = parse(opened.source).threads.length
-      notify(`Opened ${opened.name}: ${count} thread${count === 1 ? '' : 's'}.`)
+      notify(`Opened ${opened.name} on this device (nothing uploaded): ${count} thread${count === 1 ? '' : 's'}.`)
     },
     [setHistory, notify, setDraft, setSelection]
   )
@@ -378,10 +381,10 @@ export function App() {
         if (file.handle) {
           const lastModified = await writeToHandle(file.handle, next)
           setFile((f) => ({...f, lastModified}))
-          notify(`Saved ${file.name}.`)
+          notify(`Saved ${file.name} on this device. Nothing was uploaded.`)
         } else {
           download(file.name, next)
-          notify(`Downloaded ${file.name}.`)
+          notify(`Downloaded ${file.name} to this device. Nothing was uploaded.`)
         }
         setHistory(H.markSaved(historyRef.current, next))
       } catch (error) {
@@ -564,7 +567,10 @@ export function App() {
         onShowResolved={setShowResolved}
         onPurge={() => setPurging(true)}
         onAuthor={() => setAuthorPrompt({reason: null, resolve: () => {}})}
+        privacyOpen={privacyOpen}
+        onPrivacy={() => setPrivacyOpen((open) => !open)}
       />
+      {privacyOpen && <PrivacyPanel onClose={() => setPrivacyOpen(false)} />}
       <input ref={fileInput} type="file" accept={MARKDOWN_ACCEPT} hidden onChange={onFileInput} data-testid="file-input" />
 
       {view === 'source' ? (
@@ -574,7 +580,15 @@ export function App() {
       ) : (
         <main class="page">
           <div class="doc-column">
-            {showIntro && <Intro onOpen={open} onDismiss={dismissIntro} />}
+            {showIntro && <Intro onOpen={open} onDismiss={dismissIntro} onPrivacy={() => setPrivacyOpen(true)} />}
+
+            {remoteImages > 0 && (
+              <p class="remote-note" role="note">
+                This document has {remoteImages} remote image{remoteImages === 1 ? '' : 's'}.{' '}
+                {remoteImages === 1 ? 'It is' : 'They are'} not loaded, so opening the document contacted no other server. Use{' '}
+                <em>open from…</em> on an image to view it in a new tab.
+              </p>
+            )}
 
             <section class={`doc-comments${counts.document ? '' : ' is-empty'}`} aria-labelledby="doc-group">
               <h2 id="doc-group" class={counts.document ? 'group-title' : 'visually-hidden'}>
@@ -658,7 +672,10 @@ export function App() {
 
       {dragging && (
         <div class="drop-overlay" aria-hidden="true">
-          <p>Drop a Markdown file to open it</p>
+          <p>
+            Drop a Markdown file to open it
+            <span class="drop-note">It is read on this device, not uploaded.</span>
+          </p>
         </div>
       )}
 
@@ -710,18 +727,23 @@ function HiddenNote({count}: {count: number}) {
   )
 }
 
-function Intro({onOpen, onDismiss}: {onOpen(): void; onDismiss(): void}) {
+function Intro({onOpen, onDismiss, onPrivacy}: {onOpen(): void; onDismiss(): void; onPrivacy(): void}) {
   return (
     <aside class="intro" aria-label="Getting started">
       <div>
-        <p class="intro-title">Comment on your own Markdown file</p>
+        <p class="intro-title">Private: your files stay on this device</p>
         <p>
-          Drag a <code>.md</code> file from your computer and drop it anywhere on this page, or{' '}
+          Nothing you open here is uploaded. Your browser reads the file and writes it back; there is no server, account or tracking.{' '}
+          <button type="button" class="link-button inline" onClick={onPrivacy}>
+            How do I know?
+          </button>
+        </p>
+        <p>
+          To comment on your own Markdown file, drag a <code>.md</code> file from your computer and drop it anywhere on this page, or{' '}
           <button type="button" class="link-button inline" onClick={onOpen}>
             open a file
           </button>
-          . The file is read in your browser and never uploaded. Saving writes the comments back into the file, or downloads a copy
-          where the browser cannot write to it.
+          . Saving writes the comments back into the file, or downloads a copy where the browser cannot write to it.
         </p>
       </div>
       <button type="button" class="button quiet intro-dismiss" onClick={onDismiss}>

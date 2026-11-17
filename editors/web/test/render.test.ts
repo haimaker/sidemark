@@ -3,7 +3,9 @@ import type {TableCell} from 'mdast'
 import {JSDOM} from 'jsdom'
 import {parse} from '@sidemark/core'
 import {renderCell} from '../src/body/render'
-import {safeHref, safeImageSrc} from '../src/body/sanitize'
+import {countRemoteImages} from '../src/body/render'
+import {embeddedImageSrc, remoteImageUrl, safeHref} from '../src/body/sanitize'
+import {contentSecurityPolicy} from '../csp'
 import {setup} from './helpers'
 
 describe('URL policy', () => {
@@ -26,10 +28,13 @@ describe('URL policy', () => {
     expect(safeHref(url)).toBe(expected)
   })
 
-  test('images: remote http(s) only', () => {
-    expect(safeImageSrc('https://example.com/x.png')).toBe('https://example.com/x.png')
-    expect(safeImageSrc('data:image/svg+xml,<svg onload=alert(1)>')).toBeNull()
-    expect(safeImageSrc('img/local.png')).toBeNull()
+  test('images: only those embedded in the document are displayed', () => {
+    expect(embeddedImageSrc('data:image/png;base64,AAAA')).toBe('data:image/png;base64,AAAA')
+    expect(embeddedImageSrc('https://example.com/x.png')).toBeNull()
+    expect(embeddedImageSrc('img/local.png')).toBeNull()
+    expect(embeddedImageSrc('data:text/html,<script>')).toBeNull()
+    expect(remoteImageUrl('https://example.com/x.png')).toBe('https://example.com/x.png')
+    expect(remoteImageUrl('img/local.png')).toBeNull()
   })
 })
 
@@ -76,10 +81,10 @@ describe('comment text is untrusted (§12)', () => {
     expect(out.textContent).toBe('click rel')
   })
 
-  test('images in comments do not load local or data URLs', () => {
-    const out = cell('![x](data:image/png;base64,AAAA)')
+  test('remote images in comments are not loaded', () => {
+    const out = cell('![x](https://tracker.example/pixel.png)')
     expect(out.querySelector('img')).toBeNull()
-    expect(out.textContent).toBe('Image: x')
+    expect(out.textContent).toBe('Image: x · open from tracker.example')
   })
 
   test('escaped pipes read as pipes', () => {
@@ -129,5 +134,46 @@ describe('document body rendering', () => {
     expect(container.querySelector('li p')).toBeNull()
     const loose = setup('- one\n\n- two\n').container
     expect(loose.querySelector('li p')).not.toBeNull()
+  })
+})
+
+describe('local only', () => {
+  test('remote and relative images render as placeholders; embedded ones display', () => {
+    const source = [
+      '![remote](https://example.com/a.png) ![relative](img/b.png) ![embedded](data:image/png;base64,iVBORw0KGgo=) ![ref][r]',
+      '',
+      '[r]: http://example.org/c.png',
+      ''
+    ].join('\n')
+    const {container, doc} = setup(source)
+    const imgs = [...container.querySelectorAll('img')]
+    expect(imgs.map((img) => img.getAttribute('src'))).toEqual(['data:image/png;base64,iVBORw0KGgo='])
+    const placeholders = [...container.querySelectorAll('.sm-image-placeholder')]
+    expect(placeholders.map((p) => p.textContent)).toEqual([
+      'Image: remote · open from example.com',
+      'Image: relative',
+      'Image: ref · open from example.org'
+    ])
+    const open = container.querySelector('.sm-image-open')!
+    expect(open.getAttribute('target')).toBe('_blank')
+    expect(open.getAttribute('rel')).toContain('noreferrer')
+    expect(countRemoteImages(doc.root)).toBe(2)
+  })
+
+  test('the production Content Security Policy blocks connections and remote images', () => {
+    const policy = Object.fromEntries(
+      contentSecurityPolicy('production')
+        .split('; ')
+        .map((d) => [d.split(' ')[0]!, d.split(' ').slice(1)])
+    )
+    expect(policy['default-src']).toEqual(["'none'"])
+    expect(policy['connect-src']).toEqual(["'none'"])
+    expect(policy['img-src']).toEqual(["'self'", 'data:', 'blob:'])
+    expect(policy['script-src']).toEqual(["'self'"])
+    expect(policy['form-action']).toEqual(["'none'"])
+    // Nothing in the policy names another host or a whole scheme of them.
+    expect(contentSecurityPolicy('production')).not.toMatch(/https?:|wss?:|\*/)
+    // Only development may talk back to its own dev server.
+    expect(contentSecurityPolicy('development')).toContain("connect-src 'self' ws: wss:")
   })
 })

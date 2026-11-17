@@ -9,6 +9,8 @@ interface ToolbarProps {
   resolvedTotal: number
   purgeable: number
   author: string
+  privacyOpen: boolean
+  onPrivacy(): void
   onOpen(): void
   onSave(): void
   onUndo(): void
@@ -34,9 +36,22 @@ export function Toolbar(props: ToolbarProps) {
         <span class={`save-state${props.dirty ? ' is-dirty' : ''}`} data-testid="save-state">
           {props.dirty ? 'Unsaved changes' : 'Saved'}
         </span>
+        <button
+          type="button"
+          class="privacy-badge"
+          aria-expanded={props.privacyOpen}
+          aria-controls="privacy-panel"
+          onClick={props.onPrivacy}
+          title="How do I know?"
+        >
+          <span class="privacy-dot" aria-hidden="true" />
+          <span>
+            Local only<span class="privacy-long">: your file never leaves this device</span>
+          </span>
+        </button>
       </div>
       <div class="toolbar-actions" role="toolbar" aria-label="Document">
-        <button type="button" class="button" onClick={props.onOpen} title={`Open a Markdown file (${mod}O)`}>
+        <button type="button" class="button" onClick={props.onOpen} title={`Open a Markdown file from this device. It is read by your browser, not uploaded. (${mod}O)`}>
           Open
         </button>
         <button
@@ -45,8 +60,8 @@ export function Toolbar(props: ToolbarProps) {
           onClick={props.onSave}
           title={
             props.canWriteInPlace
-              ? `Save back to ${props.fileName} (${mod}S)`
-              : `Download ${props.fileName}; this file was not opened with write access (${mod}S)`
+              ? `Save back to ${props.fileName} on this device. Nothing is uploaded. (${mod}S)`
+              : `Download ${props.fileName} to this device; it was not opened with write access. Nothing is uploaded. (${mod}S)`
           }
         >
           {props.canWriteInPlace ? 'Save' : 'Download'}
