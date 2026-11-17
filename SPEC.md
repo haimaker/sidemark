@@ -369,7 +369,7 @@ This section is not normative.
 
 - Hide the comments table, and a default `Comments` heading directly above it, from the document view. Show threads beside their ranges and highlight each range.
 - Collapse or hide resolved threads by default, with a way to show them.
-- Do not show orphaned threads beside the text. List them in a separate "detached" group with their Quote, so a person can read, re-attach or purge them.
+- Do not show orphaned threads beside the text. List them in a separate "detached" group with their Quote, so a person can read or purge them. This version defines no operation for re-attaching a thread.
 - List document-level threads in a group for the document as a whole.
 - Prompt for the author string once, and remember it.
 
@@ -449,7 +449,9 @@ These points were decided provisionally while drafting and need review or testin
 6. **Ranges with no text.** A range over an image with no description or a thematic break has an empty Quote (§7.2). If its anchors are lost, §8 reads the thread as document-level, not orphaned. Deciding by the Ref form (a link means it once had anchors) would fix this.
 7. **Bare URLs after an anchor.** GFM links a bare `www.example.com` depending on the character before it. Renderers disagree on whether an anchor directly before one stops it linking.
 8. **Author handles on GitHub.** In some GitHub views `@name` becomes a link to the GitHub user of that name, who may not be the comment's author.
-9. **Deferred features.** Suggested edits, reactions, mentions with notification semantics, an "edited" marker, and comments on line ranges inside code blocks.
+9. **A renamed heading above the table.** Any heading directly above the comments table is outside the body (§3), so it cannot be commented on, but viewers hide it only when its text is `Comments` (§10). A renamed heading is therefore visible and not commentable.
+10. **Raw HTML and relative links in the body.** §12 covers comment text only. The reference editor shows raw HTML in the body as literal text and leaves relative links inert; the specification does not say what a viewer should do.
+11. **Deferred features.** Suggested edits, reactions, mentions with notification semantics, an "edited" marker, and comments on line ranges inside code blocks.
 
 ## Appendix C. Prior art
 

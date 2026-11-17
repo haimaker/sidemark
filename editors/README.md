@@ -4,7 +4,7 @@ Standalone applications that read and write Sidemark files. Each editor has its 
 
 | Directory | What it is | Status |
 |---|---|---|
-| [`web/`](web/) | Static web app: open a local Markdown file, comment, save | In development |
+| [`web/`](web/) | Static web app: open a local Markdown file, comment in the margin, save. Reader with Quote fallback; every §9 write operation. | Working (v0.1) |
 
 Integrations that add Sidemark to an existing tool belong in [`../plugins/`](../plugins/).
 

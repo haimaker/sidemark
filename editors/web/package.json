@@ -1,0 +1,30 @@
+{
+  "name": "@sidemark/web-editor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reference Sidemark editor: a static web app for commenting on local Markdown files.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@sidemark/core": "0.1.0",
+    "preact": "^11.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/jsdom": "^30.0.0",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^22.20.5",
+    "jsdom": "^31.0.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}
