@@ -434,6 +434,11 @@ a {
   height: 17px;
 }
 
+.github-mark {
+  width: 15px;
+  height: 15px;
+}
+
 /* --- Page layout ---------------------------------------------------------- */
 
 .page {

@@ -77,4 +77,4 @@ Not supported: editing the body text, and re-attaching a detached thread to new 
 - **Source:** shows the raw Markdown, with anchors and the comments table marked.
 - **Pointer to the spec:** the first comment on a file writes the pointer from spec §6.7 above the comments heading. It is hidden in the document view and shown in Source.
 - **Theme:** the sun or moon button switches between light and dark. The editor follows the operating system until you choose, then remembers the choice in this browser.
-- **About:** the CommentMark name and the *About* link open the project on GitHub in a new tab.
+- **Project link:** the CommentMark name and the *GitHub* link open the project on GitHub in a new tab.

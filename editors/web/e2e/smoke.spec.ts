@@ -686,7 +686,7 @@ test('whole-document comment box stays in view while the document scrolls', asyn
 test('about: the editor links back to the project on GitHub', async ({page}) => {
   await page.goto('./')
   const repo = 'https://github.com/waynepan/commentmark'
-  const about = page.getByRole('link', {name: 'About', exact: true})
+  const about = page.getByRole('link', {name: 'GitHub', exact: true})
   const links = [
     page.getByRole('link', {name: 'CommentMark', exact: true}),
     about,
