@@ -36,7 +36,9 @@ CommentMark bridges that gap. You get comment threads on a Markdown file while s
 
 ## Try it
 
-The reference editor runs in your browser at <https://waynepan.github.io/commentmark/>. Open or drop a local `.md` file, select text and comment. The contents of your file and your edits never leave your device.
+<a href="https://waynepan.github.io/commentmark/"><img src=".github/assets/open-the-editor.svg" alt="Open the editor" width="208" height="44"></a>
+
+The reference editor runs in your browser. Open or drop a local `.md` file, select text and comment. The contents of your file and your edits never leave your device.
 
 ## Design goals
 
