@@ -3,6 +3,7 @@
   "projection": "A ghost. B backwards. C never ends.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

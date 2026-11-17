@@ -3,6 +3,7 @@
   "projection": "The quick brown fox jumps.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

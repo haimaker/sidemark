@@ -3,6 +3,7 @@
   "projection": "Alpha one, beta two.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

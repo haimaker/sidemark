@@ -55,7 +55,7 @@ export interface Placement {
 
 /** Insert an anchor pair for `threadId` around `range`. */
 export function placeAnchors(doc: CommentMarkDocument, range: SourceRange, threadId: string): Placement {
-  validateRange(doc, range)
+  range = validateRange(doc, range)
   const leaves = leafBlocks(doc)
   const start = resolveBoundary(doc, leaves, range.start, 'start')
   const end = resolveBoundary(doc, leaves, range.end, 'end')
@@ -95,7 +95,13 @@ export function placeAnchors(doc: CommentMarkDocument, range: SourceRange, threa
   )
 }
 
-function validateRange(doc: CommentMarkDocument, range: SourceRange): void {
+/**
+ * Reject unusable ranges and keep usable ones out of the comments table
+ * block (pointer, heading and table), which an editor normally hides. A range
+ * that runs from the body into that block is cut at its edge (no body text
+ * is lost); one inside it, or one that would wrap it, is rejected.
+ */
+function validateRange(doc: CommentMarkDocument, range: SourceRange): SourceRange {
   const {start, end} = range
   if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > doc.source.length || start >= end) {
     throw new CommentMarkError('INVALID_RANGE', `Invalid range [${start}, ${end})`)
@@ -104,12 +110,15 @@ function validateRange(doc: CommentMarkDocument, range: SourceRange): void {
     throw new CommentMarkError('INVALID_RANGE', 'The range starts inside front matter')
   }
   const table = doc.table
-  if (table) {
-    const hidden = {start: table.heading?.range.start ?? table.range.start, end: table.range.end}
-    if (start < hidden.end && end > hidden.start) {
-      throw new CommentMarkError('INVALID_RANGE', 'The range overlaps the comments table')
-    }
+  if (!table) return range
+  const hidden = {
+    start: Math.min(table.pointer?.range.start ?? Infinity, table.heading?.range.start ?? Infinity, table.range.start),
+    end: table.range.end
   }
+  if (end <= hidden.start || start >= hidden.end) return range
+  if (start < hidden.start && end <= hidden.end) return {start, end: hidden.start}
+  if (start >= hidden.start && end > hidden.end) return {start: hidden.end, end}
+  throw new CommentMarkError('INVALID_RANGE', 'The range is inside or around the comments table')
 }
 
 /** Whether the source in `[from, to)` has anything but whitespace and anchors. */

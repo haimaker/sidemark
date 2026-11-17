@@ -3,6 +3,7 @@
   "projection": "Body text.",
   "table": {
     "heading": null,
+    "pointer": null,
     "columns": [
       "ref",
       "QUOTE",

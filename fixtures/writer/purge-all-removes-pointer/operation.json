@@ -1,0 +1,8 @@
+{
+  "description": "Purging every thread removes the table, heading and pointer (§9.5, §6.7).",
+  "operation": "purge",
+  "args": {
+    "resolved": true,
+    "orphaned": true
+  }
+}

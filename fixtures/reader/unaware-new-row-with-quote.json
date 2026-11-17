@@ -3,6 +3,7 @@
   "projection": "We will move every tenant to the new cluster in Q3.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

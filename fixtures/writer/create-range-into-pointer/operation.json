@@ -1,0 +1,14 @@
+{
+  "description": "A selection that runs from the body into the pointer is cut at the pointer: the anchors wrap only body text and the pointer stays directly above the heading.",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "from": "Beta",
+      "to": "holds comment"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

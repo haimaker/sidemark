@@ -3,6 +3,7 @@
   "projection": "First paragraph ends here. item one item two Next section",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

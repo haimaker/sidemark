@@ -3,6 +3,7 @@
   "projection": "Body. Draft Ref Quote Author Date Comment Status",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

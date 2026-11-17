@@ -3,6 +3,7 @@
   "projection": "Notes The slow fox.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

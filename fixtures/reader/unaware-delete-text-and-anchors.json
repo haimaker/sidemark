@@ -3,6 +3,7 @@
   "projection": "The jumps over the lazy dog.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

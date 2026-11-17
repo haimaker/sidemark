@@ -1,0 +1,7 @@
+{
+  "description": "With the pointer between `## Comments` and the table, removing the last thread removes the table, the pointer and the heading (\u00a76.2, \u00a76.7).",
+  "operation": "deleteThread",
+  "args": {
+    "thread": "c-1"
+  }
+}

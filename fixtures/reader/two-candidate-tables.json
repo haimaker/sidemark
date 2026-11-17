@@ -3,6 +3,7 @@
   "projection": "Intro with words. Ref Quote Author Date Comment Status c-old @x an example table in the body",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

@@ -1,5 +1,5 @@
 /** Finding the comments table (§6.1) and reading its rows (§6.3–§6.5). */
-import type {Heading, Nodes, Root, Table} from 'mdast'
+import type {Heading, Nodes, Root, RootContent, Table} from 'mdast'
 import {commentFromCell, inlineText, splitRow} from './cells.js'
 import {parseDate} from './dates.js'
 import {isThreadId} from './ids.js'
@@ -10,6 +10,13 @@ import type {Comment, CommentsTable, ParsedStatus, Row} from './types.js'
 export const COLUMNS = ['ref', 'quote', 'author', 'date', 'comment', 'status'] as const
 export const COLUMN = {ref: 0, quote: 1, author: 2, date: 3, comment: 4, status: 5} as const
 export const DEFAULT_HEADING = 'Comments'
+
+/** §6.7: the pointer writers put above a comments table they create. */
+export const POINTER =
+  '<!-- CommentMark: the table below holds comment threads on this document, tied to the <a id="c-..."> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->'
+
+/** §6.7: a pointer is recognised by this prefix only. */
+export const POINTER_PREFIX = '<!-- CommentMark:'
 
 /**
  * The comments table (§6.1). A top-level table qualifies if its first six
@@ -35,16 +42,51 @@ export function findCommentsTable(root: Root, source: string): CommentsTable | n
     const rows = readRows(node, source)
     const hasValidRow = rows.some((row) => row.threadId !== null)
     if (rows.length > 0 && !hasValidRow) return
-    const previous = root.children[index - 1]
+    // §6.2, §6.7: the heading directly above the table, or directly above a
+    // pointer that sits between them; the pointer directly above the heading
+    // (or the table when there is no heading), or between the two.
+    let at = index - 1
+    let pointerNode = isPointer(root.children[at]) ? root.children[at] : undefined
+    if (pointerNode) at--
+    const headingNode = root.children[at]?.type === 'heading' ? root.children[at] : undefined
+    if (headingNode && !pointerNode && isPointer(root.children[at - 1])) pointerNode = root.children[at - 1]
     const heading =
-      previous?.type === 'heading'
-        ? {node: previous, range: rangeOf(previous), text: headingText(previous)}
+      headingNode?.type === 'heading'
+        ? {node: headingNode, range: rangeOf(headingNode), text: headingText(headingNode)}
         : null
-    const table = {node, range: rangeOf(node), heading, columns, rows}
+    const pointer = pointerNode?.type === 'html' ? {node: pointerNode, range: rangeOf(pointerNode)} : null
+    const table = {node, range: rangeOf(node), heading, pointer, columns, rows}
     if (hasValidRow) lastWithRows = table
     else lastEmpty = table
   })
   return lastWithRows ?? lastEmpty
+}
+
+/**
+ * §6.7: an HTML block whose text begins `<!-- CommentMark:`. Only the prefix
+ * is checked, so hand-edited or future wording is still recognised.
+ */
+function isPointer(node: RootContent | undefined): node is Extract<RootContent, {type: 'html'}> {
+  return node?.type === 'html' && node.value.trimStart().startsWith(POINTER_PREFIX)
+}
+
+/**
+ * The top-level nodes that make up the comments table block: the pointer,
+ * the heading and the table.
+ *
+ * §3 excludes only the heading and the table from the body; the pointer is
+ * formally body content. It is an HTML block, so it adds nothing to the text
+ * projection and holds no anchors (§6.7), and leaving it out of the body as
+ * well changes nothing for readers. For writers it means a range can never
+ * be anchored around it and anchor removal never uses it as a neighbour.
+ */
+export function tableBlockNodes(table: CommentsTable | null): Set<RootContent> {
+  const nodes = new Set<RootContent>()
+  if (!table) return nodes
+  nodes.add(table.node)
+  if (table.heading) nodes.add(table.heading.node)
+  if (table.pointer) nodes.add(table.pointer.node)
+  return nodes
 }
 
 function headingText(heading: Heading): string {

@@ -3,6 +3,7 @@
   "projection": "One two three four five six seven.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

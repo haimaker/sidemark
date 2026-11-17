@@ -1,0 +1,7 @@
+{
+  "description": "A hand-edited pointer is still removed with the table (§6.7).",
+  "operation": "deleteThread",
+  "args": {
+    "thread": "c-doc"
+  }
+}

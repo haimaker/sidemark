@@ -5,6 +5,8 @@ CommentMark is an open convention for keeping comment threads inside a Markdown 
 ```markdown
 The <a id="c-x7k2m9"></a>quick brown fox<a id="c-x7k2m9-end"></a> jumps over the lazy dog.
 
+<!-- CommentMark: the table below holds comment threads on this document, tied to the <a id="c-..."> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->
+
 ## Comments
 
 | Ref | Quote | Author | Date | Comment | Status |
@@ -57,6 +59,7 @@ The reference editor runs in your browser at <https://waynepan.github.io/comment
 2. **The comments table** at the end of the file holds one row per comment. Rows that share a Ref form a thread.
 3. **The Quote cell** shows the commented text in bold with a little surrounding context. If the anchors are ever lost, a tool uses it to find the text again, and only if it matches exactly once.
 4. **Status** is recorded per row, so the table shows who resolved or reopened a thread and when.
+5. **A pointer** above the table, an HTML comment that is invisible when rendered, names the specification. An agent or person editing the raw file can find the rules and follow them.
 
 Read the full rules in [SPEC.md](SPEC.md).
 

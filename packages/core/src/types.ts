@@ -4,7 +4,7 @@
  * All offsets are UTF-16 code unit indexes into the original source string
  * (the same unit as JavaScript string indexes), half-open: `[start, end)`.
  */
-import type {Heading, Root, Table, TableRow as MdastTableRow} from 'mdast'
+import type {Heading, Html, Root, Table, TableRow as MdastTableRow} from 'mdast'
 import type {SourceMapper} from './source-map.js'
 import type {TextProjection} from './projection.js'
 
@@ -138,8 +138,15 @@ export interface Thread {
 export interface CommentsTable {
   node: Table
   range: SourceRange
-  /** The heading immediately above the table, if any (§6.2). */
+  /** The heading immediately above the table, or above a pointer directly above it (§6.2, §6.7). */
   heading: {node: Heading; range: SourceRange; text: string} | null
+  /**
+   * The pointer to the specification (§6.7): an HTML comment starting
+   * `<!-- CommentMark:` that is the block directly above the heading, between
+   * the heading and the table, or directly above the table when there is no
+   * heading. `null` if there is none.
+   */
+  pointer: {node: Html; range: SourceRange} | null
   /** Header cell texts, trimmed, in order (may have more than six). */
   columns: string[]
   rows: Row[]

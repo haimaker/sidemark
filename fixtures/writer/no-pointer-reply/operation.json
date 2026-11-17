@@ -1,0 +1,10 @@
+{
+  "description": "A table without a pointer stays without one when a reply is added (§6.7).",
+  "operation": "addReply",
+  "args": {
+    "thread": "c-aaa111",
+    "author": "@b",
+    "comment": "Reply.",
+    "date": "2026-11-17T10:32Z"
+  }
+}

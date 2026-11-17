@@ -55,7 +55,7 @@ getThread(doc: CommentMarkDocument, id: string): Thread | undefined
 |---|---|
 | `root` | mdast tree (GFM) of everything after the BOM and front matter, positions as source offsets. Render the body from this. |
 | `bodyStart`, `frontMatter` | Where Markdown starts; the front matter range or `null`. |
-| `table` | The comments table (§6.1): `node`, `range`, `heading` (`{node, range, text}` or `null`), `columns`, `rows`. |
+| `table` | The comments table (§6.1): `node`, `range`, `heading` (`{node, range, text}` or `null`), `pointer` (§6.7: `{node, range}` or `null`), `columns`, `rows`. An editor hides the pointer, heading and table. |
 | `threads` | In table order. Each: `id`, `comments`, `state` (`open`/`resolved`), `attachment`, `quote` (parsed root Quote cell), `anchors` (valid pair or `null`). |
 | `anchors`, `strayAnchors` | Every recognised anchor, and the stray ones with a `stray` reason. |
 | `malformedRows` | Rows without a valid Ref (§6.5). |
@@ -102,6 +102,8 @@ interface WriterOptions {
 }
 ```
 
+- Creating the comments table also writes the §6.7 pointer (`POINTER`) above `## Comments`. Writers never add a pointer to an existing table or change one, and removing the table removes a pointer recognised by `POINTER_PREFIX`.
+- A `range` that runs from the body into the hidden comments block (pointer, heading, table) is cut at its edge; one inside it is `INVALID_RANGE`.
 - `range: null` creates a document-level thread. Otherwise the range is snapped out of code spans, links, images, autolinks, escapes and entities, placed outside emphasis delimiters, and turned into own-paragraph anchors around code blocks, HTML blocks and thematic breaks (§5.3, §5.4). The result is re-parsed and must parse exactly as before apart from the anchors.
 - `comment` is Markdown; `|` is escaped and newlines become `<br>`. `date` is a `Date` or a string already in the form `YYYY-MM-DDThh:mmZ`.
 - `maintain` removes stray anchors, inserts anchors for threads found through their Quote (turning a bare root Ref into `[ID](#ID)`), and refreshes stale Quote cells. It never deletes a thread and is idempotent.
@@ -112,7 +114,7 @@ Every deliberate failure is a `CommentMarkError` with a `code`: `INVALID_RANGE`,
 
 ### Building blocks
 
-`buildQuote`, `readQuoteCell`, `writeQuoteCell`, `findQuote`, `anchorHtml`, `escapeCellMarkdown`, `commentFromCell`, `parseDate`, `formatDate`, `isThreadId`, `randomThreadId`, `THREAD_ID`.
+`POINTER`, `POINTER_PREFIX`, `buildQuote`, `readQuoteCell`, `writeQuoteCell`, `findQuote`, `anchorHtml`, `escapeCellMarkdown`, `commentFromCell`, `parseDate`, `formatDate`, `isThreadId`, `randomThreadId`, `THREAD_ID`.
 
 ## How it is organised
 

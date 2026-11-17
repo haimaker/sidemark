@@ -3,6 +3,7 @@
   "projection": "Plan The quick brown fox jumps over the lazy dog. ./migrate --all The dog sleeps. The dog sleeps.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

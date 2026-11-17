@@ -3,6 +3,7 @@
   "projection": "See the big chart for details.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

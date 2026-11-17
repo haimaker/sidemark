@@ -3,6 +3,7 @@
   "projection": "Text with words.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

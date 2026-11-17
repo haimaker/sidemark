@@ -21,13 +21,19 @@ Parse `<case>.md` and compare your result with `<case>.json`. Ignore the `descri
 {
   "description": "What the case tests, with SPEC section numbers.",
 
-  // §7.1 text projection of the body (§3: the comments table and the
-  // heading directly above it are excluded).
+  // §7.1 text projection of the body. The comments table and the heading
+  // directly above it are not body (§3); the pointer (§6.7) is, but as an
+  // HTML block it contributes nothing.
   "projection": "Launch plan The quick brown fox jumps over the lazy dog.",
 
   // §6.1 the comments table, or null if there is none.
   "table": {
     "heading": "Comments",          // text of the heading directly above, or null
+    // §6.7 the pointer's source exactly as written (an HTML comment starting
+    // "<!-- CommentMark:" that is the block directly above the heading,
+    // between the heading and the table, or directly above the table when
+    // there is no heading), or null.
+    "pointer": "<!-- CommentMark: ... -->",
     "columns": ["Ref", "Quote", "Author", "Date", "Comment", "Status"], // header cell text, trimmed
     "rowCount": 2                   // body rows, including malformed ones
   },
@@ -138,7 +144,7 @@ Error codes used by `expectError`:
 | Code | When |
 |---|---|
 | `UNSAFE_PLACEMENT` | No anchor placement leaves the body parsing the same (§5.3 "MUST NOT change how the surrounding Markdown parses"). |
-| `INVALID_RANGE` | The range is empty, outside the body, or overlaps the comments table. |
+| `INVALID_RANGE` | The range is empty, outside the body, or lies inside or around the comments table block (pointer, heading and table). A range that runs from the body into that block is not an error: it is cut at the block's edge (`create-range-into-pointer`). |
 | `EMPTY_COMMENT` | The row would have both Comment and Status empty (§6.4). |
 | `THREAD_NOT_FOUND` | No thread has the given ID. |
 
@@ -153,4 +159,6 @@ Writer outputs are byte-exact, so they encode choices where the spec allows more
 | §5.4 forms | Own paragraphs with blank lines; if that changes the parse, the first §5.4 alternative (no blank line), then the second (end of the preceding paragraph / start of the following one). | `create-code-block*`, `create-indented-code-block` |
 | §5.4 a second thread on the same block | Its anchors join the existing anchor-only paragraphs (the MAY). | (unit tests) |
 
-Everything else the writer cases check (empty cells as `| |`, when §9.6 rewrites a Quote, rewriting a bare Ref on repair, copying the Quote when an orphaned root is deleted, refusing unsafe placements and tables) is required by the spec.
+Everything else the writer cases check (the §6.7 pointer, written exactly as the spec gives it when a table is created and never otherwise, and removed with the table; empty cells as `| |`; when §9.6 rewrites a Quote, rewriting a bare Ref on repair, copying the Quote when an orphaned root is deleted; refusing unsafe placements and tables) is required by the spec.
+
+Removing the table restores the bytes from before it was created, except that a document which ended with exactly one blank line comes back ending with none: `createTable` normalises the separation to one blank line, so the two cases cannot be told apart afterwards.

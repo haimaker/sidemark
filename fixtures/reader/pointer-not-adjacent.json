@@ -1,0 +1,40 @@
+{
+  "description": "SPEC §6.7: a CommentMark comment that is not the block directly above the heading is not the pointer; it is ordinary body content (an HTML block, so it still projects to nothing).",
+  "projection": "Intro paragraph. A paragraph in between.",
+  "table": {
+    "heading": "Comments",
+    "pointer": null,
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-1",
+      "state": "open",
+      "attachment": "document",
+      "anchoredBy": null,
+      "rangeSource": null,
+      "rangeText": null,
+      "quote": null,
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "doc",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

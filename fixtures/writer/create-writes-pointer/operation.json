@@ -1,0 +1,11 @@
+{
+  "description": "Creating the comments table writes the §6.7 pointer on its own line directly above `## Comments`, with a blank line between (here for a document-level thread).",
+  "operation": "createThread",
+  "args": {
+    "range": null,
+    "author": "@wayne",
+    "comment": "Whole document.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

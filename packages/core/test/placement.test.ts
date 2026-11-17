@@ -3,8 +3,9 @@ import {createThread, deleteThread, parse, PlacementError, CommentMarkError, typ
 
 const fixed = {generateId: () => 'c-test01', now: () => new Date('2026-11-17T10:32:00Z')}
 
+/** The source before the comments table block (pointer, heading, table). */
 function body(source: string): string {
-  const at = source.indexOf('\n## Comments')
+  const at = source.indexOf('\n<!-- CommentMark:')
   return at === -1 ? source : source.slice(0, at)
 }
 

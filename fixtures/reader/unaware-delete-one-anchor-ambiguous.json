@@ -3,6 +3,7 @@
   "projection": "A fox. A fox.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

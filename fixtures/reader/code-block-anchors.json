@@ -3,6 +3,7 @@
   "projection": "Run this: make all Then: rm -rf build Done.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

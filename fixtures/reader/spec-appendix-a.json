@@ -3,6 +3,7 @@
   "projection": "Migration plan We will move every tenant to the new cluster in Q3. ./migrate --all --window 2h Rollback is manual.",
   "table": {
     "heading": "Comments",
+    "pointer": "<!-- CommentMark: the table below holds comment threads on this document, tied to the <a id=\"c-...\"> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->",
     "columns": [
       "Ref",
       "Quote",

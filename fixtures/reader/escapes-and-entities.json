@@ -3,6 +3,7 @@
   "projection": "Fish & chips cost $5 *each* — really.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

@@ -1,0 +1,7 @@
+{
+  "description": "As delete-last-thread-removes-pointer, with CRLF line endings.",
+  "operation": "deleteThread",
+  "args": {
+    "thread": "c-x7k2m9"
+  }
+}

@@ -35,6 +35,7 @@ export {maintain} from './maintain.js'
 
 // Building blocks
 export {anchorHtml} from './anchors.js'
+export {POINTER, POINTER_PREFIX} from './table.js'
 export {buildQuote, readQuoteCell, writeQuoteCell, type QuoteParts} from './quote.js'
 export {escapeCellMarkdown, commentFromCell} from './cells.js'
 export {formatDate, parseDate} from './dates.js'

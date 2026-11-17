@@ -3,6 +3,7 @@
   "projection": "The first line continues here and ends. A list item wraps onto a second line.",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",

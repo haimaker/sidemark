@@ -1,0 +1,5 @@
+{
+  "description": "Maintenance leaves a hand-edited pointer as written (§6.7).",
+  "operation": "maintain",
+  "args": {}
+}

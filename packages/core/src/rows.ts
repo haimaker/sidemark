@@ -1,9 +1,10 @@
 /** Edits to the comments table: rows, cells, creating and removing the table. */
 import {escapeCellMarkdown} from './cells.js'
+import type {RootContent} from 'mdast'
 import {deletion, insertion, type Edit} from './edits.js'
 import {endOf, startOf} from './markdown.js'
-import {COLUMNS, DEFAULT_HEADING} from './table.js'
-import {endsWithLineEnding, lineEnd, lineEndingLength, lineStart} from './text.js'
+import {COLUMNS, DEFAULT_HEADING, POINTER} from './table.js'
+import {countLineEndings, endsWithLineEnding, lineEnd, lineEndingLength, lineStart} from './text.js'
 import type {Row, CommentMarkDocument} from './types.js'
 
 /** Cell contents of a new row, already escaped for a table cell. */
@@ -66,7 +67,8 @@ export function createTable(doc: CommentMarkDocument, rowText: string): Edit {
   const eol = doc.lineEnding
   const header = '| Ref | Quote | Author | Date | Comment | Status |'
   const delimiter = '|---|---|---|---|---|---|'
-  const table = [`## ${DEFAULT_HEADING}`, '', header, delimiter, rowText].join(eol)
+  // §6.7: the pointer, a blank line, then the heading.
+  const table = [POINTER, '', `## ${DEFAULT_HEADING}`, '', header, delimiter, rowText].join(eol)
   const body = source.slice(doc.bodyStart)
   let lead: string
   if (body.trim() === '') lead = source.length > 0 && !endsWithLineEnding(source) ? eol : ''
@@ -128,21 +130,42 @@ export function removeLines(source: string, offsets: readonly number[]): Edit[] 
 }
 
 /**
- * Remove the comments table and, if its text is `Comments`, the heading
- * directly above it (§6.2), along with the blank lines that separated them
- * from the previous block.
+ * Remove the comments table, the heading directly above it if its text is
+ * `Comments` (§6.2), and a recognised pointer (§6.7), along with the blank
+ * lines that separated them from the previous block. A heading with other
+ * text stays, even when the pointer above it goes.
  */
 export function removeTable(doc: CommentMarkDocument): Edit[] {
   const table = doc.table!
   const nodes = doc.root.children
-  const removeHeading = table.heading !== null && table.heading.text === DEFAULT_HEADING
-  const first = removeHeading ? table.heading!.node : table.node
-  const index = nodes.indexOf(first)
-  const previous = nodes[index - 1]
-  const next = nodes[nodes.indexOf(table.node) + 1]
-  if (previous) return [deletion(endOf(previous), table.range.end)]
-  if (next) return [deletion(lineStart(doc.source, startOf(first)), lineStart(doc.source, startOf(next)))]
-  return [deletion(doc.bodyStart, doc.source.length)]
+  const doomed = new Set<RootContent>([table.node])
+  if (table.heading && table.heading.text === DEFAULT_HEADING) doomed.add(table.heading.node)
+  if (table.pointer) doomed.add(table.pointer.node)
+  // Remove each run of adjacent doomed nodes with the separation before it.
+  const edits: Edit[] = []
+  let i = 0
+  while (i < nodes.length) {
+    if (!doomed.has(nodes[i]!)) {
+      i++
+      continue
+    }
+    let j = i
+    while (j + 1 < nodes.length && doomed.has(nodes[j + 1]!)) j++
+    const first = nodes[i]!
+    const last = nodes[j]!
+    const previous = nodes[i - 1]
+    const next = nodes[j + 1]
+    if (previous && !next && countLineEndings(doc.source.slice(endOf(previous), startOf(first))) > 2) {
+      // `createTable` adds no blank line when the document already ends with
+      // more than one, so take only the block and its own line ending.
+      const end = endOf(last)
+      edits.push(deletion(lineStart(doc.source, startOf(first)), end + lineEndingLength(doc.source, end)))
+    } else if (previous) edits.push(deletion(endOf(previous), endOf(last)))
+    else if (next) edits.push(deletion(lineStart(doc.source, startOf(first)), lineStart(doc.source, startOf(next))))
+    else edits.push(deletion(doc.bodyStart, doc.source.length))
+    i = j + 1
+  }
+  return edits
 }
 
 /**

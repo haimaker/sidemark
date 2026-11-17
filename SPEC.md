@@ -10,11 +10,14 @@ A commented document has two parts:
 
 - **Anchors** in the body: pairs of empty `<a>` elements that mark the start and end of each commented range. They render as nothing.
 - **A comments table** at the end: an ordinary Markdown table with one row per comment.
+- **A pointer** above the table: an HTML comment, invisible when rendered, that sends anyone editing the raw file to this specification.
 
 ```markdown
 # Launch plan
 
 The <a id="c-x7k2m9"></a>quick brown fox<a id="c-x7k2m9-end"></a> jumps over the lazy dog.
+
+<!-- CommentMark: the table below holds comment threads on this document, tied to the <a id="c-..."> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->
 
 ## Comments
 
@@ -44,7 +47,7 @@ The base syntax is [CommonMark](https://spec.commonmark.org/) with the table ext
 
 - **Thread:** a root comment plus its replies, identified by a thread ID.
 - **Comment:** one row of the comments table.
-- **Body:** the document excluding the comments table and a heading that immediately precedes it.
+- **Body:** the document excluding the comments table, a heading that immediately precedes it, and a pointer (§6.7) directly above them.
 - **Anchor:** an empty inline `<a>` element in the body that marks one end of a thread's range.
 - **Reader:** software that parses a document and resolves its threads.
 - **Writer:** software that modifies a document. Every writer is also a reader.
@@ -104,6 +107,7 @@ The general rule is that **inserting an anchor MUST NOT change how the surroundi
 
 - If a requested range boundary falls where an anchor is not allowed, the writer MUST move that boundary outward until the anchor can be inserted without changing the parse. A comment on part of a link's text therefore covers the whole link.
 - A boundary that falls on structure with no text of its own, such as a blank line between blocks, a list marker or a table pipe, moves to the nearest position where an anchor is allowed. The range MUST NOT lose any of the requested text.
+- A range that runs from the body into the pointer, the comments heading or the comments table ends at the edge of that block. A range that lies inside that block, or wraps all of it, is refused.
 - A boundary at the inner edge of emphasis, strong emphasis or strikethrough delimiters MUST move outside the delimiters. An anchor directly inside a delimiter (`**<a id="…"></a>word**`) can stop the emphasis from parsing.
 - Writers SHOULD verify a placement by parsing the result.
 - A writer that cannot find a position that leaves the parse unchanged MUST refuse the operation and leave the document as it was.
@@ -162,9 +166,10 @@ No marker, heading or hidden sentinel identifies the table. The header row is th
 
 ### 6.2 Placement
 
-- When a writer creates the comments table, it MUST append it as the last block of the document, preceded by the heading `## Comments`.
+- When a writer creates the comments table, it MUST append it as the last block of the document, preceded by the heading `## Comments`. It SHOULD write the pointer (§6.7) above that heading.
+- Above the pointer, heading and table, a writer adds only the blank line needed to separate them from the content before. Removing the table does not promise to restore the exact trailing blank lines the document had: a document that ended in one blank line may come back ending in none.
 - Readers MUST accept the table anywhere at the top level of the document, with or without a heading. The heading's text is not significant and may be renamed or translated.
-- A writer that removes the last row MUST remove the table, and SHOULD remove an immediately preceding heading whose text is exactly `Comments`. A heading with any other text is the author's own and is kept.
+- A writer that removes the last row MUST remove the table, and SHOULD remove an immediately preceding heading whose text is exactly `Comments`. A heading with any other text is the author's own and is kept. It SHOULD also remove the pointer (§6.7).
 - If the document ends inside a block that would absorb appended text, such as an unclosed fenced code block or an unterminated HTML block, the table cannot be appended without changing the body. The writer MUST refuse to create it.
 
 ### 6.3 Rows and threads
@@ -226,6 +231,26 @@ A body row without a valid Ref cell is malformed. It belongs to no thread. Write
 
 Future versions may add columns after the first six. Readers MUST ignore columns they do not recognise. Writers MUST preserve those columns in existing rows and MUST emit empty cells for them in new rows.
 
+### 6.7 Pointer to this specification
+
+A CommentMark file is often edited by tools that do not implement this specification, including AI agents working on the raw text. The file itself tells them where the rules are.
+
+When a writer creates the comments table, it SHOULD write this HTML comment on a line of its own directly above the heading, with a blank line between them:
+
+```html
+<!-- CommentMark: the table below holds comment threads on this document, tied to the <a id="c-..."> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->
+```
+
+- **It is a hint and identifies nothing.** Readers MUST NOT require it. The header row remains the only signal for the comments table (§6.1).
+- **It does not affect rendering or anchoring.** It is an HTML block, so it renders as nothing, contributes nothing to the text projection (§7.1), and the `<a id="c-...">` inside it is not an anchor (§5.1).
+- **Recognising one.** A pointer is an HTML comment that begins `<!-- CommentMark:`, with up to three spaces of indentation, and is the block directly above the comments heading, or directly above the table. Writers match on that prefix only, so the wording and the address can change between versions.
+- **Between the heading and the table.** A pointer that someone has moved there is still a pointer, and the heading above it still counts as immediately preceding the table.
+- **Not body content.** The pointer is outside the body (§3), like the heading and the table, so nothing can be anchored to it.
+- **Only at creation.** A writer MUST NOT add a pointer to a document that already has a comments table, and MUST NOT rewrite an existing pointer. Either would change a file the user did not ask to change (§9.1).
+- **Removed with the table.** A writer that removes the comments table SHOULD remove the pointer, including when the heading has other text and is kept (§6.2).
+
+An agent or person who edits the raw file and finds the pointer should read this specification first. The short version: keep each pair of anchors around the text it wraps, add a reply as a new row with the same Ref, and never delete rows or anchors that were not theirs to delete.
+
 ## 7. Text projection and the Quote cell
 
 ### 7.1 Text projection
@@ -244,7 +269,7 @@ Fallback anchoring compares plain text, so every tool must derive the same plain
    - nothing for footnote references, link reference definitions, thematic breaks and task-list checkboxes
 3. Replace every run of whitespace with a single space, and trim both ends. Whitespace is as CommonMark defines Unicode whitespace: any character in the Unicode `Zs` category, or a tab, line feed, form feed or carriage return.
 
-The comments table and a heading immediately before it are not part of the body and contribute nothing.
+The comments table, a heading immediately before it and the pointer (§6.7) are not part of the body and contribute nothing.
 
 ### 7.2 Building a Quote
 
@@ -322,7 +347,7 @@ Consequences worth knowing:
 
 1. Generate an ID (§4).
 2. For an anchored thread, insert the anchor pair (§5.3, §5.4). For a document-level thread, insert nothing in the body.
-3. Create the comments table if there is none (§6.2).
+3. Create the comments table if there is none (§6.2), with its pointer (§6.7).
 4. Add the root row. For an anchored thread, go through the existing threads in table order and insert the row immediately before the first row of the first anchored thread whose range starts later in the body. Threads anchored by the Quote fallback count; a range with the same start does not count as later. If there is no such thread, add the row at the end of the table. Add a document-level thread at the end of the table.
 
 If the anchors cannot be placed (§5.3) or the table cannot be created (§6.2), the writer refuses and changes nothing.
@@ -379,7 +404,8 @@ This section is not normative. It records the behaviour the rules above are desi
 
 | Action in an unaware tool | Result |
 |---|---|
-| Render the file | Body renders unchanged; the comments table appears at the end; Ref links jump to the commented text. |
+| Render the file | Body renders unchanged; the comments table appears at the end; Ref links jump to the commented text. The pointer is invisible. |
+| Read the raw file (a person or an AI agent) | The pointer above the table names this specification, so the reader can follow it. |
 | Edit text inside a range | Thread stays anchored. An aware tool refreshes the Quote on its next save. |
 | Delete the commented text and both anchors | Thread is orphaned and stays in the table. |
 | Delete the commented text but leave the anchors | Same; the empty pair is stray and is removed on the next aware save. |
@@ -421,6 +447,8 @@ We will <a id="c-x7k2m9"></a>move every tenant<a id="c-x7k2m9-end"></a> to the n
 
 Rollback is manual.
 
+<!-- CommentMark: the table below holds comment threads on this document, tied to the <a id="c-..."> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->
+
 ## Comments
 
 | Ref | Quote | Author | Date | Comment | Status |
@@ -451,7 +479,8 @@ These points were decided provisionally while drafting and need review or testin
 8. **Author handles on GitHub.** In some GitHub views `@name` becomes a link to the GitHub user of that name, who may not be the comment's author.
 9. **A renamed heading above the table.** Any heading directly above the comments table is outside the body (§3), so it cannot be commented on, but viewers hide it only when its text is `Comments` (§10). A renamed heading is therefore visible and not commentable.
 10. **Raw HTML and relative links in the body.** §12 covers comment text only. The reference editor shows raw HTML in the body as literal text and leaves relative links inert; the specification does not say what a viewer should do.
-11. **Deferred features.** Suggested edits, reactions, mentions with notification semantics, an "edited" marker, and comments on line ranges inside code blocks.
+11. **A permanent address for the pointer.** The pointer (§6.7) names this specification's location on GitHub. Files keep whatever address they were written with, so the address should move to a permanent one before version 1.0.
+12. **Deferred features.** Suggested edits, reactions, mentions with notification semantics, an "edited" marker, and comments on line ranges inside code blocks.
 
 ## Appendix C. Prior art
 

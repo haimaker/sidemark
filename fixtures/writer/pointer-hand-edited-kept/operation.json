@@ -1,0 +1,13 @@
+{
+  "description": "A pointer with different wording is recognised by its prefix and left exactly as written when a thread is added (§6.7: never rewrite).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "two"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

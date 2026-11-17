@@ -1,0 +1,5 @@
+{
+  "description": "Maintenance never adds a pointer (§6.7); here it only refreshes a stale Quote.",
+  "operation": "maintain",
+  "args": {}
+}

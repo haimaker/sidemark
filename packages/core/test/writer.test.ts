@@ -8,7 +8,9 @@ import {
   parse,
   purge,
   setStatus,
-  CommentMarkError
+  CommentMarkError,
+  POINTER,
+  POINTER_PREFIX
 } from '../src/index.js'
 
 const clock = {now: () => new Date('2026-11-17T10:32:00Z')}
@@ -165,4 +167,45 @@ describe('replies, status, edits, deletes', () => {
   test('purge without matches returns the input unchanged', () => {
     expect(purge(doc, {resolved: true, orphaned: true})).toBe(doc)
   })
+})
+
+describe('pointer to the specification (§6.7)', () => {
+  test('creating the table writes the pointer; the model exposes its range', () => {
+    const {source} = createThread('Text.\n', {range: null, author: '@a', comment: 'x'}, ids('c-aaaaaa'))
+    expect(source.startsWith(`Text.\n\n${POINTER}\n\n## Comments\n`)).toBe(true)
+    const pointer = parse(source).table!.pointer!
+    expect(source.slice(pointer.range.start, pointer.range.end)).toBe(POINTER)
+    expect(POINTER.startsWith(POINTER_PREFIX)).toBe(true)
+  })
+
+  test('create then delete restores the input, with any line endings', () => {
+    for (const input of ['Text.\n', 'Text.', 'Text.\r\n', 'Text.\n\n\n', '']) {
+      const {source, id} = createThread(input, {range: null, author: '@a', comment: 'x'}, ids('c-aaaaaa'))
+      expect(deleteThread(source, id)).toBe(input)
+    }
+  })
+
+  test('the pointer adds nothing to the projection and holds no anchors', () => {
+    const {source} = createThread('Text.\n', {range: {start: 0, end: 4}, author: '@a', comment: 'x'}, ids('c-aaaaaa'))
+    const doc = parse(source)
+    expect(doc.projection.text).toBe('Text.')
+    expect(doc.anchors.map((a) => a.threadId)).toEqual(['c-aaaaaa', 'c-aaaaaa'])
+  })
+
+  test('selections touching the pointer: cut at its edge, or rejected inside it', () => {
+    const {source} = createThread('Alpha beta.\n', {range: null, author: '@a', comment: 'x'}, ids('c-aaaaaa'))
+    const into = {start: source.indexOf('beta'), end: source.indexOf('holds')}
+    const created = createThread(source, {range: into, author: '@b', comment: 'y'}, ids('c-bbbbbb')).source
+    expect(created).toContain(`Alpha <a id="c-bbbbbb"></a>beta.<a id="c-bbbbbb-end"></a>\n\n${POINTER}`)
+    const inside = {start: source.indexOf('holds'), end: source.indexOf('holds') + 5}
+    expect(codeOf(() => createThread(source, {range: inside, author: '@b', comment: 'y'}))).toBe('INVALID_RANGE')
+  })
+})
+
+test('a selection running into a heading that sits above a pointer is cut at the heading', () => {
+  const P = POINTER
+  const source = `Alpha beta.\n\n## Comments\n\n${P}\n\n| Ref | Quote | Author | Date | Comment | Status |\n|---|---|---|---|---|---|\n| c-1 | | @a | | doc | |\n`
+  const range = {start: source.indexOf('beta'), end: source.indexOf('Comments') + 3}
+  const out = createThread(source, {range, author: '@b', comment: 'y'}, ids('c-bbbbbb')).source
+  expect(out.startsWith('Alpha <a id="c-bbbbbb"></a>beta.<a id="c-bbbbbb-end"></a>\n\n## Comments\n\n')).toBe(true)
 })

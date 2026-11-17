@@ -1,0 +1,14 @@
+{
+  "description": "A selection entirely inside the pointer is rejected.",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "holds comment threads"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  },
+  "expectError": "INVALID_RANGE"
+}

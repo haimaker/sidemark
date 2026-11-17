@@ -1,0 +1,45 @@
+{
+  "description": "SPEC §6.7: the pointer above the heading is recognised by its `<!-- CommentMark:` prefix. It is an HTML block: it adds nothing to the projection, and the `<a id=\"c-1\">` inside this hand-edited pointer is not an anchor (thread c-1 is anchored by its real anchors; nothing is stray).",
+  "projection": "Some text here.",
+  "table": {
+    "heading": "Comments",
+    "pointer": "<!-- CommentMark: threads below; see <a id=\"c-1\"></a> anchors. -->",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "text",
+      "rangeText": "text",
+      "quote": {
+        "prefix": "Some ",
+        "quote": "text",
+        "suffix": " here.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "hi",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

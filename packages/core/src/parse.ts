@@ -6,7 +6,7 @@ import {buildProjection} from './projection.js'
 import {readQuoteCell} from './quote.js'
 import {resolveAttachment} from './resolve.js'
 import {fillMissingPositions, SourceMapper} from './source-map.js'
-import {COLUMN, findCommentsTable, readComment} from './table.js'
+import {COLUMN, findCommentsTable, readComment, tableBlockNodes} from './table.js'
 import {detectLineEnding} from './text.js'
 import type {Comment, Row, CommentMarkDocument, Thread, ThreadState} from './types.js'
 
@@ -18,8 +18,10 @@ export function parse(source: string): CommentMarkDocument {
   const table = findCommentsTable(root, source)
 
   // §3: the body excludes the comments table and a heading immediately
-  // preceding it, whatever its text.
-  const bodyNodes = root.children.filter((node) => node !== table?.node && node !== table?.heading?.node)
+  // preceding it, whatever its text. The pointer (§6.7) is left out too; see
+  // `tableBlockNodes` for why that changes nothing for readers.
+  const hidden = tableBlockNodes(table)
+  const bodyNodes = root.children.filter((node) => !hidden.has(node))
   const projection = buildProjection(bodyNodes as Nodes[], sourceMap)
   const anchors = findAnchors(bodyNodes as Nodes[], source)
 

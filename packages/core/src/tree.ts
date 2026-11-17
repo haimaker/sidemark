@@ -1,13 +1,14 @@
 /** mdast helpers for the writer: body blocks, ancestors, structural signatures. */
 import type {Nodes, Parents, Root} from 'mdast'
 import {endOf, rangeOf, startOf} from './markdown.js'
+import {tableBlockNodes} from './table.js'
 import {collapseWhitespaceRuns} from './text.js'
 import type {Anchor, CommentMarkDocument, SourceRange} from './types.js'
 
-/** The body's top-level nodes: everything except the comments table and its heading. */
+/** The body's top-level nodes: everything except the comments table, its heading and its pointer. */
 export function bodyNodes(doc: CommentMarkDocument): Nodes[] {
-  const table = doc.table
-  return doc.root.children.filter((node) => node !== table?.node && node !== table?.heading?.node)
+  const hidden = tableBlockNodes(doc.table)
+  return doc.root.children.filter((node) => !hidden.has(node))
 }
 
 /**

@@ -2,6 +2,8 @@
 
 The <a id="c-x7k2m9"></a>quick brown fox<a id="c-x7k2m9-end"></a> jumps over the lazy dog.
 
+<!-- CommentMark: the table below holds comment threads on this document, tied to the <a id="c-..."> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->
+
 ## Comments
 
 | Ref | Quote | Author | Date | Comment | Status |

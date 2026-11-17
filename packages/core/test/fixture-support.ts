@@ -27,6 +27,7 @@ export function readerResult(doc: CommentMarkDocument): object {
     table: doc.table
       ? {
           heading: doc.table.heading?.text ?? null,
+          pointer: doc.table.pointer ? source.slice(doc.table.pointer.range.start, doc.table.pointer.range.end) : null,
           columns: doc.table.columns,
           rowCount: doc.table.rows.length
         }

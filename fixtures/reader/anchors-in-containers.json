@@ -3,6 +3,7 @@
   "projection": "The Title first second item quoted words continue here Name Value alpha 42",
   "table": {
     "heading": "Comments",
+    "pointer": null,
     "columns": [
       "Ref",
       "Quote",
