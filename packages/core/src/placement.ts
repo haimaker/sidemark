@@ -16,12 +16,12 @@
 import type {Nodes, Parents} from 'mdast'
 import {anchorHtml, validPair} from './anchors.js'
 import {applyEdits, insertion, type Edit} from './edits.js'
-import {PlacementError, SidemarkError} from './errors.js'
+import {PlacementError, CommentMarkError} from './errors.js'
 import {endOf, rangeOf, startOf} from './markdown.js'
 import {parse} from './parse.js'
 import {bodySignature, isAnchorOnlyParagraph, leafBlocks, type LeafBlock} from './tree.js'
 import {lineEnd, lineEndingLength, lineStart} from './text.js'
-import type {SidemarkDocument, SourceRange} from './types.js'
+import type {CommentMarkDocument, SourceRange} from './types.js'
 
 type Side = 'start' | 'end'
 
@@ -50,17 +50,17 @@ const EMPHASIS_LIKE = new Set(['emphasis', 'strong', 'delete'])
 
 export interface Placement {
   source: string
-  doc: SidemarkDocument
+  doc: CommentMarkDocument
 }
 
 /** Insert an anchor pair for `threadId` around `range`. */
-export function placeAnchors(doc: SidemarkDocument, range: SourceRange, threadId: string): Placement {
+export function placeAnchors(doc: CommentMarkDocument, range: SourceRange, threadId: string): Placement {
   validateRange(doc, range)
   const leaves = leafBlocks(doc)
   const start = resolveBoundary(doc, leaves, range.start, 'start')
   const end = resolveBoundary(doc, leaves, range.end, 'end')
   if (!start || !end || !hasContent(doc, boundaryOffset(start, 'start'), boundaryOffset(end, 'end'))) {
-    throw new SidemarkError('INVALID_RANGE', 'The range contains no commentable content')
+    throw new CommentMarkError('INVALID_RANGE', 'The range contains no commentable content')
   }
   const startCandidates = candidates(doc, start, 'start', threadId)
   const endCandidates = candidates(doc, end, 'end', threadId)
@@ -95,25 +95,25 @@ export function placeAnchors(doc: SidemarkDocument, range: SourceRange, threadId
   )
 }
 
-function validateRange(doc: SidemarkDocument, range: SourceRange): void {
+function validateRange(doc: CommentMarkDocument, range: SourceRange): void {
   const {start, end} = range
   if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > doc.source.length || start >= end) {
-    throw new SidemarkError('INVALID_RANGE', `Invalid range [${start}, ${end})`)
+    throw new CommentMarkError('INVALID_RANGE', `Invalid range [${start}, ${end})`)
   }
   if (start < doc.bodyStart) {
-    throw new SidemarkError('INVALID_RANGE', 'The range starts inside front matter')
+    throw new CommentMarkError('INVALID_RANGE', 'The range starts inside front matter')
   }
   const table = doc.table
   if (table) {
     const hidden = {start: table.heading?.range.start ?? table.range.start, end: table.range.end}
     if (start < hidden.end && end > hidden.start) {
-      throw new SidemarkError('INVALID_RANGE', 'The range overlaps the comments table')
+      throw new CommentMarkError('INVALID_RANGE', 'The range overlaps the comments table')
     }
   }
 }
 
 /** Whether the source in `[from, to)` has anything but whitespace and anchors. */
-function hasContent(doc: SidemarkDocument, from: number, to: number): boolean {
+function hasContent(doc: CommentMarkDocument, from: number, to: number): boolean {
   if (from >= to) return false
   let text = doc.source.slice(from, to)
   for (const anchor of doc.anchors) {
@@ -130,7 +130,7 @@ function boundaryOffset(boundary: Boundary, side: Side): number {
 // ---------------------------------------------------------------------------
 // Resolving a boundary
 
-function resolveBoundary(doc: SidemarkDocument, leaves: LeafBlock[], x: number, side: Side): Boundary | null {
+function resolveBoundary(doc: CommentMarkDocument, leaves: LeafBlock[], x: number, side: Side): Boundary | null {
   for (const leaf of leaves) {
     if (leaf.kind === 'inline' && leaf.content) {
       const {start, end} = leaf.content
@@ -165,7 +165,7 @@ function resolveBoundary(doc: SidemarkDocument, leaves: LeafBlock[], x: number, 
   return null
 }
 
-function inlineBoundary(doc: SidemarkDocument, leaf: LeafBlock, x: number, side: Side): Boundary {
+function inlineBoundary(doc: CommentMarkDocument, leaf: LeafBlock, x: number, side: Side): Boundary {
   const snapped = snapToInsertionPoint(doc, leaf, snapOutOfAtomic(leaf.node as Parents, x, side), side)
   return {kind: 'inline', leaf, hoisted: hoistOutOfEmphasis(leaf.node as Parents, snapped)}
 }
@@ -192,7 +192,7 @@ function snapOutOfAtomic(container: Parents, x: number, side: Side): number {
  * a value character, the end of a non-line-ending value character, or a
  * node boundary. Start boundaries move backward, end boundaries forward.
  */
-function snapToInsertionPoint(doc: SidemarkDocument, leaf: LeafBlock, x: number, side: Side): number {
+function snapToInsertionPoint(doc: CommentMarkDocument, leaf: LeafBlock, x: number, side: Side): number {
   const points = insertionPoints(doc, leaf)
   if (side === 'start') {
     let best = points[0]!
@@ -203,7 +203,7 @@ function snapToInsertionPoint(doc: SidemarkDocument, leaf: LeafBlock, x: number,
   return points[points.length - 1]!
 }
 
-function insertionPoints(doc: SidemarkDocument, leaf: LeafBlock): number[] {
+function insertionPoints(doc: CommentMarkDocument, leaf: LeafBlock): number[] {
   const source = doc.source
   const points = new Set<number>()
   const content = leaf.content!
@@ -266,7 +266,7 @@ function hoistOutOfEmphasis(container: Parents, x: number): number {
 // ---------------------------------------------------------------------------
 // Candidate insertions
 
-function candidates(doc: SidemarkDocument, boundary: Boundary, side: Side, threadId: string): Edit[][] {
+function candidates(doc: CommentMarkDocument, boundary: Boundary, side: Side, threadId: string): Edit[][] {
   const anchor = anchorHtml(threadId, side === 'end')
   if (boundary.kind === 'inline') {
     const content = boundary.leaf.content!
@@ -327,7 +327,7 @@ function widenToWord(source: string, x: number, side: Side, content: SourceRange
  * re-parsing, so form 2 is also tried after a block and for blocks that
  * cannot interrupt a paragraph; it is kept only if the parse is unchanged.
  */
-function blockStartCandidates(doc: SidemarkDocument, leaf: LeafBlock, anchor: string): Edit[][] {
+function blockStartCandidates(doc: CommentMarkDocument, leaf: LeafBlock, anchor: string): Edit[][] {
   const source = doc.source
   const eol = doc.lineEnding
   const block = leaf.node
@@ -356,7 +356,7 @@ function blockStartCandidates(doc: SidemarkDocument, leaf: LeafBlock, anchor: st
 }
 
 /** Mirror of `blockStartCandidates` for the anchor after a block. */
-function blockEndCandidates(doc: SidemarkDocument, leaf: LeafBlock, anchor: string): Edit[][] {
+function blockEndCandidates(doc: CommentMarkDocument, leaf: LeafBlock, anchor: string): Edit[][] {
   const source = doc.source
   const block = leaf.node
   const blockEnd = endOf(block)

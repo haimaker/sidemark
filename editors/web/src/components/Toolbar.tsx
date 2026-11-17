@@ -28,7 +28,7 @@ export function Toolbar(props: ToolbarProps) {
     <header class="toolbar">
       <div class="toolbar-file">
         <span class="brand" aria-hidden="true">
-          Sidemark
+          CommentMark
         </span>
         <span class="file-name" title={props.fileName}>
           {props.fileName}
@@ -42,7 +42,7 @@ export function Toolbar(props: ToolbarProps) {
           aria-expanded={props.privacyOpen}
           aria-controls="privacy-panel"
           onClick={props.onPrivacy}
-          title="How do I know?"
+          title="What local only means"
         >
           <span class="privacy-dot" aria-hidden="true" />
           <span>

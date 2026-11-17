@@ -6,7 +6,7 @@ import {pairContentRange, validPair} from './anchors.js'
 import {removeAnchors} from './anchor-edits.js'
 import {formatDate, isWriterDate} from './dates.js'
 import {applyEdits, type Edit} from './edits.js'
-import {SidemarkError} from './errors.js'
+import {CommentMarkError} from './errors.js'
 import {isThreadId, randomThreadId} from './ids.js'
 import {parse} from './parse.js'
 import {placeAnchors} from './placement.js'
@@ -25,7 +25,7 @@ import {
   type RowCells
 } from './rows.js'
 import {COLUMN} from './table.js'
-import type {SidemarkDocument, SourceRange, Thread} from './types.js'
+import type {CommentMarkDocument, SourceRange, Thread} from './types.js'
 
 export interface WriterOptions {
   /** Returns a new thread ID. Defaults to 6 random characters (§4). */
@@ -75,7 +75,7 @@ export interface PurgeOptions {
  * needed (§6.2).
  *
  * @throws PlacementError if anchors cannot be placed without changing how
- *   the body parses; SidemarkError `INVALID_RANGE` for an unusable range.
+ *   the body parses; CommentMarkError `INVALID_RANGE` for an unusable range.
  */
 export function createThread(
   source: string,
@@ -109,7 +109,7 @@ export function createThread(
   const check = parse(result).threads.find((t) => t.id === id)
   const expected = input.range ? 'anchored' : 'document'
   if (!check || check.attachment.kind !== expected || check.comments.length !== 1) {
-    throw new SidemarkError('UNSAFE_EDIT', 'The new comments table row did not read back as expected')
+    throw new CommentMarkError('UNSAFE_EDIT', 'The new comments table row did not read back as expected')
   }
   return {source: result, id}
 }
@@ -120,7 +120,7 @@ export function createThread(
  * Threads are considered in table order, those anchored by the Quote
  * fallback included, and an equal start is not "later" (§9.2).
  */
-function rootRowInsertion(doc: SidemarkDocument, row: string, rangeStart: number | null): Edit {
+function rootRowInsertion(doc: CommentMarkDocument, row: string, rangeStart: number | null): Edit {
   if (!doc.table) return createTable(doc, row)
   if (rangeStart !== null) {
     const later = doc.threads.find(
@@ -160,7 +160,7 @@ export function setStatus(
   options: WriterOptions = {}
 ): string {
   if (change.status !== 'open' && change.status !== 'resolved') {
-    throw new SidemarkError('INVALID_ARGUMENT', `Unknown status ${String(change.status)}`)
+    throw new CommentMarkError('INVALID_ARGUMENT', `Unknown status ${String(change.status)}`)
   }
   const doc = parse(source)
   const thread = requireThread(doc, threadId)
@@ -178,7 +178,7 @@ export function setStatus(
   return applyEdits(source, [afterLastRow(doc, thread, row)])
 }
 
-function afterLastRow(doc: SidemarkDocument, thread: Thread, row: string): Edit {
+function afterLastRow(doc: CommentMarkDocument, thread: Thread, row: string): Edit {
   const last = thread.comments[thread.comments.length - 1]!.row
   return insertLineAfter(doc, last.range.end, row)
 }
@@ -188,7 +188,7 @@ function afterLastRow(doc: SidemarkDocument, thread: Thread, row: string): Edit 
  * anchors, the bare ID if it is document-level, and otherwise the same form
  * as the root row's Ref.
  */
-function refFor(doc: SidemarkDocument, thread: Thread): string {
+function refFor(doc: CommentMarkDocument, thread: Thread): string {
   const link = `[${thread.id}](#${thread.id})`
   if (thread.anchors) return link
   if (thread.attachment.kind === 'document') return thread.id
@@ -249,7 +249,7 @@ export function purge(source: string, options: PurgeOptions): string {
   return applyEdits(source, threadRemovalEdits(doc, doomed))
 }
 
-function threadRemovalEdits(doc: SidemarkDocument, threads: readonly Thread[]): Edit[] {
+function threadRemovalEdits(doc: CommentMarkDocument, threads: readonly Thread[]): Edit[] {
   const ids = new Set(threads.map((t) => t.id))
   const rows = threads.flatMap((t) => t.comments.map((c) => c.row))
   const anchors = doc.anchors.filter((a) => ids.has(a.threadId))
@@ -257,7 +257,7 @@ function threadRemovalEdits(doc: SidemarkDocument, threads: readonly Thread[]): 
 }
 
 /** Quote cell Markdown for an anchored thread's current range (§7.2, §7.3). */
-export function quoteCellFor(doc: SidemarkDocument, thread: Thread): string | null {
+export function quoteCellFor(doc: CommentMarkDocument, thread: Thread): string | null {
   if (thread.attachment.kind !== 'anchored') return null
   const span = projectionSpan(doc.projection, thread.attachment.range)
   const parts = buildQuote(doc.projection, span.from, span.to)
@@ -267,15 +267,15 @@ export function quoteCellFor(doc: SidemarkDocument, thread: Thread): string | nu
 // ---------------------------------------------------------------------------
 // Helpers
 
-function requireThread(doc: SidemarkDocument, id: string): Thread {
+function requireThread(doc: CommentMarkDocument, id: string): Thread {
   const thread = doc.threads.find((t) => t.id === id)
-  if (!thread) throw new SidemarkError('THREAD_NOT_FOUND', `No thread ${id}`)
+  if (!thread) throw new CommentMarkError('THREAD_NOT_FOUND', `No thread ${id}`)
   return thread
 }
 
-function requireCommentRow(doc: SidemarkDocument, ref: CommentRef) {
+function requireCommentRow(doc: CommentMarkDocument, ref: CommentRef) {
   const comment = requireThread(doc, ref.threadId).comments[ref.index]
-  if (!comment) throw new SidemarkError('COMMENT_NOT_FOUND', `Thread ${ref.threadId} has no comment ${ref.index}`)
+  if (!comment) throw new CommentMarkError('COMMENT_NOT_FOUND', `Thread ${ref.threadId} has no comment ${ref.index}`)
   return comment
 }
 
@@ -283,7 +283,7 @@ function requireCommentRow(doc: SidemarkDocument, ref: CommentRef) {
 function requireComment(comment: string, status: string): string {
   const cell = cellMarkdown(comment)
   if (cell === '' && status.trim() === '') {
-    throw new SidemarkError('EMPTY_COMMENT', 'A comment needs text unless the row records a status')
+    throw new CommentMarkError('EMPTY_COMMENT', 'A comment needs text unless the row records a status')
   }
   return cell
 }
@@ -295,12 +295,12 @@ function authorCell(author: string): string {
 function dateCell(date: Date | string | undefined, options: WriterOptions): string {
   if (typeof date === 'string') {
     if (!isWriterDate(date)) {
-      throw new SidemarkError('INVALID_DATE', `Dates must be written as YYYY-MM-DDThh:mmZ, got ${date}`)
+      throw new CommentMarkError('INVALID_DATE', `Dates must be written as YYYY-MM-DDThh:mmZ, got ${date}`)
     }
     return date
   }
   const value = date ?? options.now?.() ?? new Date()
-  if (Number.isNaN(value.getTime())) throw new SidemarkError('INVALID_DATE', 'Invalid date')
+  if (Number.isNaN(value.getTime())) throw new CommentMarkError('INVALID_DATE', 'Invalid date')
   return formatDate(value)
 }
 
@@ -311,13 +311,13 @@ function dateCell(date: Date | string | undefined, options: WriterOptions): stri
  * injected `generateId` (for tests and fixtures) may return any valid thread
  * ID; only the default generator follows the 6-character rule.
  */
-function newThreadId(doc: SidemarkDocument, options: WriterOptions): string {
+function newThreadId(doc: CommentMarkDocument, options: WriterOptions): string {
   const generate = options.generateId ?? randomThreadId
   for (let attempt = 0; attempt < 100; attempt++) {
     const id = generate()
-    if (!isThreadId(id)) throw new SidemarkError('INVALID_ID', `Not a thread ID: ${id}`)
+    if (!isThreadId(id)) throw new CommentMarkError('INVALID_ID', `Not a thread ID: ${id}`)
     // §4: regenerate if the ID already appears anywhere in the document.
     if (!doc.source.includes(id)) return id
   }
-  throw new SidemarkError('ID_COLLISION', 'Could not generate an unused thread ID')
+  throw new CommentMarkError('ID_COLLISION', 'Could not generate an unused thread ID')
 }

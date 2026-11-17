@@ -21,7 +21,7 @@
  * This module never looks at layout, so it runs (and is tested) in jsdom.
  */
 import type {Nodes} from 'mdast'
-import type {SourceMapper, SourceRange} from '@sidemark/core'
+import type {SourceMapper, SourceRange} from '@commentmark/core'
 
 export type ValueNode = Extract<Nodes, {type: 'text' | 'inlineCode' | 'code'}>
 

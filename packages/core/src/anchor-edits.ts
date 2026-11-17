@@ -3,7 +3,7 @@ import type {Nodes, Paragraph, Parents} from 'mdast'
 import {deletion, type Edit} from './edits.js'
 import {endOf, startOf} from './markdown.js'
 import {ancestorsOf, bodyNodes, deepestContaining, isAnchorOnlyParagraph} from './tree.js'
-import type {Anchor, SidemarkDocument} from './types.js'
+import type {Anchor, CommentMarkDocument} from './types.js'
 
 const PARAGRAPH = new Set(['paragraph'])
 
@@ -13,7 +13,7 @@ const PARAGRAPH = new Set(['paragraph'])
  * it from its neighbour, undoing what `createThread` inserted. Other anchors
  * are removed exactly, leaving the surrounding text as it was.
  */
-export function removeAnchors(doc: SidemarkDocument, anchors: readonly Anchor[]): Edit[] {
+export function removeAnchors(doc: CommentMarkDocument, anchors: readonly Anchor[]): Edit[] {
   const removing = new Set(anchors)
   const body = new Set<Nodes>(bodyNodes(doc))
   const wholeParagraphs = new Map<Paragraph, Parents>()

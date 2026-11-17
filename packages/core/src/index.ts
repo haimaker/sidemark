@@ -1,5 +1,5 @@
 /**
- * @sidemark/core — reference Reader and Writer for Sidemark, a convention for
+ * @commentmark/core — reference Reader and Writer for CommentMark, a convention for
  * storing comment threads inside Markdown files. See SPEC.md.
  */
 
@@ -39,7 +39,7 @@ export {buildQuote, readQuoteCell, writeQuoteCell, type QuoteParts} from './quot
 export {escapeCellMarkdown, commentFromCell} from './cells.js'
 export {formatDate, parseDate} from './dates.js'
 export {isThreadId, randomThreadId, THREAD_ID} from './ids.js'
-export {SidemarkError, PlacementError, type SidemarkErrorCode} from './errors.js'
+export {CommentMarkError, PlacementError, type CommentMarkErrorCode} from './errors.js'
 
 export type {
   Anchor,
@@ -51,7 +51,7 @@ export type {
   ParsedQuote,
   ParsedStatus,
   Row,
-  SidemarkDocument,
+  CommentMarkDocument,
   SourceRange,
   StatusValue,
   StrayReason,

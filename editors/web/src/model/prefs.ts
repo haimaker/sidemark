@@ -22,7 +22,7 @@ export function writePref(key: string, value: string, storage: Pick<Storage, 'se
   }
 }
 
-export const INTRO_DISMISSED = 'sidemark.introDismissed'
+export const INTRO_DISMISSED = 'commentmark.introDismissed'
 
 function defaultStorage(): Storage | null {
   try {

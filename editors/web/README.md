@@ -1,8 +1,8 @@
-# Sidemark web editor
+# CommentMark web editor
 
-The reference editor for [Sidemark](../../SPEC.md): a static web app that opens a local Markdown file, shows it rendered with its comment threads in the margin, lets you comment, reply, resolve and delete, and saves the file. Everything runs in the browser. Nothing is uploaded.
+The reference editor for [CommentMark](../../SPEC.md): a static web app that opens a local Markdown file, shows it rendered with its comment threads in the margin, lets you comment, reply, resolve and delete, and saves the file. Everything runs in the browser. Nothing is uploaded.
 
-It is also meant to be read. All Sidemark logic comes from [`@sidemark/core`](../../packages/core/); this app only renders, maps the selection to source offsets, and keeps an undo history of source strings.
+It is also meant to be read. All CommentMark logic comes from [`@commentmark/core`](../../packages/core/); this app only renders, maps the selection to source offsets, and keeps an undo history of source strings.
 
 ## Local only
 
@@ -24,7 +24,7 @@ From the repository root:
 
 ```sh
 npm install
-npm run build --workspace @sidemark/core   # the editor imports core's built output
+npm run build --workspace @commentmark/core   # the editor imports core's built output
 cd editors/web
 npm run dev        # development server
 npm run build      # static site in dist/ (relative paths: host it under any path)
@@ -35,7 +35,7 @@ npm run test:e2e   # browser smoke tests against dist/ (Playwright; run `npx pla
 
 ## Spec support
 
-- **Reader:** full (§5 to §8), through `@sidemark/core`, including the optional Quote fallback (§8 step 3). Threads found through their Quote are highlighted, and get their anchors back on the next save.
+- **Reader:** full (§5 to §8), through `@commentmark/core`, including the optional Quote fallback (§8 step 3). Threads found through their Quote are highlighted, and get their anchors back on the next save.
 - **Writer:** every operation in §9: create (anchored and document-level), reply, resolve, reopen (with an optional note), edit, delete a comment, delete a thread, purge (resolved and/or orphaned, on explicit request), and maintenance on save (§9.6).
 - **Presentation (§10):** the comments table and a default `Comments` heading are hidden; threads sit beside their ranges; resolved threads are hidden until you ask; orphaned threads are listed under *Detached* with their quote; document-level threads have their own group; the author is asked for once and remembered.
 - **Security (§12):** raw HTML in the body and in comments is shown as text, never rendered (`<br>` in comments is a line break). Links become links only for `http:`, `https:`, `mailto:` and `#fragment`, and open without a referrer. Remote images are never loaded (see *Local only*). Nothing is assigned to `innerHTML`.
@@ -69,7 +69,7 @@ Not supported: editing the body text, and re-attaching a detached thread to new 
 ## Using it
 
 - **Comment:** select text and a comment box appears in the margin beside it, without taking focus (the selection stays, so copying still works). Click into the box, or press Ctrl+Alt+M / ⌘⌥M, to write; from then on the box stays and its range is highlighted. Clearing the selection removes an unused box; a box with text in it is only discarded by Escape or Cancel. At phone width the box docks at the bottom of the screen. A range core refuses shows the reason in the box instead.
-- **Whole-document comments** are listed at the top of the page, above the document, with a *Comment on the whole document* entry point.
+- **Whole-document comments** are listed at the top of the page, above the document, with an *Add a comment* entry point.
 - **Getting started:** the first visit shows how to drag and drop a file or open one; dismissing it is remembered in this browser.
 - **Threads:** click a highlight to focus its thread, or a thread to highlight its text. Overlapping highlights cycle on repeated clicks. Ctrl+Enter / ⌘↩ submits a comment or reply.
 - **Save:** Ctrl+S / ⌘S. A file opened through the system file picker (or dropped, in Chromium) is written back in place, after checking it has not changed on disk. Otherwise the file is downloaded. Saving runs core's `maintain`, which may refresh Quote cells, repair anchors and remove stray anchors; those changes can be undone like any other.

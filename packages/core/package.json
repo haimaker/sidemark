@@ -1,7 +1,7 @@
 {
-  "name": "@sidemark/core",
+  "name": "@commentmark/core",
   "version": "0.1.0",
-  "description": "Reference reader and writer for Sidemark: comment threads stored inside Markdown files.",
+  "description": "Reference reader and writer for CommentMark: comment threads stored inside Markdown files.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,

@@ -1,6 +1,6 @@
 /**
  * The editor. One source string is the whole document state: every action
- * calls a pure `@sidemark/core` operation, gets a new source string, and the
+ * calls a pure `@commentmark/core` operation, gets a new source string, and the
  * view re-parses and re-renders from it. History is a list of strings.
  */
 import {useCallback, useEffect, useMemo, useRef, useState} from 'preact/hooks'
@@ -15,7 +15,7 @@ import {
   purge,
   setStatus,
   type SourceRange
-} from '@sidemark/core'
+} from '@commentmark/core'
 import {countRemoteImages, type BodyRenderResult} from './body/render'
 import {AuthorDialog, ConfirmDialog, PurgeDialog, type ConfirmRequest} from './components/Dialogs'
 import {DocumentView} from './components/DocumentView'
@@ -44,7 +44,7 @@ import * as H from './model/history'
 import {INTRO_DISMISSED, readPref, writePref} from './model/prefs'
 import sample from './sample.md?raw'
 
-const SAMPLE_NAME = 'sidemark-sample.md'
+const SAMPLE_NAME = 'commentmark-sample.md'
 
 type Message = {text: string; tone: 'info' | 'error'; id: number}
 
@@ -120,7 +120,7 @@ export function App() {
   }, [view])
 
   useEffect(() => {
-    document.title = `${dirty ? '• ' : ''}${file.name} · Sidemark`
+    document.title = `${dirty ? '• ' : ''}${file.name} · CommentMark`
   }, [dirty, file.name])
 
   useEffect(() => {
@@ -580,7 +580,7 @@ export function App() {
       ) : (
         <main class="page">
           <div class="doc-column">
-            {showIntro && <Intro onOpen={open} onDismiss={dismissIntro} onPrivacy={() => setPrivacyOpen(true)} />}
+            {showIntro && <Intro onOpen={open} onDismiss={dismissIntro} />}
 
             {remoteImages > 0 && (
               <p class="remote-note" role="note">
@@ -604,7 +604,7 @@ export function App() {
                 />
               ) : (
                 <button type="button" class="link-button doc-comment-add" onClick={startDocumentComment}>
-                  Comment on the whole document
+                  Add a comment
                 </button>
               )}
               {groups.hiddenResolved.document > 0 && <HiddenNote count={groups.hiddenResolved.document} />}
@@ -727,17 +727,12 @@ function HiddenNote({count}: {count: number}) {
   )
 }
 
-function Intro({onOpen, onDismiss, onPrivacy}: {onOpen(): void; onDismiss(): void; onPrivacy(): void}) {
+function Intro({onOpen, onDismiss}: {onOpen(): void; onDismiss(): void}) {
   return (
     <aside class="intro" aria-label="Getting started">
       <div>
         <p class="intro-title">Private: your files stay on this device</p>
-        <p>
-          Nothing you open here is uploaded. Your browser reads the file and writes it back; there is no server, account or tracking.{' '}
-          <button type="button" class="link-button inline" onClick={onPrivacy}>
-            How do I know?
-          </button>
-        </p>
+        <p>The contents of your Markdown file and your edits never leave this device.</p>
         <p>
           To comment on your own Markdown file, drag a <code>.md</code> file from your computer and drop it anywhere on this page, or{' '}
           <button type="button" class="link-button inline" onClick={onOpen}>

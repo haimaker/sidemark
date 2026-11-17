@@ -1,8 +1,8 @@
 {
-  "name": "@sidemark/web-editor",
+  "name": "@commentmark/web-editor",
   "version": "0.1.0",
   "private": true,
-  "description": "Reference Sidemark editor: a static web app for commenting on local Markdown files.",
+  "description": "Reference CommentMark editor: a static web app for commenting on local Markdown files.",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@sidemark/core": "0.1.0",
+    "@commentmark/core": "0.1.0",
     "preact": "^11.2.0"
   },
   "devDependencies": {

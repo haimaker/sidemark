@@ -1,4 +1,4 @@
-export type SidemarkErrorCode =
+export type CommentMarkErrorCode =
   /** The requested range is out of bounds, empty, or outside the body. */
   | 'INVALID_RANGE'
   /** No anchor placement could be found that leaves the body parsing unchanged. */
@@ -18,18 +18,18 @@ export type SidemarkErrorCode =
   | 'INVALID_ARGUMENT'
 
 /** Every error thrown on purpose by this library. Check `code`. */
-export class SidemarkError extends Error {
-  readonly code: SidemarkErrorCode
+export class CommentMarkError extends Error {
+  readonly code: CommentMarkErrorCode
 
-  constructor(code: SidemarkErrorCode, message: string) {
+  constructor(code: CommentMarkErrorCode, message: string) {
     super(message)
-    this.name = 'SidemarkError'
+    this.name = 'CommentMarkError'
     this.code = code
   }
 }
 
 /** Thrown by `createThread` (and skipped by `maintain`) when anchors cannot be placed safely. */
-export class PlacementError extends SidemarkError {
+export class PlacementError extends CommentMarkError {
   constructor(message: string) {
     super('UNSAFE_PLACEMENT', message)
     this.name = 'PlacementError'

@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'vitest'
-import {createThread, parse} from '@sidemark/core'
+import {createThread, parse} from '@commentmark/core'
 import {domRange, findText, setup, textNodes} from './helpers'
 
 /** Select `needle` in the rendered body and map it to source. */

@@ -11,7 +11,7 @@
  *
  * Pure functions; the app holds a `Draft | null` in state.
  */
-import type {SourceRange} from '@sidemark/core'
+import type {SourceRange} from '@commentmark/core'
 
 export interface Draft {
   /** Source range the comment is for, in the current source. */

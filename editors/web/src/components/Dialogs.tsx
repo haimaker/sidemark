@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'preact/hooks'
 import type {ComponentChildren} from 'preact'
-import type {Thread} from '@sidemark/core'
+import type {Thread} from '@commentmark/core'
 import {looksLikeEmail, normaliseAuthor, suggestHandle} from '../model/author'
 import {purgeCount, quoteText, type PurgeCandidates} from '../model/groups'
 

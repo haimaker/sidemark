@@ -11,7 +11,7 @@
  * `innerHTML`.
  */
 import type {Definition, Nodes, Parents, PhrasingContent, Root, RootContent, TableCell} from 'mdast'
-import type {Anchor, SidemarkDocument, SourceRange} from '@sidemark/core'
+import type {Anchor, CommentMarkDocument, SourceRange} from '@commentmark/core'
 import {BodyIndex, type ValueNode} from './dom-map'
 import {embeddedImageSrc, remoteImageUrl, safeHref} from './sanitize'
 
@@ -44,7 +44,7 @@ interface Context {
  */
 export function renderBody(
   container: HTMLElement,
-  doc: SidemarkDocument,
+  doc: CommentMarkDocument,
   options: {highlights: readonly Highlight[]; hidden: ReadonlySet<Nodes>}
 ): BodyRenderResult {
   const document = container.ownerDocument
@@ -77,7 +77,7 @@ export function renderBody(
  * Render a Comment cell (already parsed by GFM as part of the comments
  * table) as inline content. `<br>` is a line break (SPEC §6.4).
  */
-export function renderCell(document: Document, cell: TableCell, doc: SidemarkDocument): DocumentFragment {
+export function renderCell(document: Document, cell: TableCell, doc: CommentMarkDocument): DocumentFragment {
   const ctx: Context = {
     document,
     index: null,

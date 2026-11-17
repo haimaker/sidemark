@@ -1,6 +1,6 @@
-# Sidemark conformance fixtures
+# CommentMark conformance fixtures
 
-Language-agnostic test cases for implementations of the Sidemark specification (`../SPEC.md`). Any Reader or Writer, in any language, can run them. The reference implementation (`packages/core`) runs every case in its test suite.
+Language-agnostic test cases for implementations of the CommentMark specification (`../SPEC.md`). Any Reader or Writer, in any language, can run them. The reference implementation (`packages/core`) runs every case in its test suite.
 
 All files are UTF-8. Line endings are significant (some cases use CRLF), so read files as bytes or with newline translation turned off. `.gitattributes` stops Git from converting them.
 

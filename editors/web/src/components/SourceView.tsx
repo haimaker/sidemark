@@ -1,4 +1,4 @@
-import type {SidemarkDocument} from '@sidemark/core'
+import type {CommentMarkDocument} from '@commentmark/core'
 
 interface Span {
   start: number
@@ -7,10 +7,10 @@ interface Span {
 }
 
 /**
- * The raw Markdown, read-only, with what Sidemark wrote marked: anchors in
+ * The raw Markdown, read-only, with what CommentMark wrote marked: anchors in
  * the body and the comments table at the end. Rendered as text nodes only.
  */
-export function SourceView({doc}: {doc: SidemarkDocument}) {
+export function SourceView({doc}: {doc: CommentMarkDocument}) {
   const spans: Span[] = doc.anchors.map((a) => ({start: a.range.start, end: a.range.end, kind: 'anchor' as const}))
   if (doc.table) {
     const start = doc.table.heading?.range.start ?? doc.table.range.start

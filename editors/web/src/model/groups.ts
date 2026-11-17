@@ -3,7 +3,7 @@
  * document. Pure functions, no DOM.
  */
 import type {Nodes} from 'mdast'
-import type {SidemarkDocument, SourceRange, Thread} from '@sidemark/core'
+import type {CommentMarkDocument, SourceRange, Thread} from '@commentmark/core'
 import type {Highlight} from '../body/render'
 
 /** Pseudo highlight ID for the range of a comment being written. */
@@ -20,7 +20,7 @@ export interface ThreadGroups {
   hiddenResolved: {anchored: number; detached: number; document: number; total: number}
 }
 
-export function groupThreads(doc: SidemarkDocument, showResolved: boolean): ThreadGroups {
+export function groupThreads(doc: CommentMarkDocument, showResolved: boolean): ThreadGroups {
   const anchored: Thread[] = []
   const detached: Thread[] = []
   const document: Thread[] = []
@@ -56,7 +56,7 @@ export function highlightsFor(groups: ThreadGroups, pending: SourceRange | null)
  * visible (it is the author's text), although core leaves it out of the
  * text projection.
  */
-export function hiddenNodes(doc: SidemarkDocument): Set<Nodes> {
+export function hiddenNodes(doc: CommentMarkDocument): Set<Nodes> {
   const hidden = new Set<Nodes>()
   if (!doc.table) return hidden
   hidden.add(doc.table.node)
@@ -71,7 +71,7 @@ export interface PurgeCandidates {
 }
 
 /** Threads that `purge` would remove for each option (§9.5). */
-export function purgeCandidates(doc: SidemarkDocument): PurgeCandidates {
+export function purgeCandidates(doc: CommentMarkDocument): PurgeCandidates {
   return {
     resolved: doc.threads.filter((t) => t.state === 'resolved'),
     orphaned: doc.threads.filter((t) => t.attachment.kind === 'orphaned')

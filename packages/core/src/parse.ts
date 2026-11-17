@@ -8,9 +8,9 @@ import {resolveAttachment} from './resolve.js'
 import {fillMissingPositions, SourceMapper} from './source-map.js'
 import {COLUMN, findCommentsTable, readComment} from './table.js'
 import {detectLineEnding} from './text.js'
-import type {Comment, Row, SidemarkDocument, Thread, ThreadState} from './types.js'
+import type {Comment, Row, CommentMarkDocument, Thread, ThreadState} from './types.js'
 
-export function parse(source: string): SidemarkDocument {
+export function parse(source: string): CommentMarkDocument {
   const {bodyStart, frontMatter} = splitPreamble(source)
   const root = parseTree(source, bodyStart)
   const sourceMap = new SourceMapper(source, parseEvents(source, bodyStart), bodyStart)
@@ -81,6 +81,6 @@ function threadState(comments: readonly Comment[]): ThreadState {
 }
 
 /** Find a thread by ID. */
-export function getThread(doc: SidemarkDocument, id: string): Thread | undefined {
+export function getThread(doc: CommentMarkDocument, id: string): Thread | undefined {
   return doc.threads.find((thread) => thread.id === id)
 }

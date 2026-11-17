@@ -1,9 +1,9 @@
 import type {Nodes, Text} from 'mdast'
 import {describe, expect, test} from 'vitest'
-import {parse, projectRange, sourceRangeOf, type SidemarkDocument} from '../src/index.js'
+import {parse, projectRange, sourceRangeOf, type CommentMarkDocument} from '../src/index.js'
 
 /** Every text/inlineCode/code node in the body, in document order. */
-function valueNodes(doc: SidemarkDocument): Array<Extract<Nodes, {type: 'text' | 'inlineCode' | 'code'}>> {
+function valueNodes(doc: CommentMarkDocument): Array<Extract<Nodes, {type: 'text' | 'inlineCode' | 'code'}>> {
   const out: Array<Extract<Nodes, {type: 'text' | 'inlineCode' | 'code'}>> = []
   const visit = (node: Nodes) => {
     if (node.type === 'text' || node.type === 'inlineCode' || node.type === 'code') out.push(node)

@@ -1,6 +1,6 @@
-# Welcome to Sidemark
+# Welcome to CommentMark
 
-Sidemark keeps Google Docs style comment threads <a id="c-intro1"></a>inside the Markdown file itself<a id="c-intro1-end"></a>. There is no server and no sidecar file: the comments live in a table at the end of the document, and invisible anchors mark the text they refer to.
+CommentMark keeps Google Docs style comment threads <a id="c-intro1"></a>inside the Markdown file itself<a id="c-intro1-end"></a>. There is no server and no sidecar file: the comments live in a table at the end of the document, and invisible anchors mark the text they refer to.
 
 This page is a working editor. **Select any text** and a comment box appears beside it. Files are read and saved in your browser; <a id="c-done66"></a>nothing is uploaded<a id="c-done66-end"></a>.
 
@@ -8,7 +8,7 @@ This page is a working editor. **Select any text** and a comment box appears bes
 
 1. Select a phrase on this page and add a comment.
 2. Reply to a thread, resolve it, then press Undo.
-3. Switch to *Source* to see exactly what Sidemark writes into the file.
+3. Switch to *Source* to see exactly what CommentMark writes into the file.
 4. Open one of your own Markdown files, or drop it onto the page.
 
 ## What this sample shows
@@ -37,7 +37,7 @@ One thread on this page is resolved and hidden until you choose *Show resolved*.
 | Ref | Quote | Author | Date | Comment | Status |
 |---|---|---|---|---|---|
 | [c-intro1](#c-intro1) | Docs style comment threads **inside the Markdown file itself**. There is no server and no | @ada | 2026-11-16T09:12Z | This is the whole idea: the file is the record. | |
-| [c-intro1](#c-intro1) | | @lin | 2026-11-16T09:40Z | And a tool that has never heard of Sidemark still shows a readable table at the end. | |
+| [c-intro1](#c-intro1) | | @lin | 2026-11-16T09:40Z | And a tool that has never heard of CommentMark still shows a readable table at the end. | |
 | [c-done66](#c-done66) | read and saved in your browser; **nothing is uploaded**. Try it Select a phrase on this | @lin | 2026-11-16T10:02Z | Is that true for drag and drop too? | |
 | [c-done66](#c-done66) | | @ada | 2026-11-16T10:05Z | Yes. Dropped files are read locally, like opened ones. | |
 | [c-done66](#c-done66) | | @lin | 2026-11-16T10:06Z | | resolved |

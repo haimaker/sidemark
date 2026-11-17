@@ -8,7 +8,7 @@ import {
   parse,
   purge,
   setStatus,
-  SidemarkError
+  CommentMarkError
 } from '../src/index.js'
 
 const clock = {now: () => new Date('2026-11-17T10:32:00Z')}
@@ -22,7 +22,7 @@ function codeOf(fn: () => unknown): string | null {
   try {
     fn()
   } catch (error) {
-    if (error instanceof SidemarkError) return error.code
+    if (error instanceof CommentMarkError) return error.code
     throw error
   }
   return null

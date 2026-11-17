@@ -1,8 +1,8 @@
-# Sidemark
+# CommentMark
 
 **Version 0.1 (draft).**
 
-Sidemark is a convention for storing Google Docs style comment threads inside a Markdown file. Comments are anchored to ranges of text, can be replied to and resolved, and travel with the file. There is no sidecar file, database or server.
+CommentMark is a convention for storing Google Docs style comment threads inside a Markdown file. Comments are anchored to ranges of text, can be replied to and resolved, and travel with the file. There is no sidecar file, database or server.
 
 ## 1. Overview
 

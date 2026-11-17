@@ -1,5 +1,5 @@
 {
-  "name": "sidemark",
+  "name": "commentmark",
   "private": true,
   "description": "Comment threads stored inside Markdown files: the specification, a reference library, and editors.",
   "license": "MIT",

@@ -1,6 +1,6 @@
 import {JSDOM} from 'jsdom'
 import type {Nodes} from 'mdast'
-import {parse, type SidemarkDocument} from '@sidemark/core'
+import {parse, type CommentMarkDocument} from '@commentmark/core'
 import {renderBody, type Highlight} from '../src/body/render'
 import {hiddenNodes} from '../src/model/groups'
 
@@ -62,4 +62,4 @@ export function domRange(points: ReturnType<typeof findText>) {
   }
 }
 
-export type {SidemarkDocument}
+export type {CommentMarkDocument}

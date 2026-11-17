@@ -13,14 +13,14 @@ import {
   maintain,
   purge,
   setStatus,
-  type SidemarkDocument,
+  type CommentMarkDocument,
   type SourceRange
 } from '../src/index.js'
 
 export const FIXTURES = new URL('../../../fixtures/', import.meta.url).pathname
 
 /** Serialise a parsed document to the reader fixture format. */
-export function readerResult(doc: SidemarkDocument): object {
+export function readerResult(doc: CommentMarkDocument): object {
   const source = doc.source
   return {
     projection: doc.projection.text,

@@ -1,11 +1,11 @@
 /**
  * Real-browser smoke tests against the production build (`vite preview`).
- * Every check of what the editor wrote goes through `@sidemark/core`'s
+ * Every check of what the editor wrote goes through `@commentmark/core`'s
  * parser, reading the source from the Source view or a downloaded file.
  */
 import {readFile} from 'node:fs/promises'
 import {expect, test, type Page} from '@playwright/test'
-import {maintain, parse} from '@sidemark/core'
+import {maintain, parse} from '@commentmark/core'
 
 /** Select `needle` (inside one text node) in the rendered document. */
 async function selectText(page: Page, needle: string) {
@@ -53,7 +53,7 @@ const selectionTop = (page: Page) => page.evaluate(() => window.getSelection()!.
 test('select, comment, reply, resolve, undo, redo, download', async ({page}) => {
   const errors = collectErrors(page)
   await page.goto('./')
-  await expect(page.locator('.doc-body h1')).toHaveText('Welcome to Sidemark')
+  await expect(page.locator('.doc-body h1')).toHaveText('Welcome to CommentMark')
   const initialThreads = parse(await readSource(page)).threads.length
 
   // New comment on a selection.
@@ -120,7 +120,7 @@ test('select, comment, reply, resolve, undo, redo, download', async ({page}) => 
   const downloading = page.waitForEvent('download')
   await page.getByRole('button', {name: 'Download'}).click()
   const download = await downloading
-  expect(download.suggestedFilename()).toBe('sidemark-sample.md')
+  expect(download.suggestedFilename()).toBe('commentmark-sample.md')
   const saved = await readFile((await download.path())!, 'utf8')
   expect(maintain(saved)).toBe(saved)
   const savedDoc = parse(saved)
@@ -133,7 +133,7 @@ test('select, comment, reply, resolve, undo, redo, download', async ({page}) => 
 
 test('open a file, edit, delete, document-level comment, purge', async ({page}) => {
   const errors = collectErrors(page)
-  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@robot'))
+  await page.addInitScript(() => localStorage.setItem('commentmark.author', '@robot'))
   await page.goto('./')
 
   const source = [
@@ -180,7 +180,7 @@ test('open a file, edit, delete, document-level comment, purge', async ({page}) 
   expect(/[^\r]\n/.test(doc.source)).toBe(false)
 
   // Document-level comment.
-  await page.getByRole('button', {name: 'Comment on the whole document'}).click()
+  await page.getByRole('button', {name: 'Add a comment'}).click()
   await page.getByRole('textbox', {name: 'New comment on the whole document'}).fill('Overall fine.')
   await page.locator('.doc-comments .composer').getByRole('button', {name: 'Comment', exact: true}).click()
   await expect(page.locator('.doc-comments')).toContainText('Overall fine.')
@@ -212,7 +212,7 @@ test('open a file, edit, delete, document-level comment, purge', async ({page}) 
 })
 
 test('a selection core cannot anchor shows an in-page message', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@robot'))
+  await page.addInitScript(() => localStorage.setItem('commentmark.author', '@robot'))
   await page.goto('./')
   const source = '# T\n\nSome text.\n\n## Discussion\n\n| Ref | Quote | Author | Date | Comment | Status |\n|---|---|---|---|---|---|\n| c-1 | | @a | | Hi | |\n'
   await page.getByTestId('file-input').setInputFiles({name: 't.md', mimeType: 'text/markdown', buffer: Buffer.from(source)})
@@ -228,7 +228,7 @@ test('a selection core cannot anchor shows an in-page message', async ({page}) =
 
 test('phone width: threads and the comment box dock at the bottom', async ({browser}) => {
   const page = await browser.newPage({viewport: {width: 390, height: 844}})
-  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@phone'))
+  await page.addInitScript(() => localStorage.setItem('commentmark.author', '@phone'))
   await page.goto('./')
   await expect(page.locator('.margin')).toHaveCount(0)
   await page.locator('mark[data-threads~="c-intro1"]').first().click()
@@ -280,7 +280,7 @@ async function textPoint(page: Page, needle: string, edge: 'left' | 'right') {
 }
 
 test('mouse: drag-select across list items and comment', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@mouse'))
+  await page.addInitScript(() => localStorage.setItem('commentmark.author', '@mouse'))
   await page.goto('./')
   await page.locator('.doc-body ol').scrollIntoViewIfNeeded()
   const from = await textPoint(page, 'Reply to a thread', 'left')
@@ -301,7 +301,7 @@ test('mouse: drag-select across list items and comment', async ({page}) => {
 })
 
 test('mouse: double-click a word and comment', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@mouse'))
+  await page.addInitScript(() => localStorage.setItem('commentmark.author', '@mouse'))
   await page.goto('./')
   const word = await textPoint(page, 'sidecar', 'left')
   await page.mouse.dblclick(word.x + 4, word.y)
@@ -349,7 +349,7 @@ test('File System Access: open with a handle, save in place, detect changes on d
       }
     }
     ;(window as unknown as {showOpenFilePicker: () => Promise<unknown[]>}).showOpenFilePicker = async () => [handle]
-    localStorage.setItem('sidemark.author', '@disk')
+    localStorage.setItem('commentmark.author', '@disk')
   })
   await page.goto('./')
   await page.getByRole('toolbar').getByRole('button', {name: 'Open'}).click()
@@ -388,10 +388,10 @@ test('File System Access: open with a handle, save in place, detect changes on d
 })
 
 test('drag and drop a file; unsaved changes are confirmed in-page first', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@drop'))
+  await page.addInitScript(() => localStorage.setItem('commentmark.author', '@drop'))
   await page.goto('./')
   // Make the sample dirty.
-  await page.getByRole('button', {name: 'Comment on the whole document'}).click()
+  await page.getByRole('button', {name: 'Add a comment'}).click()
   await page.keyboard.type('Pending.')
   await page.keyboard.press('ControlOrMeta+Enter')
   await expect(page.getByTestId('save-state')).toHaveText('Unsaved changes')
@@ -412,7 +412,7 @@ test('drag and drop a file; unsaved changes are confirmed in-page first', async 
 })
 
 test('comment box: appears on selection, follows it, disappears, survives focus, keeps drafts', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@sel'))
+  await page.addInitScript(() => localStorage.setItem('commentmark.author', '@sel'))
   await page.goto('./')
   const box = margin(page).getByTestId('draft')
   const boxTop = async () => (await box.boundingBox())!.y
@@ -504,7 +504,7 @@ test('layout: wider document, whole-document comments on top, getting-started no
   await page.getByTestId('file-input').setInputFiles({name: 'plain.md', mimeType: 'text/markdown', buffer: Buffer.from(source)})
   await expect(page.locator('.doc-comments.is-empty')).toBeVisible()
   await expect(page.locator('.doc-comments .thread')).toHaveCount(0)
-  await expect(page.locator('.doc-comments').getByRole('button', {name: 'Comment on the whole document'})).toBeVisible()
+  await expect(page.locator('.doc-comments').getByRole('button', {name: 'Add a comment'})).toBeVisible()
 })
 
 test('local only: nothing leaves the device while opening, commenting and saving', async ({page, baseURL}) => {
@@ -517,7 +517,7 @@ test('local only: nothing leaves the device while opening, commenting and saving
   page.on('requestfailed', (request) => failed.push({url: request.url(), error: request.failure()?.errorText ?? ''}))
   page.on('requestfinished', (request) => completed.push(request.url()))
   await page.addInitScript(() => {
-    localStorage.setItem('sidemark.author', '@private')
+    localStorage.setItem('commentmark.author', '@private')
     const seen: string[] = []
     ;(window as unknown as {__blocked: string[]}).__blocked = seen
     document.addEventListener('securitypolicyviolation', (event) => seen.push(`${event.effectiveDirective} ${event.blockedURI}`))
@@ -599,16 +599,14 @@ test('local only: the statement is always visible and explains itself', async ({
   const badge = page.getByRole('button', {name: /Local only/})
   await expect(badge).toBeVisible()
   await badge.click()
-  const panel = page.getByRole('region', {name: 'Local only: how do I know?'})
-  await expect(panel).toContainText('no server behind the editor, no account and no analytics')
-  await expect(panel).toContainText('Content-Security-Policy')
+  const panel = page.getByRole('region', {name: 'Local only'})
+  await expect(panel).toContainText('The contents of your Markdown file and your edits never leave this device.')
   await panel.getByRole('button', {name: 'Close'}).click()
   await expect(panel).toHaveCount(0)
-  // The first-open note leads with it, and links to the same explanation.
+  // The first-open note leads with it.
   const intro = page.getByRole('complementary', {name: 'Getting started'})
   await expect(intro.locator('.intro-title')).toHaveText('Private: your files stay on this device')
-  await intro.getByRole('button', {name: 'How do I know?'}).click()
-  await expect(panel).toBeVisible()
+  await expect(intro).toContainText('never leave this device')
   // The badge stays after the note is dismissed.
   await intro.getByRole('button', {name: 'Got it'}).click()
   await expect(badge).toBeVisible()

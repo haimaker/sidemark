@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest'
 import type {TableCell} from 'mdast'
 import {JSDOM} from 'jsdom'
-import {parse} from '@sidemark/core'
+import {parse} from '@commentmark/core'
 import {renderCell} from '../src/body/render'
 import {countRemoteImages} from '../src/body/render'
 import {embeddedImageSrc, remoteImageUrl, safeHref} from '../src/body/sanitize'

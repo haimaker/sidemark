@@ -1,8 +1,8 @@
-import {SidemarkError} from '@sidemark/core'
+import {CommentMarkError} from '@commentmark/core'
 
 /** A short, user-facing explanation of a failed core operation. */
 export function describeError(error: unknown): string {
-  if (error instanceof SidemarkError) {
+  if (error instanceof CommentMarkError) {
     switch (error.code) {
       case 'INVALID_RANGE':
         return 'That selection can’t be commented on. Select text in the body of the document.'

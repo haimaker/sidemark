@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'vitest'
-import {addReply, createThread} from '@sidemark/core'
+import {addReply, createThread} from '@commentmark/core'
 import {followSelection, hasText, mapRange, type Draft} from '../src/model/draft'
 import {INTRO_DISMISSED, readPref, writePref} from '../src/model/prefs'
 

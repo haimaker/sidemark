@@ -145,7 +145,7 @@ export interface CommentsTable {
   rows: Row[]
 }
 
-export interface SidemarkDocument {
+export interface CommentMarkDocument {
   source: string
   /**
    * mdast tree of everything after the BOM and front matter, with positions

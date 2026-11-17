@@ -5,7 +5,7 @@
 import {writeFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {describe, expect, test} from 'vitest'
-import {maintain, parse, SidemarkError} from '../src/index.js'
+import {maintain, parse, CommentMarkError} from '../src/index.js'
 import {
   FIXTURES,
   listReaderCases,
@@ -53,8 +53,8 @@ describe('writer fixtures', () => {
         } catch (e) {
           error = e
         }
-        expect(error).toBeInstanceOf(SidemarkError)
-        expect((error as SidemarkError).code).toBe(op.expectError)
+        expect(error).toBeInstanceOf(CommentMarkError)
+        expect((error as CommentMarkError).code).toBe(op.expectError)
         return
       }
       const output = runOperation(input, op)

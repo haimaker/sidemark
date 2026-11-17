@@ -1,6 +1,6 @@
-# @sidemark/core
+# @commentmark/core
 
-Reference Reader and Writer for **Sidemark**, a convention for storing Google Docs style comment threads inside Markdown files (see [`SPEC.md`](../../SPEC.md)).
+Reference Reader and Writer for **CommentMark**, a convention for storing Google Docs style comment threads inside Markdown files (see [`SPEC.md`](../../SPEC.md)).
 
 - Parses a document into threads, comments, anchors and a text projection with a full source map.
 - Writes by splicing the original text: bytes outside an edit are never touched, and nothing is re-serialised.
@@ -9,7 +9,7 @@ Reference Reader and Writer for **Sidemark**, a convention for storing Google Do
 ## Install
 
 ```sh
-npm install @sidemark/core
+npm install @commentmark/core
 ```
 
 In this repository it is an npm workspace: run `npm install` at the root, then `npm run build` in `packages/core`.
@@ -17,7 +17,7 @@ In this repository it is an npm workspace: run `npm install` at the root, then `
 ## Usage
 
 ```ts
-import {parse, createThread, addReply, setStatus, maintain} from '@sidemark/core'
+import {parse, createThread, addReply, setStatus, maintain} from '@commentmark/core'
 
 let source = '# Plan\n\nThe quick brown fox jumps.\n'
 
@@ -45,11 +45,11 @@ for (const thread of doc.threads) {
 ### Reading
 
 ```ts
-parse(source: string): SidemarkDocument
-getThread(doc: SidemarkDocument, id: string): Thread | undefined
+parse(source: string): CommentMarkDocument
+getThread(doc: CommentMarkDocument, id: string): Thread | undefined
 ```
 
-`SidemarkDocument` (all offsets are UTF-16 indexes into `source`, half-open):
+`CommentMarkDocument` (all offsets are UTF-16 indexes into `source`, half-open):
 
 | Field | |
 |---|---|
@@ -108,7 +108,7 @@ interface WriterOptions {
 
 ### Errors
 
-Every deliberate failure is a `SidemarkError` with a `code`: `INVALID_RANGE`, `UNSAFE_PLACEMENT` (thrown as `PlacementError`), `UNSAFE_EDIT`, `THREAD_NOT_FOUND`, `COMMENT_NOT_FOUND`, `EMPTY_COMMENT`, `INVALID_ID`, `ID_COLLISION`, `INVALID_DATE`, `INVALID_ARGUMENT`.
+Every deliberate failure is a `CommentMarkError` with a `code`: `INVALID_RANGE`, `UNSAFE_PLACEMENT` (thrown as `PlacementError`), `UNSAFE_EDIT`, `THREAD_NOT_FOUND`, `COMMENT_NOT_FOUND`, `EMPTY_COMMENT`, `INVALID_ID`, `ID_COLLISION`, `INVALID_DATE`, `INVALID_ARGUMENT`.
 
 ### Building blocks
 

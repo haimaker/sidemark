@@ -4,7 +4,7 @@ import {contentSecurityPolicy} from './csp'
 /** Put the Content Security Policy (see csp.ts) at the top of <head>. */
 function csp(): Plugin {
   return {
-    name: 'sidemark-csp',
+    name: 'commentmark-csp',
     transformIndexHtml: {
       order: 'pre',
       handler(html, context) {

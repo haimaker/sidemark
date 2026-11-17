@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'vitest'
-import {createThread, deleteThread, parse, PlacementError, SidemarkError, type SourceRange} from '../src/index.js'
+import {createThread, deleteThread, parse, PlacementError, CommentMarkError, type SourceRange} from '../src/index.js'
 
 const fixed = {generateId: () => 'c-test01', now: () => new Date('2026-11-17T10:32:00Z')}
 
@@ -65,7 +65,7 @@ describe('inline placement (§5.3)', () => {
   test('a selection of whitespace between blocks is rejected', () => {
     const s = 'One.\n\n\n\nTwo.\n'
     const r = {start: s.indexOf('\n\n'), end: s.indexOf('Two')}
-    expect(() => comment(s, r)).toThrow(SidemarkError)
+    expect(() => comment(s, r)).toThrow(CommentMarkError)
   })
 })
 
@@ -145,8 +145,8 @@ describe('placement never changes how the body parses', () => {
         try {
           created = comment(source, range)
         } catch (error) {
-          expect(error).toBeInstanceOf(SidemarkError)
-          expect(['INVALID_RANGE', 'UNSAFE_PLACEMENT']).toContain((error as SidemarkError).code)
+          expect(error).toBeInstanceOf(CommentMarkError)
+          expect(['INVALID_RANGE', 'UNSAFE_PLACEMENT']).toContain((error as CommentMarkError).code)
           continue
         }
         placed++

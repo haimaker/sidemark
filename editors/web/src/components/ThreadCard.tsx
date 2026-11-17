@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'preact/hooks'
 import type {Ref, TargetedKeyboardEvent} from 'preact'
-import type {Comment, SidemarkDocument, Thread} from '@sidemark/core'
+import type {Comment, CommentMarkDocument, Thread} from '@commentmark/core'
 import {isPrimaryModifier} from '../hooks'
 import {hasText, type Draft} from '../model/draft'
 import {CellView} from './CellView'
@@ -16,7 +16,7 @@ export interface ThreadActions {
 
 interface ThreadCardProps {
   thread: Thread
-  doc: SidemarkDocument
+  doc: CommentMarkDocument
   focused: boolean
   /** Show the commented text above the thread (detached and list views). */
   showQuote: boolean

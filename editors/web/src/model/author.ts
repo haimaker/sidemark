@@ -4,7 +4,7 @@
  */
 import {readPref, writePref} from './prefs'
 
-const KEY = 'sidemark.author'
+const KEY = 'commentmark.author'
 
 export function loadAuthor(storage?: Pick<Storage, 'getItem'> | null): string {
   return readPref(KEY, storage)?.trim() ?? ''

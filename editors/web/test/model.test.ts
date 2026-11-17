@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'vitest'
-import {createThread, parse, SidemarkError, PlacementError} from '@sidemark/core'
+import {createThread, parse, CommentMarkError, PlacementError} from '@commentmark/core'
 import {loadAuthor, looksLikeEmail, normaliseAuthor, saveAuthor, suggestHandle} from '../src/model/author'
 import {describeError} from '../src/model/errors'
 import {groupThreads, hiddenNodes, highlightsFor, PENDING_ID, purgeCandidates, purgeCount, quoteText} from '../src/model/groups'
@@ -182,7 +182,7 @@ describe('error messages', () => {
     } catch (e) {
       error = e
     }
-    expect(error).toBeInstanceOf(SidemarkError)
+    expect(error).toBeInstanceOf(CommentMarkError)
     expect(describeError(error)).toMatch(/can’t be commented on/)
     expect(describeError(new PlacementError('x'))).toMatch(/can’t be anchored/)
     expect(describeError(new Error('boom'))).toBe('boom')

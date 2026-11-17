@@ -4,7 +4,7 @@ import {deletion, insertion, type Edit} from './edits.js'
 import {endOf, startOf} from './markdown.js'
 import {COLUMNS, DEFAULT_HEADING} from './table.js'
 import {endsWithLineEnding, lineEnd, lineEndingLength, lineStart} from './text.js'
-import type {Row, SidemarkDocument} from './types.js'
+import type {Row, CommentMarkDocument} from './types.js'
 
 /** Cell contents of a new row, already escaped for a table cell. */
 export interface RowCells {
@@ -24,7 +24,7 @@ export function formatRow(cells: RowCells, columnCount: number): string {
   return '|' + values.map((v) => (v === '' ? ' ' : ` ${v} `)).join('|') + '|'
 }
 
-export function columnCount(doc: SidemarkDocument): number {
+export function columnCount(doc: CommentMarkDocument): number {
   return Math.max(COLUMNS.length, doc.table?.columns.length ?? 0)
 }
 
@@ -40,19 +40,19 @@ function lineEndingOf(source: string, offset: number): string {
 }
 
 /** Insert `rowText` as a new line directly before `row`. */
-export function insertRowBefore(doc: SidemarkDocument, row: Row, rowText: string): Edit {
+export function insertRowBefore(doc: CommentMarkDocument, row: Row, rowText: string): Edit {
   const eol = lineEndingOf(doc.source, row.range.start) || doc.lineEnding
   return insertion(lineStart(doc.source, row.range.start), rowText + eol)
 }
 
 /** Insert `rowText` as a new line directly after the line holding `offset`. */
-export function insertLineAfter(doc: SidemarkDocument, offset: number, rowText: string): Edit {
+export function insertLineAfter(doc: CommentMarkDocument, offset: number, rowText: string): Edit {
   const eol = lineEndingOf(doc.source, offset) || doc.lineEnding
   return insertion(lineEnd(doc.source, offset), eol + rowText)
 }
 
 /** Insert `rowText` after the last line of the table. */
-export function appendRow(doc: SidemarkDocument, rowText: string): Edit {
+export function appendRow(doc: CommentMarkDocument, rowText: string): Edit {
   return insertLineAfter(doc, doc.table!.range.end, rowText)
 }
 
@@ -61,7 +61,7 @@ export function appendRow(doc: SidemarkDocument, rowText: string): Edit {
  * table, as the last block. The document keeps (or keeps lacking) its final
  * line ending.
  */
-export function createTable(doc: SidemarkDocument, rowText: string): Edit {
+export function createTable(doc: CommentMarkDocument, rowText: string): Edit {
   const source = doc.source
   const eol = doc.lineEnding
   const header = '| Ref | Quote | Author | Date | Comment | Status |'
@@ -89,7 +89,7 @@ function trailingLineEndings(source: string): number {
 }
 
 /** Delete whole rows; if no rows would remain, delete the table instead. */
-export function removeRows(doc: SidemarkDocument, rows: readonly Row[]): Edit[] {
+export function removeRows(doc: CommentMarkDocument, rows: readonly Row[]): Edit[] {
   const table = doc.table!
   const distinct = new Set(rows)
   if (distinct.size >= table.rows.length) return removeTable(doc)
@@ -132,7 +132,7 @@ export function removeLines(source: string, offsets: readonly number[]): Edit[] 
  * directly above it (§6.2), along with the blank lines that separated them
  * from the previous block.
  */
-export function removeTable(doc: SidemarkDocument): Edit[] {
+export function removeTable(doc: CommentMarkDocument): Edit[] {
   const table = doc.table!
   const nodes = doc.root.children
   const removeHeading = table.heading !== null && table.heading.text === DEFAULT_HEADING
@@ -149,7 +149,7 @@ export function removeTable(doc: SidemarkDocument): Edit[] {
  * Replace the content of one cell (`column` is 0-based). Cells missing from
  * a short row are added. `text` must already be escaped for a cell.
  */
-export function setCell(doc: SidemarkDocument, row: Row, column: number, text: string): Edit {
+export function setCell(doc: CommentMarkDocument, row: Row, column: number, text: string): Edit {
   const cell = row.cells[column]
   if (cell) {
     if (cell.contentRange.start < cell.contentRange.end && text !== '') {

@@ -1,6 +1,6 @@
 import {useLayoutEffect, useRef} from 'preact/hooks'
 import type {TableCell} from 'mdast'
-import type {Comment, SidemarkDocument} from '@sidemark/core'
+import type {Comment, CommentMarkDocument} from '@commentmark/core'
 import {renderCell} from '../body/render'
 
 /** Index of the Comment column (SPEC §6.1: Ref, Quote, Author, Date, Comment, Status). */
@@ -10,7 +10,7 @@ const COMMENT_COLUMN = 4
  * A comment's text, rendered from the GFM parse of its table cell: inline
  * Markdown only, links sanitised, raw HTML shown as text (SPEC §12).
  */
-export function CellView({comment, doc}: {comment: Comment; doc: SidemarkDocument}) {
+export function CellView({comment, doc}: {comment: Comment; doc: CommentMarkDocument}) {
   const ref = useRef<HTMLDivElement>(null)
   const cell = comment.row.node.children[COMMENT_COLUMN] as TableCell | undefined
   useLayoutEffect(() => {

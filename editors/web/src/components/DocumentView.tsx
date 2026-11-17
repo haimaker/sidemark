@@ -1,11 +1,11 @@
 import {useEffect, useLayoutEffect, useRef} from 'preact/hooks'
 import type {Nodes} from 'mdast'
-import type {SidemarkDocument, SourceRange} from '@sidemark/core'
+import type {CommentMarkDocument, SourceRange} from '@commentmark/core'
 import {renderBody, type BodyRenderResult, type Highlight} from '../body/render'
 import {PENDING_ID} from '../model/groups'
 
 interface DocumentViewProps {
-  doc: SidemarkDocument
+  doc: CommentMarkDocument
   highlights: Highlight[]
   hidden: Set<Nodes>
   focusedId: string | null

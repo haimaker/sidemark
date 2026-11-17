@@ -2,10 +2,10 @@
 import type {Nodes, Parents, Root} from 'mdast'
 import {endOf, rangeOf, startOf} from './markdown.js'
 import {collapseWhitespaceRuns} from './text.js'
-import type {Anchor, SidemarkDocument, SourceRange} from './types.js'
+import type {Anchor, CommentMarkDocument, SourceRange} from './types.js'
 
 /** The body's top-level nodes: everything except the comments table and its heading. */
-export function bodyNodes(doc: SidemarkDocument): Nodes[] {
+export function bodyNodes(doc: CommentMarkDocument): Nodes[] {
   const table = doc.table
   return doc.root.children.filter((node) => node !== table?.node && node !== table?.heading?.node)
 }
@@ -25,7 +25,7 @@ export interface LeafBlock {
 
 const OPAQUE = new Set(['code', 'html', 'thematicBreak', 'definition', 'yaml'])
 
-export function leafBlocks(doc: SidemarkDocument): LeafBlock[] {
+export function leafBlocks(doc: CommentMarkDocument): LeafBlock[] {
   const leaves: LeafBlock[] = []
   const visit = (node: Nodes, parent: Parents): void => {
     if (node.type === 'paragraph' || node.type === 'heading' || node.type === 'tableCell') {
@@ -104,7 +104,7 @@ export function isAnchorOnlyParagraph(node: Nodes, anchors: readonly Anchor[], s
  * ignored. Two documents with equal signatures render the same apart from
  * anchors.
  */
-export function bodySignature(doc: SidemarkDocument): string {
+export function bodySignature(doc: CommentMarkDocument): string {
   const anchorRanges = doc.anchors.map((a) => a.range)
   const isAnchorPart = (node: Nodes): boolean => {
     if (node.type !== 'html') return false
