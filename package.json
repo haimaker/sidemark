@@ -1,0 +1,18 @@
+{
+  "name": "sidemark",
+  "private": true,
+  "description": "Comment threads stored inside Markdown files: the specification, a reference library, and editors.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "editors/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
