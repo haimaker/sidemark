@@ -189,7 +189,11 @@ function StatusEvent({comment}: {comment: Comment}) {
 /** Prefix, **quote**, suffix as plain text (never parsed as HTML). */
 export function QuoteView({thread}: {thread: Thread}) {
   if (thread.attachment.kind === 'anchored') {
-    return <blockquote class="thread-quote">{thread.attachment.text}</blockquote>
+    return (
+      <blockquote class="thread-quote">
+        <strong>{thread.attachment.text}</strong>
+      </blockquote>
+    )
   }
   const quote = thread.quote
   if (!quote || quote.quote === '') return null

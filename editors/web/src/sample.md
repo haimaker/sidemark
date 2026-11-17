@@ -32,6 +32,8 @@ console.log(doc.threads.length)
 
 One thread on this page is resolved and hidden until you choose *Show resolved*. Another is detached: the text it was about has been deleted, so it is listed under *Detached* with its last known quote. A third is about the document as a whole.
 
+<!-- CommentMark: the table below holds comment threads on this document, tied to the <a id="c-..."> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->
+
 ## Comments
 
 | Ref | Quote | Author | Date | Comment | Status |

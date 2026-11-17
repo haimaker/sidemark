@@ -13,7 +13,7 @@ interface Span {
 export function SourceView({doc}: {doc: CommentMarkDocument}) {
   const spans: Span[] = doc.anchors.map((a) => ({start: a.range.start, end: a.range.end, kind: 'anchor' as const}))
   if (doc.table) {
-    const start = doc.table.heading?.range.start ?? doc.table.range.start
+    const start = Math.min(doc.table.pointer?.range.start ?? Infinity, doc.table.heading?.range.start ?? Infinity, doc.table.range.start)
     spans.push({start, end: doc.table.range.end, kind: 'table'})
   }
   spans.sort((a, b) => a.start - b.start)

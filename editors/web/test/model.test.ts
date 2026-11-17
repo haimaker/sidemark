@@ -115,8 +115,9 @@ describe('thread groups', () => {
     expect(highlights.length).toBe(groups.anchored.length + 1)
   })
 
-  test('only a default Comments heading is hidden', () => {
-    expect([...hiddenNodes(doc)].map((n) => n.type).sort()).toEqual(['heading', 'table'])
+  test('the table and the pointer are hidden; the heading only when it is the default', () => {
+    // The sample carries the pointer to the specification (§6.7).
+    expect([...hiddenNodes(doc)].map((n) => n.type).sort()).toEqual(['heading', 'html', 'table'])
     const renamed = parse('Hi.\n\n## Notes\n\n| Ref | Quote | Author | Date | Comment | Status |\n|---|---|---|---|---|---|\n| c-1 | | | | x | |\n')
     expect([...hiddenNodes(renamed)].map((n) => n.type)).toEqual(['table'])
     const lower = parse('Hi.\n\n## comments\n\n| Ref | Quote | Author | Date | Comment | Status |\n|---|---|---|---|---|---|\n| c-1 | | | | x | |\n')

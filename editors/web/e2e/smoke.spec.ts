@@ -5,7 +5,7 @@
  */
 import {readFile} from 'node:fs/promises'
 import {expect, test, type Page} from '@playwright/test'
-import {maintain, parse} from '@commentmark/core'
+import {maintain, parse, POINTER} from '@commentmark/core'
 
 /** Select `needle` (inside one text node) in the rendered document. */
 async function selectText(page: Page, needle: string) {
@@ -182,7 +182,7 @@ test('open a file, edit, delete, document-level comment, purge', async ({page}) 
   // Document-level comment.
   await page.getByRole('button', {name: 'Add a comment'}).click()
   await page.getByRole('textbox', {name: 'New comment on the whole document'}).fill('Overall fine.')
-  await page.locator('.doc-comments .composer').getByRole('button', {name: 'Comment', exact: true}).click()
+  await page.locator('.doc-composer-dock .composer').getByRole('button', {name: 'Comment', exact: true}).click()
   await expect(page.locator('.doc-comments')).toContainText('Overall fine.')
 
   // Purge: choose only the detached threads.
@@ -614,4 +614,122 @@ test('local only: the statement is always visible and explains itself', async ({
   const policy = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content')
   expect(policy).toContain("connect-src 'none'")
   expect(policy).toContain("img-src 'self' data: blob:")
+})
+
+test('theme: the toggle switches between light and dark and is remembered', async ({page}) => {
+  const errors = collectErrors(page)
+  await page.emulateMedia({colorScheme: 'light'})
+  await page.goto('./')
+  const toggle = page.getByTestId('theme-toggle')
+  const background = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor)
+  // With no choice made, the page follows the system and pins nothing.
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/)
+  await expect(toggle).toHaveAccessibleName('Switch to dark theme')
+  const light = await background()
+
+  await toggle.click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await expect(toggle).toHaveAccessibleName('Switch to light theme')
+  const dark = await background()
+  expect(dark).not.toBe(light)
+
+  // The choice survives a reload and wins over the system setting.
+  await page.reload()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  expect(await background()).toBe(dark)
+
+  await page.getByTestId('theme-toggle').click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+  expect(await background()).toBe(light)
+  expect(errors).toEqual([])
+})
+
+test('theme: follows a dark system setting until a choice is made', async ({page}) => {
+  await page.emulateMedia({colorScheme: 'dark'})
+  await page.goto('./')
+  await expect(page.getByTestId('theme-toggle')).toHaveAccessibleName('Switch to light theme')
+  const dark = await page.evaluate(() => getComputedStyle(document.body).backgroundColor)
+  await page.emulateMedia({colorScheme: 'light'})
+  await expect(page.getByTestId('theme-toggle')).toHaveAccessibleName('Switch to dark theme')
+  expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe(dark)
+})
+
+test('whole-document comment box stays in view while the document scrolls', async ({page}) => {
+  const errors = collectErrors(page)
+  await page.setViewportSize({width: 1280, height: 620})
+  await page.goto('./')
+  await page.getByRole('button', {name: 'Add a comment'}).click()
+  const box = page.getByRole('textbox', {name: 'New comment on the whole document'})
+  await box.fill('Started at the top')
+
+  await page.evaluate(() => window.scrollTo(0, 700))
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(600)
+  await expect(box).toBeInViewport({ratio: 1})
+  await expect(box).toBeFocused()
+  // It sits below the sticky toolbar, not under it.
+  const toolbarBottom = await page.locator('.toolbar').evaluate((el) => el.getBoundingClientRect().bottom)
+  const dockTop = await page.locator('.doc-composer-dock').evaluate((el) => el.getBoundingClientRect().top)
+  expect(dockTop).toBeGreaterThanOrEqual(toolbarBottom)
+
+  await page.keyboard.type(', finished further down.')
+  await expect(box).toHaveValue('Started at the top, finished further down.')
+  await page.getByRole('article', {name: 'New comment on the whole document'}).getByRole('button', {name: 'Comment', exact: true}).click()
+  const dialog = page.getByRole('dialog', {name: 'Your name on comments'})
+  await dialog.getByRole('textbox').fill('@tester')
+  await dialog.getByRole('button', {name: 'Save'}).click()
+  await expect(page.locator('.doc-composer-dock')).toHaveCount(0)
+  const doc = parse(await readSource(page))
+  expect(doc.threads.some((t) => t.attachment.kind === 'document' && t.comments[0]?.comment === 'Started at the top, finished further down.')).toBe(true)
+  expect(errors).toEqual([])
+})
+
+test('about: the editor links back to the project on GitHub', async ({page}) => {
+  await page.goto('./')
+  const repo = 'https://github.com/waynepan/commentmark'
+  const about = page.getByRole('link', {name: 'About', exact: true})
+  const links = [
+    page.getByRole('link', {name: 'CommentMark', exact: true}),
+    about,
+    page.getByRole('complementary', {name: 'Getting started'}).getByRole('link', {name: 'Read about the project on GitHub'})
+  ]
+  for (const link of links) {
+    await expect(link).toBeVisible()
+    await expect(link).toHaveAttribute('href', repo)
+    await expect(link).toHaveAttribute('target', '_blank')
+    await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  }
+  // The toolbar link stays after the note is dismissed.
+  await page.getByRole('button', {name: 'Got it'}).click()
+  await expect(about).toBeVisible()
+})
+
+test('pointer: the first comment on a file writes the pointer to the spec, hidden in the document view', async ({page}) => {
+  const errors = collectErrors(page)
+  await page.goto('./')
+  const source = '# Plan\n\nShip the migration in the third quarter.\n'
+  await page.getByTestId('file-input').setInputFiles({name: 'plan.md', mimeType: 'text/markdown', buffer: Buffer.from(source)})
+  await expect(page.locator('.file-name')).toHaveText('plan.md')
+  await selectText(page, 'third quarter')
+  const box = draftBox(page)
+  await box.getByRole('textbox').click()
+  await box.getByRole('textbox').fill('Which month?')
+  await box.getByRole('button', {name: 'Comment', exact: true}).click()
+  const dialog = page.getByRole('dialog', {name: 'Your name on comments'})
+  await dialog.getByRole('textbox').fill('@tester')
+  await dialog.getByRole('button', {name: 'Save'}).click()
+  await expect(margin(page)).toContainText('Which month?')
+
+  // The raw file carries the pointer directly above the heading.
+  const written = await readSource(page)
+  expect(written).toContain(`\n\n${POINTER}\n\n## Comments\n\n| Ref |`)
+  expect(written.startsWith('# Plan\n\nShip the migration in the ')).toBe(true)
+  const doc = parse(written)
+  expect(doc.table?.pointer).not.toBeNull()
+
+  // The rendered document shows neither the pointer, the heading nor the table.
+  const body = page.locator('.doc-body')
+  await expect(body).not.toContainText('CommentMark:')
+  await expect(body).not.toContainText('github.com')
+  await expect(body.locator('table')).toHaveCount(0)
+  expect(errors).toEqual([])
 })

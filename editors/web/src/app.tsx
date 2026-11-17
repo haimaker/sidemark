@@ -42,6 +42,8 @@ import {describeError} from './model/errors'
 import {groupThreads, hiddenNodes, highlightsFor, PENDING_ID, purgeCandidates, rangeOf} from './model/groups'
 import * as H from './model/history'
 import {INTRO_DISMISSED, readPref, writePref} from './model/prefs'
+import {applyTheme, otherTheme, saveTheme, storedTheme, systemTheme, type Theme} from './model/theme'
+import {REPO_URL} from './project'
 import sample from './sample.md?raw'
 
 const SAMPLE_NAME = 'commentmark-sample.md'
@@ -91,6 +93,7 @@ export function App() {
   const [privacyOpen, setPrivacyOpen] = useState(false)
   const remoteImages = useMemo(() => countRemoteImages(doc.root), [doc])
   const [showIntro, setShowIntro] = useState(() => readPref(INTRO_DISMISSED) !== '1')
+  const [theme, setTheme] = useState<Theme>(() => storedTheme() ?? systemTheme())
   const [rendered, setRendered] = useState<BodyRenderResult | null>(null)
   const [message, setMessage] = useState<Message | null>(null)
   const [confirm, setConfirm] = useState<ConfirmRequest | null>(null)
@@ -118,6 +121,37 @@ export function App() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [view])
+
+  // Follow the operating system until the person picks a theme themselves.
+  useEffect(() => {
+    if (typeof matchMedia !== 'function') return
+    const query = matchMedia('(prefers-color-scheme: dark)')
+    const follow = () => {
+      if (storedTheme() === null) setTheme(query.matches ? 'dark' : 'light')
+    }
+    query.addEventListener('change', follow)
+    return () => query.removeEventListener('change', follow)
+  }, [])
+
+  const toggleTheme = useCallback(() => {
+    setTheme((current) => {
+      const next = otherTheme(current)
+      saveTheme(next)
+      applyTheme(next)
+      return next
+    })
+  }, [])
+
+  // The toolbar's height, for things that stick just below it.
+  useEffect(() => {
+    const toolbar = document.querySelector('.toolbar')
+    if (!toolbar || typeof ResizeObserver === 'undefined') return
+    const measure = () => document.documentElement.style.setProperty('--toolbar-h', `${toolbar.getBoundingClientRect().height}px`)
+    const observer = new ResizeObserver(measure)
+    observer.observe(toolbar)
+    measure()
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     document.title = `${dirty ? '• ' : ''}${file.name} · CommentMark`
@@ -569,6 +603,8 @@ export function App() {
         onAuthor={() => setAuthorPrompt({reason: null, resolve: () => {}})}
         privacyOpen={privacyOpen}
         onPrivacy={() => setPrivacyOpen((open) => !open)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
       {privacyOpen && <PrivacyPanel onClose={() => setPrivacyOpen(false)} />}
       <input ref={fileInput} type="file" accept={MARKDOWN_ACCEPT} hidden onChange={onFileInput} data-testid="file-input" />
@@ -595,20 +631,26 @@ export function App() {
                 Comments on this document <span class="count">{counts.document || ''}</span>
               </h2>
               {groups.document.map((thread) => card(thread, false))}
-              {docComposing ? (
-                <Composer
-                  title="New comment on the whole document"
-                  author={author}
-                  onSubmit={submitDocumentComment}
-                  onCancel={() => setDocComposing(false)}
-                />
-              ) : (
+              {!docComposing && (
                 <button type="button" class="link-button doc-comment-add" onClick={startDocumentComment}>
                   Add a comment
                 </button>
               )}
               {groups.hiddenResolved.document > 0 && <HiddenNote count={groups.hiddenResolved.document} />}
             </section>
+
+            {/* Outside the section so it can stay in view for the whole
+                document: the person keeps writing while they scroll and read. */}
+            {docComposing && (
+              <div class="doc-composer-dock">
+                <Composer
+                  title="New comment on the whole document"
+                  author={author}
+                  onSubmit={submitDocumentComment}
+                  onCancel={() => setDocComposing(false)}
+                />
+              </div>
+            )}
 
             <DocumentView
               doc={doc}
@@ -739,6 +781,13 @@ function Intro({onOpen, onDismiss}: {onOpen(): void; onDismiss(): void}) {
             open a file
           </button>
           . Saving writes the comments back into the file, or downloads a copy where the browser cannot write to it.
+        </p>
+        <p>
+          New to CommentMark?{' '}
+          <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+            Read about the project on GitHub
+          </a>
+          .
         </p>
       </div>
       <button type="button" class="button quiet intro-dismiss" onClick={onDismiss}>

@@ -69,9 +69,12 @@ Not supported: editing the body text, and re-attaching a detached thread to new 
 ## Using it
 
 - **Comment:** select text and a comment box appears in the margin beside it, without taking focus (the selection stays, so copying still works). Click into the box, or press Ctrl+Alt+M / ⌘⌥M, to write; from then on the box stays and its range is highlighted. Clearing the selection removes an unused box; a box with text in it is only discarded by Escape or Cancel. At phone width the box docks at the bottom of the screen. A range core refuses shows the reason in the box instead.
-- **Whole-document comments** are listed at the top of the page, above the document, with an *Add a comment* entry point.
+- **Whole-document comments** are listed at the top of the page, above the document, with an *Add a comment* entry point. While you write one, its box stays just below the toolbar as you scroll, so you can keep typing while you read.
 - **Getting started:** the first visit shows how to drag and drop a file or open one; dismissing it is remembered in this browser.
 - **Threads:** click a highlight to focus its thread, or a thread to highlight its text. Overlapping highlights cycle on repeated clicks. Ctrl+Enter / ⌘↩ submits a comment or reply.
 - **Save:** Ctrl+S / ⌘S. A file opened through the system file picker (or dropped, in Chromium) is written back in place, after checking it has not changed on disk. Otherwise the file is downloaded. Saving runs core's `maintain`, which may refresh Quote cells, repair anchors and remove stray anchors; those changes can be undone like any other.
 - **Undo / redo:** Ctrl+Z / ⌘Z and Ctrl+Shift+Z / ⌘⇧Z outside text fields.
 - **Source:** shows the raw Markdown, with anchors and the comments table marked.
+- **Pointer to the spec:** the first comment on a file writes the pointer from spec §6.7 above the comments heading. It is hidden in the document view and shown in Source.
+- **Theme:** the sun or moon button switches between light and dark. The editor follows the operating system until you choose, then remembers the choice in this browser.
+- **About:** the CommentMark name and the *About* link open the project on GitHub in a new tab.

@@ -60,6 +60,8 @@ export function hiddenNodes(doc: CommentMarkDocument): Set<Nodes> {
   const hidden = new Set<Nodes>()
   if (!doc.table) return hidden
   hidden.add(doc.table.node)
+  // The pointer to the specification (§6.7) is for people reading the raw file.
+  if (doc.table.pointer) hidden.add(doc.table.pointer.node)
   const heading = doc.table.heading
   if (heading && heading.text.trim().toLowerCase() === 'comments') hidden.add(heading.node)
   return hidden

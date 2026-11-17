@@ -1,3 +1,6 @@
+import type {ComponentChildren} from 'preact'
+import {REPO_URL} from '../project'
+
 interface ToolbarProps {
   fileName: string
   canWriteInPlace: boolean
@@ -19,6 +22,8 @@ interface ToolbarProps {
   onShowResolved(show: boolean): void
   onPurge(): void
   onAuthor(): void
+  theme: 'light' | 'dark'
+  onToggleTheme(): void
 }
 
 const mod = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl+'
@@ -27,9 +32,9 @@ export function Toolbar(props: ToolbarProps) {
   return (
     <header class="toolbar">
       <div class="toolbar-file">
-        <span class="brand" aria-hidden="true">
+        <a class="brand" href={REPO_URL} target="_blank" rel="noopener noreferrer" title="About CommentMark: the specification and source on GitHub">
           CommentMark
-        </span>
+        </a>
         <span class="file-name" title={props.fileName}>
           {props.fileName}
         </span>
@@ -67,11 +72,17 @@ export function Toolbar(props: ToolbarProps) {
           {props.canWriteInPlace ? 'Save' : 'Download'}
         </button>
         <span class="divider" />
-        <button type="button" class="button" onClick={props.onUndo} disabled={!props.canUndo} title={`Undo (${mod}Z)`}>
-          Undo
+        <button type="button" class="button quiet icon-button" onClick={props.onUndo} disabled={!props.canUndo} aria-label="Undo" title={`Undo (${mod}Z)`}>
+          <Icon>
+            <path d="M8.5 14.5 3.5 9.5l5-5" />
+            <path d="M3.5 9.5h11a6 6 0 0 1 0 12h-3.5" />
+          </Icon>
         </button>
-        <button type="button" class="button" onClick={props.onRedo} disabled={!props.canRedo} title={`Redo (${mod}Shift+Z)`}>
-          Redo
+        <button type="button" class="button quiet icon-button" onClick={props.onRedo} disabled={!props.canRedo} aria-label="Redo" title={`Redo (${mod}Shift+Z)`}>
+          <Icon>
+            <path d="m15.5 14.5 5-5-5-5" />
+            <path d="M20.5 9.5h-11a6 6 0 0 0 0 12H13" />
+          </Icon>
         </button>
         <span class="divider" />
         <div class="segmented" role="group" aria-label="View">
@@ -88,14 +99,46 @@ export function Toolbar(props: ToolbarProps) {
             Show resolved{props.resolvedTotal > 0 && <span class="count"> ({props.resolvedTotal})</span>}
           </span>
         </label>
-        <button type="button" class="button" onClick={props.onPurge} disabled={props.purgeable === 0}>
+        <button type="button" class="button quiet" onClick={props.onPurge} disabled={props.purgeable === 0}>
           Purge…
         </button>
         <span class="divider" />
-        <button type="button" class="button author-button" onClick={props.onAuthor} title="Change the name written on your comments">
+        <button type="button" class="button quiet author-button" onClick={props.onAuthor} title="Change the name written on your comments">
           {props.author || 'Set your name'}
         </button>
+        <a class="button quiet" href={REPO_URL} target="_blank" rel="noopener noreferrer" title="What CommentMark is: the specification and source on GitHub">
+          About
+        </a>
+        <ThemeToggle theme={props.theme} onToggle={props.onToggleTheme} />
       </div>
     </header>
+  )
+}
+
+/** Shows the theme the button switches to: a moon in light, a sun in dark. */
+function ThemeToggle({theme, onToggle}: {theme: 'light' | 'dark'; onToggle(): void}) {
+  const label = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+  return (
+    <button type="button" class="button quiet icon-button" onClick={onToggle} aria-label={label} title={label} data-testid="theme-toggle">
+      <Icon>
+        {theme === 'dark' ? (
+          <>
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+          </>
+        ) : (
+          <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z" />
+        )}
+      </Icon>
+    </button>
+  )
+}
+
+/** One stroke weight and size for every toolbar icon. */
+function Icon({children}: {children: ComponentChildren}) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      {children}
+    </svg>
   )
 }
