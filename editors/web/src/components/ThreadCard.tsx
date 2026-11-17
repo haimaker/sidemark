@@ -1,7 +1,8 @@
 import {useEffect, useRef, useState} from 'preact/hooks'
-import type {TargetedKeyboardEvent} from 'preact'
+import type {Ref, TargetedKeyboardEvent} from 'preact'
 import type {Comment, SidemarkDocument, Thread} from '@sidemark/core'
 import {isPrimaryModifier} from '../hooks'
+import {hasText, type Draft} from '../model/draft'
 import {CellView} from './CellView'
 
 /** Every thread action resolves `true` when the document changed. */
@@ -256,7 +257,7 @@ export function InlineConfirm(props: {text: string; confirmLabel: string; onConf
   )
 }
 
-/** The card for a comment being written. */
+/** The card for a new whole-document comment (opened by a button, so it takes focus). */
 export function Composer(props: {
   title: string
   author: string
@@ -311,4 +312,71 @@ function formatDate(comment: Comment): string {
   const {raw, value} = comment.date
   if (!value) return raw
   return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? dateOnly.format(value) : dateTime.format(value)
+}
+
+/**
+ * The new-comment box that follows the body selection (see `model/draft.ts`).
+ * It never focuses itself: the selection stays live until the person clicks
+ * or tabs into the box.
+ */
+export function DraftBox(props: {
+  draft: Draft
+  author: string
+  inputRef: Ref<HTMLTextAreaElement>
+  onEngage(): void
+  onText(text: string): void
+  onSubmit(): void
+  onCancel(): void
+}) {
+  const {draft} = props
+  if (draft.error && !hasText(draft)) {
+    return (
+      <div class="thread draft draft-refused" role="status" data-testid="draft">
+        {draft.error}
+      </div>
+    )
+  }
+  const blocked = draft.error !== null || draft.stale
+  return (
+    <article
+      class={`thread composer draft${draft.engaged ? ' is-focused' : ''}`}
+      aria-label="New comment"
+      data-testid="draft"
+      // Any press inside the box means "I am commenting": engage before the
+      // browser collapses the body selection.
+      onMouseDown={props.onEngage}
+    >
+      <p class="composer-title">New comment</p>
+      {draft.stale && <p class="draft-note warning">The text this comment was for changed. Select it again to attach the comment.</p>}
+      {draft.error && <p class="draft-note warning">{draft.error}</p>}
+      <textarea
+        ref={props.inputRef}
+        rows={draft.engaged ? 3 : 2}
+        aria-label="New comment"
+        placeholder="Comment on the selection…"
+        value={draft.text}
+        onFocus={props.onEngage}
+        onInput={(event) => props.onText(event.currentTarget.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && isPrimaryModifier(event)) {
+            event.preventDefault()
+            if (!blocked) props.onSubmit()
+          } else if (event.key === 'Escape') {
+            event.preventDefault()
+            event.stopPropagation()
+            props.onCancel()
+          }
+        }}
+      />
+      <div class="thread-buttons">
+        <button type="button" class="button primary" disabled={blocked || !hasText(draft)} onClick={props.onSubmit}>
+          Comment
+        </button>
+        <button type="button" class="button" onClick={props.onCancel}>
+          Cancel
+        </button>
+        {props.author && <span class="composer-author">as {props.author}</span>}
+      </div>
+    </article>
+  )
 }

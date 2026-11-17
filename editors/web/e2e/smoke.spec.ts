@@ -45,6 +45,10 @@ function collectErrors(page: Page): string[] {
 }
 
 const margin = (page: Page) => page.locator('.margin')
+const draftBox = (page: Page) => page.getByTestId('draft')
+
+/** Viewport top of the current browser selection. */
+const selectionTop = (page: Page) => page.evaluate(() => window.getSelection()!.getRangeAt(0).getClientRects()[0]!.top)
 
 test('select, comment, reply, resolve, undo, redo, download', async ({page}) => {
   const errors = collectErrors(page)
@@ -54,10 +58,11 @@ test('select, comment, reply, resolve, undo, redo, download', async ({page}) => 
 
   // New comment on a selection.
   await selectText(page, 'Select a phrase on this page')
-  await page.locator('.add-comment').click()
-  const composer = margin(page).locator('.composer textarea')
-  await composer.fill('Is *this* the first step?')
-  await margin(page).locator('.composer').getByRole('button', {name: 'Comment', exact: true}).click()
+  // The box appears beside the selection by itself.
+  const box = margin(page).getByTestId('draft')
+  await box.getByRole('textbox').click()
+  await box.getByRole('textbox').fill('Is *this* the first step?')
+  await box.getByRole('button', {name: 'Comment', exact: true}).click()
 
   // First write asks for the author once.
   const dialog = page.getByRole('dialog', {name: 'Your name on comments'})
@@ -175,10 +180,10 @@ test('open a file, edit, delete, document-level comment, purge', async ({page}) 
   expect(/[^\r]\n/.test(doc.source)).toBe(false)
 
   // Document-level comment.
-  await page.getByRole('button', {name: 'Comment on the document'}).click()
+  await page.getByRole('button', {name: 'Comment on the whole document'}).click()
   await page.getByRole('textbox', {name: 'New comment on the whole document'}).fill('Overall fine.')
-  await page.locator('.group .composer').getByRole('button', {name: 'Comment', exact: true}).click()
-  await expect(page.locator('section', {has: page.getByRole('heading', {name: /whole document/})})).toContainText('Overall fine.')
+  await page.locator('.doc-comments .composer').getByRole('button', {name: 'Comment', exact: true}).click()
+  await expect(page.locator('.doc-comments')).toContainText('Overall fine.')
 
   // Purge: choose only the detached threads.
   await page.getByRole('button', {name: 'Purge…'}).click()
@@ -213,20 +218,34 @@ test('a selection core cannot anchor shows an in-page message', async ({page}) =
   await page.getByTestId('file-input').setInputFiles({name: 't.md', mimeType: 'text/markdown', buffer: Buffer.from(source)})
   // The heading above the table is shown but is not part of the body (§6.2).
   await selectText(page, 'Discussion')
-  await page.locator('.add-comment').click()
-  await expect(page.getByRole('status')).toContainText('can’t be commented on')
-  await expect(page.locator('.composer')).toHaveCount(0)
+  // The refusal shows where the comment box would be, instead of an input.
+  await expect(draftBox(page)).toContainText('can’t be commented on')
+  await expect(draftBox(page).getByRole('textbox')).toHaveCount(0)
+  // A valid selection gets a box again.
+  await selectText(page, 'Some text')
+  await expect(draftBox(page).getByRole('textbox')).toBeVisible()
 })
 
-test('phone width: threads open in a bottom sheet', async ({browser}) => {
+test('phone width: threads and the comment box dock at the bottom', async ({browser}) => {
   const page = await browser.newPage({viewport: {width: 390, height: 844}})
+  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@phone'))
   await page.goto('./')
   await expect(page.locator('.margin')).toHaveCount(0)
   await page.locator('mark[data-threads~="c-intro1"]').first().click()
-  const sheet = page.getByRole('dialog', {name: 'Comment thread'})
+  const sheet = page.getByRole('region', {name: 'Comment panel'})
   await expect(sheet).toContainText('This is the whole idea')
   await sheet.getByRole('button', {name: 'Close'}).click()
   await expect(sheet).toHaveCount(0)
+
+  // Selecting text docks the comment box, without taking focus.
+  await selectText(page, 'sidecar file')
+  await expect(sheet.getByTestId('draft')).toBeVisible()
+  expect(await page.evaluate(() => window.getSelection()!.toString())).toBe('sidecar file')
+  await sheet.getByRole('textbox', {name: 'New comment'}).fill('From a phone.')
+  await sheet.getByRole('button', {name: 'Comment', exact: true}).click()
+  await expect(sheet).toHaveCount(0)
+  const doc = parse(await readSource(page))
+  expect(doc.threads.find((t) => t.comments[0]?.author === '@phone')?.attachment).toMatchObject({text: 'sidecar file'})
   await page.close()
 })
 
@@ -263,6 +282,7 @@ async function textPoint(page: Page, needle: string, edge: 'left' | 'right') {
 test('mouse: drag-select across list items and comment', async ({page}) => {
   await page.addInitScript(() => localStorage.setItem('sidemark.author', '@mouse'))
   await page.goto('./')
+  await page.locator('.doc-body ol').scrollIntoViewIfNeeded()
   const from = await textPoint(page, 'Reply to a thread', 'left')
   const to = await textPoint(page, 'Switch to', 'right')
   await page.mouse.move(from.x, from.y)
@@ -270,7 +290,7 @@ test('mouse: drag-select across list items and comment', async ({page}) => {
   await page.mouse.move((from.x + to.x) / 2, (from.y + to.y) / 2, {steps: 5})
   await page.mouse.move(to.x, to.y, {steps: 5})
   await page.mouse.up()
-  await page.locator('.add-comment').click()
+  await draftBox(page).getByRole('textbox').click()
   await page.keyboard.type('Two steps in one.')
   await page.keyboard.press('ControlOrMeta+Enter')
   const doc = parse(await readSource(page))
@@ -285,7 +305,10 @@ test('mouse: double-click a word and comment', async ({page}) => {
   await page.goto('./')
   const word = await textPoint(page, 'sidecar', 'left')
   await page.mouse.dblclick(word.x + 4, word.y)
-  await page.locator('.add-comment').click()
+  await expect(draftBox(page)).toBeVisible()
+  // Ctrl/⌘+Alt+M moves into the box.
+  await page.keyboard.press('ControlOrMeta+Alt+KeyM')
+  await expect(draftBox(page).getByRole('textbox')).toBeFocused()
   await page.keyboard.type('Define this?')
   await page.keyboard.press('ControlOrMeta+Enter')
   const doc = parse(await readSource(page))
@@ -329,12 +352,12 @@ test('File System Access: open with a handle, save in place, detect changes on d
     localStorage.setItem('sidemark.author', '@disk')
   })
   await page.goto('./')
-  await page.getByRole('button', {name: 'Open'}).click()
+  await page.getByRole('toolbar').getByRole('button', {name: 'Open'}).click()
   await expect(page.locator('.file-name')).toHaveText('disk.md')
   await expect(page.getByRole('button', {name: 'Save', exact: true})).toBeVisible()
 
   await selectText(page, 'in place')
-  await page.locator('.add-comment').click()
+  await draftBox(page).getByRole('textbox').click()
   await page.keyboard.type('Nice.')
   await page.keyboard.press('ControlOrMeta+Enter')
   await page.keyboard.press('ControlOrMeta+S')
@@ -368,7 +391,7 @@ test('drag and drop a file; unsaved changes are confirmed in-page first', async 
   await page.addInitScript(() => localStorage.setItem('sidemark.author', '@drop'))
   await page.goto('./')
   // Make the sample dirty.
-  await page.getByRole('button', {name: 'Comment on the document'}).click()
+  await page.getByRole('button', {name: 'Comment on the whole document'}).click()
   await page.keyboard.type('Pending.')
   await page.keyboard.press('ControlOrMeta+Enter')
   await expect(page.getByTestId('save-state')).toHaveText('Unsaved changes')
@@ -386,4 +409,100 @@ test('drag and drop a file; unsaved changes are confirmed in-page first', async 
   await expect(page.locator('.file-name')).toHaveText('dropped.md')
   await expect(page.locator('.doc-body')).toContainText('Hello from a drop.')
   await expect(page.getByTestId('save-state')).toHaveText('Saved')
+})
+
+test('comment box: appears on selection, follows it, disappears, survives focus, keeps drafts', async ({page}) => {
+  await page.addInitScript(() => localStorage.setItem('sidemark.author', '@sel'))
+  await page.goto('./')
+  const box = margin(page).getByTestId('draft')
+  const boxTop = async () => (await box.boundingBox())!.y
+  await expect(box).toHaveCount(0)
+
+  // Appears beside the selection, without taking focus: the selection stays.
+  await selectText(page, 'There is no server')
+  await expect(box).toBeVisible()
+  await expect.poll(async () => Math.abs((await boxTop()) - (await selectionTop(page)))).toBeLessThan(4)
+  expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('BODY')
+  expect(await page.evaluate(() => window.getSelection()!.toString())).toBe('There is no server')
+
+  // Follows a new selection.
+  await selectText(page, 'Code blocks are commented on')
+  await expect(box).toHaveCount(1)
+  await expect.poll(async () => Math.abs((await boxTop()) - (await selectionTop(page)))).toBeLessThan(4)
+
+  // Disappears when the selection is cleared without using the box.
+  await page.evaluate(() => window.getSelection()!.removeAllRanges())
+  await expect(box).toHaveCount(0)
+
+  // Focusing the box keeps it and highlights the range instead of the selection.
+  await selectText(page, 'Threads can overlap')
+  await box.getByRole('textbox').click()
+  await expect(page.locator('mark[data-threads~="pending"]')).toHaveText('Threads can overlap')
+  expect(await page.evaluate(() => window.getSelection()!.toString())).toBe('')
+  // A click elsewhere in the document does not remove a focused box.
+  const elsewhere = await textPoint(page, 'Code blocks are', 'left')
+  await page.mouse.click(elsewhere.x + 10, elsewhere.y)
+  await expect(box).toBeVisible()
+
+  // Draft text is never thrown away by clicks or new selections.
+  await box.getByRole('textbox').fill('Half-written thought')
+  await page.mouse.click(elsewhere.x + 10, elsewhere.y)
+  await selectText(page, 'There is no server')
+  await page.waitForTimeout(200)
+  await expect(box).toHaveCount(1)
+  await expect(box.getByRole('textbox')).toHaveValue('Half-written thought')
+  await expect(page.locator('mark[data-threads~="pending"]')).toHaveText('Threads can overlap')
+
+  // Escape in the box discards it.
+  await box.getByRole('textbox').press('Escape')
+  await expect(box).toHaveCount(0)
+  await expect(page.locator('mark[data-threads~="pending"]')).toHaveCount(0)
+
+  // Cancel discards too.
+  await selectText(page, 'There is no server')
+  await box.getByRole('textbox').click()
+  await box.getByRole('button', {name: 'Cancel'}).click()
+  await expect(box).toHaveCount(0)
+
+  // Keyboard focus (not a click) also engages the box.
+  await selectText(page, 'There is no server')
+  await expect(box).toBeVisible()
+  await box.getByRole('textbox').focus()
+  await page.keyboard.type('Typed after tabbing in.')
+  await page.keyboard.press('ControlOrMeta+Enter')
+  const doc = parse(await readSource(page))
+  expect(doc.threads.find((t) => t.comments[0]?.comment === 'Typed after tabbing in.')?.attachment).toMatchObject({text: 'There is no server'})
+})
+
+test('layout: wider document, whole-document comments on top, getting-started note', async ({page}) => {
+  await page.setViewportSize({width: 1280, height: 900})
+  await page.goto('./')
+  // 820px document beside a 300px margin at a 1280px laptop width.
+  expect((await page.locator('.doc-body').boundingBox())!.width).toBe(820)
+  await expect(page.locator('.margin')).toBeVisible()
+
+  // Whole-document comments sit above the body.
+  const order = await page.evaluate(() => {
+    const comments = document.querySelector('.doc-comments')!
+    const body = document.querySelector('.doc-body')!
+    return comments.compareDocumentPosition(body) & Node.DOCUMENT_POSITION_FOLLOWING
+  })
+  expect(order).toBeTruthy()
+  await expect(page.locator('.doc-comments')).toContainText('Feedback on the sample as a whole')
+
+  // The getting-started note explains drag and drop, and stays dismissed.
+  const intro = page.getByRole('complementary', {name: 'Getting started'})
+  await expect(intro).toContainText('drop it anywhere on this page')
+  await intro.getByRole('button', {name: 'Got it'}).click()
+  await expect(intro).toHaveCount(0)
+  await page.reload()
+  await expect(page.locator('.doc-body h1')).toBeVisible()
+  await expect(intro).toHaveCount(0)
+
+  // With no whole-document threads, only a compact entry point shows.
+  const source = '# Plain\n\nNo comments yet.\n'
+  await page.getByTestId('file-input').setInputFiles({name: 'plain.md', mimeType: 'text/markdown', buffer: Buffer.from(source)})
+  await expect(page.locator('.doc-comments.is-empty')).toBeVisible()
+  await expect(page.locator('.doc-comments .thread')).toHaveCount(0)
+  await expect(page.locator('.doc-comments').getByRole('button', {name: 'Comment on the whole document'})).toBeVisible()
 })

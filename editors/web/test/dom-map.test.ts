@@ -169,6 +169,46 @@ describe('DOM selection → source range', () => {
   })
 })
 
+describe('source → DOM', () => {
+  test('pointAt finds the text node and offset for a source offset', () => {
+    const source = 'Fish &amp; chips, **bold** words.\n\nNext paragraph.\n'
+    const ctx = setup(source)
+    for (const needle of ['Fish', 'chips', 'bold', 'words', 'Next']) {
+      const point = ctx.index.pointAt(source.indexOf(needle))!
+      expect(point.kind).toBe('text')
+      expect((point.node as Text).data.slice(point.offset)).toMatch(new RegExp('^' + needle))
+    }
+    // An offset inside an entity rounds down to the decoded character.
+    const amp = ctx.index.pointAt(source.indexOf('amp;'))!
+    expect((amp.node as Text).data.slice(amp.offset)).toMatch(/^& chips/)
+    // Between blocks: the next content.
+    const between = ctx.index.pointAt(source.indexOf('\n\n') + 1)!
+    expect((between.node as Text).data.slice(between.offset)).toMatch(/^Next/)
+    expect(ctx.index.pointAt(source.length)).toBeNull()
+  })
+
+  test('pointAt and rangeToSource round-trip at every character', () => {
+    const source = '# T\n\n> a *b* &amp; `c`\n> d\n\n1. x\n2. y **z**\n'
+    const ctx = setup(source)
+    for (const node of textNodes(ctx.container)) {
+      for (let i = 0; i < node.data.length; i++) {
+        const offset = ctx.index.pointToSource(node, i, 'start')!
+        const point = ctx.index.pointAt(offset)!
+        expect(point.node).toBe(node)
+        expect(point.offset).toBe(i)
+      }
+    }
+  })
+
+  test('images are found as atoms', () => {
+    const source = 'See ![x](https://example.com/x.png) here.\n'
+    const ctx = setup(source)
+    const point = ctx.index.pointAt(source.indexOf('!['))!
+    expect(point.kind).toBe('atom')
+    expect((point.node as Element).classList.contains('sm-image')).toBe(true)
+  })
+})
+
 describe('rendering with highlights', () => {
   const base = 'The quick brown fox jumps over the lazy dog.\n\nA second paragraph here.\n'
 

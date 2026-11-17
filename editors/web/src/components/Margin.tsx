@@ -29,6 +29,12 @@ export function Margin({items, focusedId, rendered, layoutKey}: MarginProps) {
   const [anchors, setAnchors] = useState<Record<string, number>>({})
   const [heights, setHeights] = useState<Record<string, number>>({})
   const [tick, setTick] = useState(0)
+  /** Items already drawn at a measured position; only these animate when they move. */
+  const placed = useRef(new Set<string>())
+  useLayoutEffect(() => {
+    const ids = new Set(items.map((item) => item.id).filter((id) => id in anchors))
+    placed.current = ids
+  })
 
   // Where each range starts on screen, relative to the margin.
   useLayoutEffect(() => {
@@ -37,8 +43,8 @@ export function Margin({items, focusedId, rendered, layoutKey}: MarginProps) {
     const base = margin.getBoundingClientRect().top
     const next: Record<string, number> = {}
     for (const item of items) {
-      const el = rendered.marks.get(item.id)?.[0] ?? elementOf(rendered.index.domAt(item.start))
-      if (el) next[item.id] = el.getBoundingClientRect().top - base
+      const top = topOf(rendered, item.start)
+      if (top !== null) next[item.id] = top - base
     }
     setAnchors((previous) => (sameNumbers(previous, next) ? previous : next))
   }, [items, rendered, layoutKey, tick])
@@ -90,7 +96,12 @@ export function Margin({items, focusedId, rendered, layoutKey}: MarginProps) {
           class={`margin-slot${item.id === focusedId ? ' is-focused' : ''}`}
           data-slot={item.id}
           ref={slotRef}
-          style={{transform: `translateY(${tops.get(item.id) ?? 0}px)`, visibility: item.id in anchors ? 'visible' : 'hidden'}}
+          style={{
+            transform: `translateY(${tops.get(item.id) ?? 0}px)`,
+            visibility: item.id in anchors ? 'visible' : 'hidden',
+            // A card appearing for the first time jumps into place instead of sliding in from the top.
+            transition: placed.current.has(item.id) ? undefined : 'none'
+          }}
         >
           {item.render()}
         </div>
@@ -99,9 +110,18 @@ export function Margin({items, focusedId, rendered, layoutKey}: MarginProps) {
   )
 }
 
-function elementOf(node: Node | null): Element | null {
-  if (!node) return null
-  return node instanceof Element ? node : node.parentElement
+/** Viewport top of the line where source offset `offset` is shown. */
+function topOf(rendered: BodyRenderResult, offset: number): number | null {
+  const point = rendered.index.pointAt(offset)
+  if (!point) return null
+  if (point.kind === 'atom') return (point.node as Element).getBoundingClientRect().top
+  const text = point.node as Text
+  const range = document.createRange()
+  const at = Math.min(point.offset, Math.max(0, text.length - 1))
+  range.setStart(text, at)
+  range.setEnd(text, Math.min(text.length, at + 1))
+  const rect = range.getClientRects()[0] ?? range.getBoundingClientRect()
+  return rect.top
 }
 
 function sameNumbers(a: Record<string, number>, b: Record<string, number>): boolean {

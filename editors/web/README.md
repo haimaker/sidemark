@@ -42,7 +42,8 @@ Not supported: editing the body text, and re-attaching a detached thread to new 
 | `src/model/history.ts` | Undo/redo over source strings, and the saved marker. |
 | `src/model/groups.ts` | Grouping threads for display (§10), purge counts, which nodes to hide. |
 | `src/model/layout.ts` | Margin layout: cards beside their ranges without overlapping. |
-| `src/model/author.ts`, `errors.ts` | Remembered author; messages for core's refusals. |
+| `src/model/draft.ts` | The new-comment box that follows the selection: when it appears, moves, stays and goes. |
+| `src/model/author.ts`, `prefs.ts`, `errors.ts` | Remembered author and preferences; messages for core's refusals. |
 | `src/files.ts` | Open (File System Access API, file input, drag and drop) and save (in place, or download). |
 | `src/app.tsx` | State and actions. |
 | `src/components/` | Preact components: toolbar, document view, margin, thread cards, dialogs, source view. |
@@ -52,7 +53,9 @@ Not supported: editing the body text, and re-attaching a detached thread to new 
 
 ## Using it
 
-- **Comment:** select text and press *Comment* (or Ctrl+Alt+M / ⌘⌥M). *Comment on the document* adds a document-level thread.
+- **Comment:** select text and a comment box appears in the margin beside it, without taking focus (the selection stays, so copying still works). Click into the box, or press Ctrl+Alt+M / ⌘⌥M, to write; from then on the box stays and its range is highlighted. Clearing the selection removes an unused box; a box with text in it is only discarded by Escape or Cancel. At phone width the box docks at the bottom of the screen. A range core refuses shows the reason in the box instead.
+- **Whole-document comments** are listed at the top of the page, above the document, with a *Comment on the whole document* entry point.
+- **Getting started:** the first visit shows how to drag and drop a file or open one; dismissing it is remembered in this browser.
 - **Threads:** click a highlight to focus its thread, or a thread to highlight its text. Overlapping highlights cycle on repeated clicks. Ctrl+Enter / ⌘↩ submits a comment or reply.
 - **Save:** Ctrl+S / ⌘S. A file opened through the system file picker (or dropped, in Chromium) is written back in place, after checking it has not changed on disk. Otherwise the file is downloaded. Saving runs core's `maintain`, which may refresh Quote cells, repair anchors and remove stray anchors; those changes can be undone like any other.
 - **Undo / redo:** Ctrl+Z / ⌘Z and Ctrl+Shift+Z / ⌘⇧Z outside text fields.

@@ -4,22 +4,14 @@ import type {SidemarkDocument, SourceRange} from '@sidemark/core'
 import {renderBody, type BodyRenderResult, type Highlight} from '../body/render'
 import {PENDING_ID} from '../model/groups'
 
-export interface BodySelection {
-  range: SourceRange
-  /** Selection rectangle relative to the document column. */
-  top: number
-  bottom: number
-  /** Right edge of the selection's last line, relative to the document column. */
-  right: number
-}
-
 interface DocumentViewProps {
   doc: SidemarkDocument
   highlights: Highlight[]
   hidden: Set<Nodes>
   focusedId: string | null
   onRendered(result: BodyRenderResult): void
-  onSelection(selection: BodySelection | null): void
+  /** The body selection as a source range, or `null` when there is none in the body. */
+  onSelection(selection: SourceRange | null): void
   /** A highlight was clicked; `ids` are the threads under the pointer. */
   onHighlightClick(ids: string[]): void
   onBackgroundClick(): void
@@ -78,16 +70,10 @@ export function DocumentView(props: DocumentViewProps) {
   return <div class="doc-body" ref={ref} onClick={onClick} aria-label="Document" role="document" />
 }
 
-function readSelection(container: HTMLElement | null, rendered: BodyRenderResult | null): BodySelection | null {
+function readSelection(container: HTMLElement | null, rendered: BodyRenderResult | null): SourceRange | null {
   const selection = window.getSelection()
   if (!container || !rendered || !selection || selection.rangeCount === 0 || selection.isCollapsed) return null
   const range = selection.getRangeAt(0)
   if (!container.contains(range.commonAncestorContainer)) return null
-  const source = rendered.index.rangeToSource(range)
-  if (!source) return null
-  const column = (container.closest('.doc-column') ?? container).getBoundingClientRect()
-  const rects = range.getClientRects()
-  const first = rects[0] ?? range.getBoundingClientRect()
-  const last = rects[rects.length - 1] ?? first
-  return {range: source, top: first.top - column.top, bottom: last.bottom - column.top, right: last.right - column.left}
+  return rendered.index.rangeToSource(range)
 }

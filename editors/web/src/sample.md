@@ -2,7 +2,7 @@
 
 Sidemark keeps Google Docs style comment threads <a id="c-intro1"></a>inside the Markdown file itself<a id="c-intro1-end"></a>. There is no server and no sidecar file: the comments live in a table at the end of the document, and invisible anchors mark the text they refer to.
 
-This page is a working editor. **Select any text** and choose *Comment* to start a thread. Files are read and saved in your browser; <a id="c-done66"></a>nothing is uploaded<a id="c-done66-end"></a>.
+This page is a working editor. **Select any text** and a comment box appears beside it. Files are read and saved in your browser; <a id="c-done66"></a>nothing is uploaded<a id="c-done66-end"></a>.
 
 ## Try it
 

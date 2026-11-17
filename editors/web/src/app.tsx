@@ -18,10 +18,10 @@ import {
 } from '@sidemark/core'
 import type {BodyRenderResult} from './body/render'
 import {AuthorDialog, ConfirmDialog, PurgeDialog, type ConfirmRequest} from './components/Dialogs'
-import {DocumentView, type BodySelection} from './components/DocumentView'
+import {DocumentView} from './components/DocumentView'
 import {Margin, type MarginItem} from './components/Margin'
 import {SourceView} from './components/SourceView'
-import {Composer, ThreadCard, type ThreadActions} from './components/ThreadCard'
+import {Composer, DraftBox, ThreadCard, type ThreadActions} from './components/ThreadCard'
 import {Toolbar} from './components/Toolbar'
 import {
   canPickWithHandle,
@@ -36,14 +36,15 @@ import {
 } from './files'
 import {isPrimaryModifier, isTextField, useMediaQuery} from './hooks'
 import {loadAuthor, saveAuthor} from './model/author'
+import {followSelection, hasText, mapRange, sameRange, type Draft} from './model/draft'
 import {describeError} from './model/errors'
 import {groupThreads, hiddenNodes, highlightsFor, PENDING_ID, purgeCandidates, rangeOf} from './model/groups'
 import * as H from './model/history'
+import {INTRO_DISMISSED, readPref, writePref} from './model/prefs'
 import sample from './sample.md?raw'
 
 const SAMPLE_NAME = 'sidemark-sample.md'
 
-type Composing = {kind: 'anchored'; range: SourceRange} | {kind: 'document'} | null
 type Message = {text: string; tone: 'info' | 'error'; id: number}
 
 interface FileInfo {
@@ -71,8 +72,22 @@ export function App() {
   const [view, setView] = useState<'document' | 'source'>('document')
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [composing, setComposing] = useState<Composing>(null)
-  const [selection, setSelection] = useState<BodySelection | null>(null)
+  /** Writing a whole-document comment. */
+  const [docComposing, setDocComposing] = useState(false)
+  /** The body selection, as a source range. */
+  const [selection, setSelectionState] = useState<SourceRange | null>(null)
+  const setSelection = useCallback((next: SourceRange | null) => {
+    setSelectionState((current) => (current && next && sameRange(current, next)) || current === next ? current : next)
+  }, [])
+  /** The new-comment box that follows the selection (see model/draft.ts). */
+  const [draft, setDraftState] = useState<Draft | null>(null)
+  const draftRef = useRef(draft)
+  const setDraft = useCallback((next: Draft | null) => {
+    draftRef.current = next
+    setDraftState(next)
+  }, [])
+  const draftInput = useRef<HTMLTextAreaElement>(null)
+  const [showIntro, setShowIntro] = useState(() => readPref(INTRO_DISMISSED) !== '1')
   const [rendered, setRendered] = useState<BodyRenderResult | null>(null)
   const [message, setMessage] = useState<Message | null>(null)
   const [confirm, setConfirm] = useState<ConfirmRequest | null>(null)
@@ -83,7 +98,10 @@ export function App() {
   const fileInput = useRef<HTMLInputElement>(null)
 
   const groups = useMemo(() => groupThreads(doc, showResolved), [doc, showResolved])
-  const pendingRange = composing?.kind === 'anchored' ? composing.range : null
+  // The draft's range is highlighted once the person is writing in the box;
+  // before that the live browser selection shows it (re-rendering the body
+  // would destroy that selection).
+  const pendingRange = draft?.engaged && !draft.stale ? draft.range : null
   const highlights = useMemo(() => highlightsFor(groups, pendingRange), [groups, pendingRange])
   const hidden = useMemo(() => hiddenNodes(doc), [doc])
 
@@ -181,76 +199,132 @@ export function App() {
   )
 
   // --- New comments ---------------------------------------------------------
-  const startComment = useCallback(() => {
-    if (!selection) return
-    // Ask core now, so a range it cannot anchor is reported before anyone types.
+  /** Core's refusal for a range, checked before anyone types. */
+  const checkRange = useCallback((range: SourceRange): string | null => {
     try {
-      createThread(H.current(historyRef.current), {range: selection.range, author: '', comment: 'check'})
+      createThread(H.current(historyRef.current), {range, author: '', comment: 'check'})
+      return null
     } catch (error) {
-      notify(describeError(error), 'error')
-      return
+      return describeError(error)
     }
-    setComposing({kind: 'anchored', range: selection.range})
-    setFocusedId(PENDING_ID)
-    setSheetOpen(true)
+  }, [])
+
+  // The box follows the selection. Short debounce: a drag fires many
+  // selection changes, and each check re-parses the document.
+  useEffect(() => {
+    const update = () => {
+      const current = draftRef.current
+      const next = followSelection(current, selection, checkRange)
+      if (next === current) return
+      setDraft(next)
+      // A new box sits exactly beside its selection.
+      if (next && !next.engaged && (!current || !sameRange(current.range, next.range))) setFocusedId(null)
+    }
+    if (!selection) return update()
+    const timer = setTimeout(update, 80)
+    return () => clearTimeout(timer)
+  }, [selection, checkRange, setDraft])
+
+  // Keep the draft's range pointing at the same text when the source changes.
+  const draftSource = useRef(source)
+  useEffect(() => {
+    const before = draftSource.current
+    draftSource.current = source
+    const current = draftRef.current
+    if (!current || before === source) return
+    const range = mapRange(before, source, current.range)
+    if (range) setDraft({...current, range})
+    else if (hasText(current)) setDraft({...current, stale: true})
+    else setDraft(null)
+  }, [source, setDraft])
+
+  const engageDraft = useCallback(() => {
+    const current = draftRef.current
+    if (current && !current.engaged) setDraft({...current, engaged: true})
+    setFocusedId(null)
+  }, [setDraft])
+
+  const cancelDraft = useCallback(() => {
+    setDraft(null)
+    // Forget the selection too, so selecting the same text again brings the box back.
+    setSelection(null)
     window.getSelection()?.removeAllRanges()
-  }, [selection, notify])
+  }, [setDraft, setSelection])
+
+  const submitDraft = useCallback(async () => {
+    const current = draftRef.current
+    if (!current || current.stale || current.error) return
+    const by = await ensureAuthor()
+    if (by === null) return
+    let id: string | null = null
+    const ok = apply((s) => {
+      const created = createThread(s, {range: current.range, author: by, comment: current.text})
+      id = created.id
+      return created.source
+    })
+    if (ok) {
+      setDraft(null)
+      setSelection(null)
+      setFocusedId(id)
+      setSheetOpen(false)
+    }
+  }, [apply, ensureAuthor, setDraft, setSelection])
+
+  /** Ctrl/⌘+Alt+M: move into the comment box for the current selection. */
+  const focusDraft = useCallback(() => {
+    const input = draftInput.current
+    if (input) input.focus()
+    else notify(draftRef.current?.error ?? 'Select some text in the document to comment on it.', draftRef.current?.error ? 'error' : 'info')
+  }, [notify])
 
   const startDocumentComment = useCallback(() => {
-    setComposing({kind: 'document'})
+    setDocComposing(true)
     setFocusedId(null)
   }, [])
 
-  const cancelComposer = useCallback(() => {
-    setComposing(null)
-    setFocusedId(null)
-    setSheetOpen(false)
-  }, [])
-
-  const submitComposer = useCallback(
+  const submitDocumentComment = useCallback(
     async (text: string) => {
-      if (!composing) return false
       const by = await ensureAuthor()
       if (by === null) return false
       let id: string | null = null
       const ok = apply((s) => {
-        const created = createThread(s, {range: composing.kind === 'anchored' ? composing.range : null, author: by, comment: text})
+        const created = createThread(s, {range: null, author: by, comment: text})
         id = created.id
         return created.source
       })
       if (ok) {
-        setComposing(null)
+        setDocComposing(false)
         setFocusedId(id)
-        setSheetOpen(false)
       }
       return ok
     },
-    [composing, apply, ensureAuthor]
+    [apply, ensureAuthor]
   )
 
+  const dismissIntro = useCallback(() => {
+    writePref(INTRO_DISMISSED, '1')
+    setShowIntro(false)
+  }, [])
+
   // --- Undo / redo ------------------------------------------------------------
-  const undo = useCallback(() => {
-    setComposing(null)
-    setHistory(H.undo(historyRef.current))
-  }, [setHistory])
-  const redo = useCallback(() => {
-    setComposing(null)
-    setHistory(H.redo(historyRef.current))
-  }, [setHistory])
+  const undo = useCallback(() => setHistory(H.undo(historyRef.current)), [setHistory])
+  const redo = useCallback(() => setHistory(H.redo(historyRef.current)), [setHistory])
 
   // --- Files ----------------------------------------------------------------
   const load = useCallback(
     (opened: OpenedFile) => {
       setHistory(H.createHistory(opened.source))
       setFile({name: opened.name, handle: opened.handle, lastModified: opened.lastModified})
-      setComposing(null)
+      setDraft(null)
+      setDocComposing(false)
       setFocusedId(null)
       setSelection(null)
+      setShowIntro(false)
       window.scrollTo(0, 0)
       const count = parse(opened.source).threads.length
       notify(`Opened ${opened.name}: ${count} thread${count === 1 ? '' : 's'}.`)
     },
-    [setHistory, notify]
+    [setHistory, notify, setDraft, setSelection]
   )
 
   /** Run `then` now, or after confirming that unsaved changes may be lost. */
@@ -384,7 +458,7 @@ export function App() {
         open()
       } else if (primary && event.altKey && event.code === 'KeyM') {
         event.preventDefault()
-        startComment()
+        focusDraft()
       } else if (primary && !isTextField(event.target) && (key === 'z' || key === 'y')) {
         event.preventDefault()
         if (key === 'y' || event.shiftKey) redo()
@@ -396,12 +470,11 @@ export function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [save, open, startComment, undo, redo])
+  }, [save, open, focusDraft, undo, redo])
 
   // --- Margin ---------------------------------------------------------------
   const focusThread = useCallback((id: string) => {
     setFocusedId((current) => (current === id ? current : id))
-    setComposing((c) => (c && id !== PENDING_ID ? null : c))
   }, [])
 
   const onHighlightClick = useCallback(
@@ -414,7 +487,6 @@ export function App() {
       let next = [...ids].sort((a, b) => byLength(a) - byLength(b))[0]!
       // Clicking the same place again cycles through overlapping threads.
       if (focusedId && ids.includes(focusedId) && ids.length > 1) next = ids[(ids.indexOf(focusedId) + 1) % ids.length]!
-      setComposing(null)
       setFocusedId(next)
       setSheetOpen(true)
     },
@@ -434,22 +506,32 @@ export function App() {
     />
   )
 
-  const composer = (title: string) => (
-    <Composer title={title} author={author} onSubmit={submitComposer} onCancel={cancelComposer} />
-  )
+  const draftBox = () =>
+    draft && (
+      <DraftBox
+        draft={draft}
+        author={author}
+        inputRef={draftInput}
+        onEngage={engageDraft}
+        onText={(text) => setDraft({...draftRef.current!, text})}
+        onSubmit={() => void submitDraft()}
+        onCancel={cancelDraft}
+      />
+    )
 
   const marginItems: MarginItem[] = useMemo(() => {
-    const items: MarginItem[] = groups.anchored.map((thread) => ({
-      id: thread.id,
-      start: rangeOf(thread)!.start,
-      render: () => card(thread, false)
-    }))
-    if (composing?.kind === 'anchored') {
-      items.push({id: PENDING_ID, start: composing.range.start, render: () => composer('New comment')})
+    const items: MarginItem[] = []
+    // First in the DOM, so Tab reaches the box before the other threads.
+    if (draft) items.push({id: PENDING_ID, start: draft.range.start, render: draftBox})
+    for (const thread of groups.anchored) {
+      items.push({id: thread.id, start: rangeOf(thread)!.start, render: () => card(thread, false)})
     }
     return items
-    // `card` and `composer` close over the values listed here.
-  }, [groups, composing, focusedId, doc, actions, author, submitComposer, cancelComposer, focusThread])
+    // `card` and `draftBox` close over the values listed here.
+  }, [groups, draft, focusedId, doc, actions, author, submitDraft, cancelDraft, engageDraft, focusThread])
+
+  /** The margin keeps the focused thread beside its text; otherwise the comment box. */
+  const marginFocus = focusedId ?? (draft ? PENDING_ID : null)
 
   const focusedAnchored = groups.anchored.find((t) => t.id === focusedId) ?? null
 
@@ -492,30 +574,38 @@ export function App() {
       ) : (
         <main class="page">
           <div class="doc-column">
+            {showIntro && <Intro onOpen={open} onDismiss={dismissIntro} />}
+
+            <section class={`doc-comments${counts.document ? '' : ' is-empty'}`} aria-labelledby="doc-group">
+              <h2 id="doc-group" class={counts.document ? 'group-title' : 'visually-hidden'}>
+                Comments on this document <span class="count">{counts.document || ''}</span>
+              </h2>
+              {groups.document.map((thread) => card(thread, false))}
+              {docComposing ? (
+                <Composer
+                  title="New comment on the whole document"
+                  author={author}
+                  onSubmit={submitDocumentComment}
+                  onCancel={() => setDocComposing(false)}
+                />
+              ) : (
+                <button type="button" class="link-button doc-comment-add" onClick={startDocumentComment}>
+                  Comment on the whole document
+                </button>
+              )}
+              {groups.hiddenResolved.document > 0 && <HiddenNote count={groups.hiddenResolved.document} />}
+            </section>
+
             <DocumentView
               doc={doc}
               highlights={highlights}
               hidden={hidden}
-              focusedId={focusedId}
+              focusedId={focusedId ?? (draft?.engaged ? PENDING_ID : null)}
               onRendered={setRendered}
               onSelection={setSelection}
               onHighlightClick={onHighlightClick}
-              onBackgroundClick={() => {
-                if (!composing) setFocusedId(null)
-              }}
+              onBackgroundClick={() => setFocusedId(null)}
             />
-            {selection && !composing && (
-              <button
-                type="button"
-                class="button primary add-comment"
-                style={wide ? {top: `${selection.bottom + 6}px`, left: `min(${Math.max(0, selection.right - 48)}px, calc(100% - 120px))`} : undefined}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={startComment}
-                title="Comment on the selected text (Ctrl+Alt+M)"
-              >
-                Comment
-              </button>
-            )}
 
             {!wide && (
               <section class="group" aria-labelledby="text-group">
@@ -528,21 +618,6 @@ export function App() {
               </section>
             )}
 
-            <section class="group" aria-labelledby="doc-group">
-              <h2 id="doc-group" class="group-title">
-                About the whole document <span class="count">{counts.document || ''}</span>
-              </h2>
-              {groups.document.map((thread) => card(thread, false))}
-              {composing?.kind === 'document' ? (
-                composer('New comment on the whole document')
-              ) : (
-                <button type="button" class="button" onClick={startDocumentComment}>
-                  Comment on the document
-                </button>
-              )}
-              {groups.hiddenResolved.document > 0 && <HiddenNote count={groups.hiddenResolved.document} />}
-            </section>
-
             {(counts.detached > 0 || groups.hiddenResolved.detached > 0) && (
               <section class="group" aria-labelledby="detached-group">
                 <h2 id="detached-group" class="group-title">
@@ -554,7 +629,6 @@ export function App() {
               </section>
             )}
 
-
             {doc.malformedRows.length > 0 && (
               <p class="group-note warning">
                 The comments table has {doc.malformedRows.length} row{doc.malformedRows.length === 1 ? '' : 's'} without a valid
@@ -563,16 +637,22 @@ export function App() {
             )}
           </div>
 
-          {wide && <Margin items={marginItems} focusedId={focusedId} rendered={rendered} layoutKey={highlights} />}
+          {wide && <Margin items={marginItems} focusedId={marginFocus} rendered={rendered} layoutKey={highlights} />}
         </main>
       )}
 
-      {!wide && view === 'document' && sheetOpen && (composing?.kind === 'anchored' || focusedAnchored) && (
-        <div class="sheet" role="dialog" aria-label="Comment thread">
-          <button type="button" class="button quiet sheet-close" onClick={() => (composing ? cancelComposer() : setSheetOpen(false))}>
-            Close
-          </button>
-          {composing?.kind === 'anchored' ? composer('New comment') : card(focusedAnchored!, true, () => setSheetOpen(false))}
+      {/* Phone width: no margin. The comment box and a tapped thread dock at the bottom. */}
+      {!wide && view === 'document' && (draft || (sheetOpen && focusedAnchored)) && (
+        <div class="sheet" role="region" aria-label="Comment panel">
+          {sheetOpen && focusedAnchored && (
+            <>
+              <button type="button" class="button quiet sheet-close" onClick={() => setSheetOpen(false)}>
+                Close
+              </button>
+              {card(focusedAnchored, true, () => setSheetOpen(false))}
+            </>
+          )}
+          {draftBox()}
         </div>
       )}
 
@@ -627,5 +707,26 @@ function HiddenNote({count}: {count: number}) {
     <p class="group-note">
       {count} resolved thread{count === 1 ? '' : 's'} hidden.
     </p>
+  )
+}
+
+function Intro({onOpen, onDismiss}: {onOpen(): void; onDismiss(): void}) {
+  return (
+    <aside class="intro" aria-label="Getting started">
+      <div>
+        <p class="intro-title">Comment on your own Markdown file</p>
+        <p>
+          Drag a <code>.md</code> file from your computer and drop it anywhere on this page, or{' '}
+          <button type="button" class="link-button inline" onClick={onOpen}>
+            open a file
+          </button>
+          . The file is read in your browser and never uploaded. Saving writes the comments back into the file, or downloads a copy
+          where the browser cannot write to it.
+        </p>
+      </div>
+      <button type="button" class="button quiet intro-dismiss" onClick={onDismiss}>
+        Got it
+      </button>
+    </aside>
   )
 }

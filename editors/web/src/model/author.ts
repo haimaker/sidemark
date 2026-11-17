@@ -1,25 +1,17 @@
 /**
  * The author string (SPEC §6.4 Author, §10): asked for once, remembered in
- * localStorage. Storage can be unavailable (private windows, blocked site
- * data), so every access is wrapped and failure just means "not remembered".
+ * localStorage (see `prefs.ts`).
  */
+import {readPref, writePref} from './prefs'
 
 const KEY = 'sidemark.author'
 
-export function loadAuthor(storage: Pick<Storage, 'getItem'> | null = safeStorage()): string {
-  try {
-    return storage?.getItem(KEY)?.trim() ?? ''
-  } catch {
-    return ''
-  }
+export function loadAuthor(storage?: Pick<Storage, 'getItem'> | null): string {
+  return readPref(KEY, storage)?.trim() ?? ''
 }
 
-export function saveAuthor(author: string, storage: Pick<Storage, 'setItem'> | null = safeStorage()): void {
-  try {
-    storage?.setItem(KEY, author)
-  } catch {
-    // Not remembered; the editor still works for this session.
-  }
+export function saveAuthor(author: string, storage?: Pick<Storage, 'setItem'> | null): void {
+  writePref(KEY, author, storage)
 }
 
 /** Collapse whitespace, as core does when writing the Author cell. */
@@ -40,12 +32,4 @@ export function suggestHandle(input: string): string | null {
 /** Emails are discouraged as authors in shared documents (SPEC §12). */
 export function looksLikeEmail(author: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(author)
-}
-
-function safeStorage(): Storage | null {
-  try {
-    return typeof localStorage === 'undefined' ? null : localStorage
-  } catch {
-    return null
-  }
 }

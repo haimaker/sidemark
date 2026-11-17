@@ -270,14 +270,14 @@ textarea {
 
 .page {
   display: grid;
-  grid-template-columns: minmax(0, 720px);
+  grid-template-columns: minmax(0, 820px);
   justify-content: center;
   gap: 24px;
   padding: 24px 16px 96px;
 }
 
 .is-wide .page:not(.page-source) {
-  grid-template-columns: minmax(0, 720px) 300px;
+  grid-template-columns: minmax(0, 820px) 300px;
   align-items: start;
 }
 
@@ -477,24 +477,80 @@ textarea {
   background: var(--hl-pending);
 }
 
-/* --- Comment button ------------------------------------------------------- */
+/* --- Getting started and whole-document comments ------------------------ */
 
-.add-comment {
-  z-index: 5;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+.intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--page) 60%, transparent);
+  font-size: 14px;
 }
 
-.is-wide .add-comment {
-  position: absolute;
+.intro p {
+  margin: 0;
 }
 
-.is-narrow .add-comment {
-  position: fixed;
-  left: 50%;
-  bottom: 20px;
-  transform: translateX(-50%);
-  min-height: 44px;
-  padding: 8px 20px;
+.intro .intro-title {
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.intro-dismiss {
+  flex: none;
+}
+
+.link-button.inline {
+  padding: 0;
+  font-size: inherit;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.doc-comments {
+  margin-bottom: 16px;
+}
+
+.doc-comments > .thread {
+  margin-bottom: 8px;
+}
+
+.doc-comments.is-empty {
+  margin-bottom: 8px;
+}
+
+.doc-comment-add {
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.doc-comment-add::before {
+  content: '+';
+  display: inline-block;
+  width: 1em;
+  margin-right: 4px;
+  font-weight: 600;
+}
+
+/* --- New-comment box ------------------------------------------------------ */
+
+.draft:not(.is-focused) {
+  border-style: dashed;
+  border-color: var(--border-strong);
+}
+
+.draft-refused {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.draft-note {
+  margin: 0 0 8px;
+  font-size: 13px;
 }
 
 /* --- Margin --------------------------------------------------------------- */
@@ -718,6 +774,10 @@ textarea {
   border-top: 1px solid var(--border-strong);
   border-radius: 14px 14px 0 0;
   box-shadow: 0 -6px 24px rgb(0 0 0 / 0.18);
+}
+
+.sheet > .thread + .thread {
+  margin-top: 10px;
 }
 
 .sheet-close {

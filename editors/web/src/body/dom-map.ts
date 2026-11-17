@@ -133,14 +133,21 @@ export class BodyIndex {
   }
 
   /**
-   * The first registered DOM node whose content ends after `offset`: where a
-   * range starting at `offset` begins on screen.
+   * Source → DOM: the DOM point where content at or after source offset
+   * `offset` is shown. For text it is a (text node, offset) pair; for an atom
+   * it is the atom element with offset 0. `null` if nothing is registered at
+   * or after `offset`.
    */
-  domAt(offset: number): Node | null {
+  pointAt(offset: number): {node: Node; offset: number; kind: 'text' | 'atom'} | null {
     for (const entry of this.ordered) {
-      if (entry.segment.range.end > offset) return entry.dom
+      const segment = entry.segment
+      if (segment.range.end <= offset) continue
+      if (segment.kind === 'atom') return {node: entry.dom, offset: 0, kind: 'atom'}
+      const value = this.sourceMap.fromSource(segment.node, Math.max(offset, segment.range.start))
+      const clamped = Math.max(segment.from, Math.min(segment.to, value))
+      return {node: entry.dom, offset: clamped - segment.from, kind: 'text'}
     }
-    return this.ordered.at(-1)?.dom ?? null
+    return null
   }
 
   // -------------------------------------------------------------------------
