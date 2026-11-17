@@ -1,0 +1,13 @@
+{
+  "description": "A document without a final newline still has none afterwards (§9.1).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "without"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

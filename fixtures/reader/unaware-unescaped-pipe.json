@@ -1,0 +1,52 @@
+{
+  "description": "SPEC §11 \"Type an unescaped | in a comment\": the row gains a cell and the text is split; the Status column receives \"b\" (unrecognised, ignored). Escaped \\| stays in the cell.",
+  "projection": "Text with words.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 2
+  },
+  "threads": [
+    {
+      "id": "c-1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "words",
+      "rangeText": "words",
+      "quote": {
+        "prefix": "Text with ",
+        "quote": "words",
+        "suffix": ".",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@w",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "use a",
+          "status": "b",
+          "statusValue": null
+        },
+        {
+          "author": "@w",
+          "date": "2026-11-17T10:40Z",
+          "dateParsed": "2026-11-17T10:40:00.000Z",
+          "comment": "use a \\| b",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

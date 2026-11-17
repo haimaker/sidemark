@@ -1,0 +1,10 @@
+{
+  "description": "Resolving adds a row with Status `resolved` and may have an empty Comment (§9.3).",
+  "operation": "setStatus",
+  "args": {
+    "thread": "c-ccc333",
+    "status": "resolved",
+    "author": "@b",
+    "date": "2026-11-17T10:32Z"
+  }
+}

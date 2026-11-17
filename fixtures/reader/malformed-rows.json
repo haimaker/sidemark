@@ -1,0 +1,49 @@
+{
+  "description": "SPEC §6.5: rows without a valid Ref belong to no thread. Upper-case and over-long IDs and links to other targets are not valid Refs.",
+  "projection": "Some text.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 5
+  },
+  "threads": [
+    {
+      "id": "c-1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "text",
+      "rangeText": "text",
+      "quote": {
+        "prefix": "Some ",
+        "quote": "text",
+        "suffix": ".",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "ok",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": [
+    "| C-1 | | @a | | upper case | |",
+    "| [see](https://example.com) | | @a | | external link | |",
+    "| c-0123456789abcdefghijklmnopqrstuvw | | @a | | 33 characters | |",
+    "| | | @a | | empty ref | |"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "description": "A boundary inside link text snaps outward to cover the whole link (§5.3).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "from": "full",
+      "to": "first"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

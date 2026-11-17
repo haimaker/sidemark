@@ -1,0 +1,84 @@
+{
+  "description": "SPEC §6.3: readers group rows by ID even when they are not contiguous, keeping row order.",
+  "projection": "Alpha one and beta two.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 4
+  },
+  "threads": [
+    {
+      "id": "c-a",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "one",
+      "rangeText": "one",
+      "quote": {
+        "prefix": "Alpha ",
+        "quote": "one",
+        "suffix": " and beta two.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "A root",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@c",
+          "date": "2026-11-17T10:02Z",
+          "dateParsed": "2026-11-17T10:02:00.000Z",
+          "comment": "A reply",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-b",
+      "state": "resolved",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "two",
+      "rangeText": "two",
+      "quote": {
+        "prefix": "Alpha one and beta ",
+        "quote": "two",
+        "suffix": ".",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@b",
+          "date": "2026-11-17T10:01Z",
+          "dateParsed": "2026-11-17T10:01:00.000Z",
+          "comment": "B root",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@d",
+          "date": "2026-11-17T10:03Z",
+          "dateParsed": "2026-11-17T10:03:00.000Z",
+          "comment": "B reply",
+          "status": "resolved",
+          "statusValue": "resolved"
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

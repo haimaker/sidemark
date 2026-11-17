@@ -1,0 +1,5 @@
+{
+  "description": "Maintenance on a CRLF document keeps CRLF in the repaired body and refreshed cell.",
+  "operation": "maintain",
+  "args": {}
+}

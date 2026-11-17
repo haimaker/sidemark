@@ -1,0 +1,44 @@
+{
+  "description": "SPEC §5.2: a range may start in one block and end in another (here a paragraph, a list and a heading).",
+  "projection": "First paragraph ends here. item one item two Next section",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-x1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "ends here.\n\n- item one\n- item two\n\n## Next",
+      "rangeText": "ends here. item one item two Next",
+      "quote": {
+        "prefix": "First paragraph ",
+        "quote": "ends here. item one item two Next",
+        "suffix": " section",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "spans",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

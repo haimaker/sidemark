@@ -1,0 +1,44 @@
+{
+  "description": "SPEC §6.1: two tables qualify; the last is the comments table and the first is ordinary body content (its text is in the projection).",
+  "projection": "Intro with words. Ref Quote Author Date Comment Status c-old @x an example table in the body",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-t1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "words",
+      "rangeText": "words",
+      "quote": {
+        "prefix": "Intro with ",
+        "quote": "words",
+        "suffix": ".",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "real",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

@@ -1,0 +1,5 @@
+Example:
+
+    $ make
+
+Done.

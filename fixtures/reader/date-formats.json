@@ -1,0 +1,95 @@
+{
+  "description": "SPEC §6.4: writer form, seconds, fractional seconds, numeric offsets, bare date; empty and unparseable dates mean unknown.",
+  "projection": "Text.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 8
+  },
+  "threads": [
+    {
+      "id": "c-d",
+      "state": "open",
+      "attachment": "document",
+      "anchoredBy": null,
+      "rangeSource": null,
+      "rangeText": null,
+      "quote": null,
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "writer form",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:32:45Z",
+          "dateParsed": "2026-11-17T10:32:45.000Z",
+          "comment": "seconds",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:32:45.123Z",
+          "dateParsed": "2026-11-17T10:32:45.123Z",
+          "comment": "fraction",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:32+01:00",
+          "dateParsed": "2026-11-17T09:32:00.000Z",
+          "comment": "offset",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@a",
+          "date": "2026-11-17",
+          "dateParsed": "2026-11-17T00:00:00.000Z",
+          "comment": "date only",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@a",
+          "date": "",
+          "dateParsed": null,
+          "comment": "empty",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@a",
+          "date": "2026-02-30",
+          "dateParsed": null,
+          "comment": "impossible",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@a",
+          "date": "yesterday",
+          "dateParsed": null,
+          "comment": "words",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

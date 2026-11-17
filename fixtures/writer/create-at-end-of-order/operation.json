@@ -1,0 +1,13 @@
+{
+  "description": "A range after every existing anchored thread: the row is added at the end of the table.",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "four"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

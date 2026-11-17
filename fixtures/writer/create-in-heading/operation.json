@@ -1,0 +1,13 @@
+{
+  "description": "Anchors inside a heading (§5.3).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "Quarterly"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

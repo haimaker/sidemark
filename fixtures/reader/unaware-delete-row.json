@@ -1,0 +1,52 @@
+{
+  "description": "SPEC §11 \"Delete a table row\": the thread's only row was deleted, so its anchors are stray (\"unknown-thread\").",
+  "projection": "The quick brown fox jumps.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-m3k8za",
+      "state": "open",
+      "attachment": "document",
+      "anchoredBy": null,
+      "rangeSource": null,
+      "rangeText": null,
+      "quote": null,
+      "comments": [
+        {
+          "author": "@wayne",
+          "date": "2026-11-17T13:00Z",
+          "dateParsed": "2026-11-17T13:00:00.000Z",
+          "comment": "Needs an owner.",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [
+    {
+      "id": "c-x7k2m9",
+      "end": false,
+      "raw": "<a id=\"c-x7k2m9\"></a>",
+      "reason": "unknown-thread"
+    },
+    {
+      "id": "c-x7k2m9",
+      "end": true,
+      "raw": "<a id=\"c-x7k2m9-end\"></a>",
+      "reason": "unknown-thread"
+    }
+  ],
+  "malformedRows": []
+}

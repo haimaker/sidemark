@@ -1,0 +1,44 @@
+{
+  "description": "SPEC §7.2/§8: a quote longer than 80 code points is stored as 40 + … + 40; the fallback matches prefix+head and tail+suffix.",
+  "projection": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-long",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "rangeText": "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "quote": {
+        "prefix": "Lorem ipsum dolor sit amet, ",
+        "quote": "consectetur adipiscing elit, sed do eius…ididunt ut labore et dolore magna aliqua",
+        "suffix": ". Ut enim ad minim veniam.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "long",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

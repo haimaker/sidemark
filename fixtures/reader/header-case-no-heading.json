@@ -1,0 +1,44 @@
+{
+  "description": "SPEC §6.1/§6.2: header cells compare ignoring ASCII case and whitespace; no heading is required.",
+  "projection": "Body text.",
+  "table": {
+    "heading": null,
+    "columns": [
+      "ref",
+      "QUOTE",
+      "Author",
+      "date",
+      "Comment",
+      "STATUS"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "text",
+      "rangeText": "text",
+      "quote": {
+        "prefix": "Body ",
+        "quote": "text",
+        "suffix": ".",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "hi",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

@@ -1,0 +1,10 @@
+{
+  "description": "A reply goes directly after the thread's last row, with an empty Quote (§9.3).",
+  "operation": "addReply",
+  "args": {
+    "thread": "c-aaa111",
+    "author": "@b",
+    "comment": "Reply with *emphasis*.",
+    "date": "2026-11-17T10:32Z"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "No comments table yet: the anchors are inserted and the table is appended with a `## Comments` heading (§6.2, §9.2).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "quick brown fox"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

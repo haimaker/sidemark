@@ -1,0 +1,52 @@
+{
+  "description": "SPEC §11 \"Add a row with an existing Ref\": a reply. Hand-written replies may use the bare ID.",
+  "projection": "The quick brown fox jumps.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 2
+  },
+  "threads": [
+    {
+      "id": "c-x7k2m9",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "quick brown fox",
+      "rangeText": "quick brown fox",
+      "quote": {
+        "prefix": "The ",
+        "quote": "quick brown fox",
+        "suffix": " jumps.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@wayne",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "Red fox?",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "alex",
+          "date": "2026-11-18",
+          "dateParsed": "2026-11-18T00:00:00.000Z",
+          "comment": "Yes, red.",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

@@ -1,0 +1,8 @@
+{
+  "description": "Purging orphaned threads (§9.5).",
+  "operation": "purge",
+  "args": {
+    "resolved": false,
+    "orphaned": true
+  }
+}

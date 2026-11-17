@@ -1,0 +1,44 @@
+{
+  "description": "SPEC §7.1: an image contributes the text of its description; a quote can span it.",
+  "projection": "See the big chart for details.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-img",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "![the *big* chart](chart.png) for",
+      "rangeText": "the big chart for",
+      "quote": {
+        "prefix": "See ",
+        "quote": "the big chart for",
+        "suffix": " details.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "image",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

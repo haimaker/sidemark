@@ -1,0 +1,5 @@
+{
+  "description": "Text next to the range changed so the stored prefix is no longer accurate: the cell is rewritten.",
+  "operation": "maintain",
+  "args": {}
+}

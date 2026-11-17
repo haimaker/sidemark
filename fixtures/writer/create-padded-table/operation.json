@@ -1,0 +1,13 @@
+{
+  "description": "Existing padded rows are left byte for byte; the new row is compact (§9.1).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "more"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

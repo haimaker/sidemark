@@ -1,0 +1,13 @@
+{
+  "description": "CRLF line endings are preserved, including in the new table (§9.1).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "quick"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

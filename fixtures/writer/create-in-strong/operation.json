@@ -1,0 +1,13 @@
+{
+  "description": "A boundary that coincides with emphasis delimiters: the anchors go outside `**` (§5.3).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "ever"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "description": "SPEC §5.3: anchors in a heading, a list item, a block quote and a table cell.",
+  "projection": "The Title first second item quoted words continue here Name Value alpha 42",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 4
+  },
+  "threads": [
+    {
+      "id": "c-h",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "Title",
+      "rangeText": "Title",
+      "quote": {
+        "prefix": "The ",
+        "quote": "Title",
+        "suffix": " first second",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "heading",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-li",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "second item",
+      "rangeText": "second item",
+      "quote": {
+        "prefix": "first ",
+        "quote": "second item",
+        "suffix": " quoted",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:01Z",
+          "dateParsed": "2026-11-17T10:01:00.000Z",
+          "comment": "list item",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-bq",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "words\n> continue",
+      "rangeText": "words continue",
+      "quote": {
+        "prefix": "second item quoted ",
+        "quote": "words continue",
+        "suffix": " here",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:02Z",
+          "dateParsed": "2026-11-17T10:02:00.000Z",
+          "comment": "quote",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-td",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "42",
+      "rangeText": "42",
+      "quote": {
+        "prefix": "Name Value alpha ",
+        "quote": "42",
+        "suffix": "",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:03Z",
+          "dateParsed": "2026-11-17T10:03:00.000Z",
+          "comment": "cell",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

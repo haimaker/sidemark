@@ -1,0 +1,7 @@
+{
+  "description": "Deleting a thread removes all of its rows, wherever they are, and its anchors (§9.4).",
+  "operation": "deleteThread",
+  "args": {
+    "thread": "c-a"
+  }
+}

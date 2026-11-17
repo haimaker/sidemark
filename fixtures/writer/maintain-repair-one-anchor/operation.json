@@ -1,0 +1,5 @@
+{
+  "description": "One anchor was deleted: the lone end anchor is removed and a new pair is inserted around the Quote match (§9.6, §11).",
+  "operation": "maintain",
+  "args": {}
+}

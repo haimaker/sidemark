@@ -1,0 +1,11 @@
+{
+  "description": "Replying to a thread that does not exist is an error.",
+  "operation": "addReply",
+  "args": {
+    "thread": "c-nope",
+    "author": "@b",
+    "comment": "x",
+    "date": "2026-11-17T10:32Z"
+  },
+  "expectError": "THREAD_NOT_FOUND"
+}

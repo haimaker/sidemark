@@ -1,0 +1,13 @@
+{
+  "description": "Front matter is skipped; the table goes at the end (§6.2, §7.1).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "text"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

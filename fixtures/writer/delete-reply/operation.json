@@ -1,0 +1,8 @@
+{
+  "description": "Deleting a reply removes its row only (§9.4).",
+  "operation": "deleteComment",
+  "args": {
+    "thread": "c-aaa111",
+    "index": 1
+  }
+}

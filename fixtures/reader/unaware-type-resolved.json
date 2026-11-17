@@ -1,0 +1,84 @@
+{
+  "description": "SPEC §11 \"Type resolved in a Status cell\": a thread is resolved if that is its last recognised Status; a later \"open\" reopens. Status is compared ignoring ASCII case.",
+  "projection": "Alpha one, beta two.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 4
+  },
+  "threads": [
+    {
+      "id": "c-1",
+      "state": "resolved",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "one",
+      "rangeText": "one",
+      "quote": {
+        "prefix": "Alpha ",
+        "quote": "one",
+        "suffix": ", beta two.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "First",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@b",
+          "date": "2026-11-17T10:05Z",
+          "dateParsed": "2026-11-17T10:05:00.000Z",
+          "comment": "Done",
+          "status": "Resolved",
+          "statusValue": "resolved"
+        }
+      ]
+    },
+    {
+      "id": "c-2",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "two",
+      "rangeText": "two",
+      "quote": {
+        "prefix": "Alpha one, beta ",
+        "quote": "two",
+        "suffix": ".",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "Second",
+          "status": "resolved",
+          "statusValue": "resolved"
+        },
+        {
+          "author": "@b",
+          "date": "2026-11-17T10:05Z",
+          "dateParsed": "2026-11-17T10:05:00.000Z",
+          "comment": "Not yet",
+          "status": "open",
+          "statusValue": "open"
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

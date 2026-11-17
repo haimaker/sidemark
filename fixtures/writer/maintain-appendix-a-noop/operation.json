@@ -1,0 +1,5 @@
+{
+  "description": "Appendix A is already maintained: nothing changes (its shorter-than-32 prefixes are still accurate).",
+  "operation": "maintain",
+  "args": {}
+}

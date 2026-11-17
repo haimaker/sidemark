@@ -1,0 +1,13 @@
+{
+  "description": "A code block after a paragraph in a tight list item: the start anchor goes at the end of that paragraph.",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "make"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

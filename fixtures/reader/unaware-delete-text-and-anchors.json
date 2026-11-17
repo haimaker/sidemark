@@ -1,0 +1,44 @@
+{
+  "description": "SPEC §11 \"Delete the commented text and both anchors\": the quote no longer occurs, so the thread is orphaned and stays in the table.",
+  "projection": "The jumps over the lazy dog.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-x7k2m9",
+      "state": "open",
+      "attachment": "orphaned",
+      "anchoredBy": null,
+      "rangeSource": null,
+      "rangeText": null,
+      "quote": {
+        "prefix": "The ",
+        "quote": "quick brown fox",
+        "suffix": " jumps over the lazy dog.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@wayne",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "Should this be \"red fox\"?",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

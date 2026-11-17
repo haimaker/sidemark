@@ -1,0 +1,52 @@
+{
+  "description": "SPEC §11 \"Reformat the table (re-pad columns)\": padding and alignment markers have no effect on meaning.",
+  "projection": "The quick brown fox jumps.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 2
+  },
+  "threads": [
+    {
+      "id": "c-x7k2m9",
+      "state": "resolved",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "quick brown fox",
+      "rangeText": "quick brown fox",
+      "quote": {
+        "prefix": "The ",
+        "quote": "quick brown fox",
+        "suffix": " jumps.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@wayne",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "Red fox?",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@alex",
+          "date": "2026-11-17T11:02Z",
+          "dateParsed": "2026-11-17T11:02:00.000Z",
+          "comment": "Agreed.",
+          "status": "resolved",
+          "statusValue": "resolved"
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

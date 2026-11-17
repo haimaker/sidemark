@@ -1,0 +1,99 @@
+{
+  "description": "SPEC §5.5: an anchor for an unknown thread, an end before its start, and a start with no end after it.",
+  "projection": "A ghost. B backwards. C never ends.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 2
+  },
+  "threads": [
+    {
+      "id": "c-2",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "backwards",
+      "rangeText": "backwards",
+      "quote": {
+        "prefix": "B ",
+        "quote": "backwards",
+        "suffix": ". C",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "two",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-3",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "never ends",
+      "rangeText": "never ends",
+      "quote": {
+        "prefix": "C ",
+        "quote": "never ends",
+        "suffix": ".",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "three",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [
+    {
+      "id": "c-ghost",
+      "end": false,
+      "raw": "<a id=\"c-ghost\"></a>",
+      "reason": "unknown-thread"
+    },
+    {
+      "id": "c-ghost",
+      "end": true,
+      "raw": "<a id=\"c-ghost-end\"></a>",
+      "reason": "unknown-thread"
+    },
+    {
+      "id": "c-2",
+      "end": true,
+      "raw": "<a id=\"c-2-end\"></a>",
+      "reason": "unmatched"
+    },
+    {
+      "id": "c-2",
+      "end": false,
+      "raw": "<a id=\"c-2\"></a>",
+      "reason": "unmatched"
+    },
+    {
+      "id": "c-3",
+      "end": false,
+      "raw": "<a id=\"c-3\"></a>",
+      "reason": "unmatched"
+    }
+  ],
+  "malformedRows": []
+}

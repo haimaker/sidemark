@@ -1,0 +1,14 @@
+{
+  "description": "A new thread needs comment text (§6.4).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "Text"
+    },
+    "author": "@wayne",
+    "comment": "  ",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  },
+  "expectError": "EMPTY_COMMENT"
+}

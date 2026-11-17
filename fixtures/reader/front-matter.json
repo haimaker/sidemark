@@ -1,0 +1,68 @@
+{
+  "description": "SPEC §7.1 step 1: YAML front matter (closed with ...) is skipped; text in it is not part of the projection, so a Quote that only occurs there does not match.",
+  "projection": "Notes The slow fox.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 2
+  },
+  "threads": [
+    {
+      "id": "c-fm",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "slow",
+      "rangeText": "slow",
+      "quote": {
+        "prefix": "The ",
+        "quote": "slow",
+        "suffix": " fox.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "anchored",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-fm2",
+      "state": "open",
+      "attachment": "orphaned",
+      "anchoredBy": null,
+      "rangeSource": null,
+      "rangeText": null,
+      "quote": {
+        "prefix": "",
+        "quote": "title: The quick fox",
+        "suffix": "",
+        "marker": "none"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "only in front matter",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

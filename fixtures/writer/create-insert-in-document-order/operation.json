@@ -1,0 +1,13 @@
+{
+  "description": "The root row goes before the first row of the first thread whose range starts later (§9.2 step 4).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "two"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

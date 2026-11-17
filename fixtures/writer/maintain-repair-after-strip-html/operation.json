@@ -1,0 +1,5 @@
+{
+  "description": "All HTML was stripped: unique quotes get anchors again (including a code block); ambiguous ones stay orphaned (§11).",
+  "operation": "maintain",
+  "args": {}
+}

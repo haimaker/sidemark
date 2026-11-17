@@ -1,0 +1,21 @@
+{
+  "description": "A document without a comments table: no threads; every anchor is stray (\"unknown-thread\").",
+  "projection": "Plain text only.",
+  "table": null,
+  "threads": [],
+  "strayAnchors": [
+    {
+      "id": "c-1",
+      "end": false,
+      "raw": "<a id=\"c-1\"></a>",
+      "reason": "unknown-thread"
+    },
+    {
+      "id": "c-1",
+      "end": true,
+      "raw": "<a id=\"c-1-end\"></a>",
+      "reason": "unknown-thread"
+    }
+  ],
+  "malformedRows": []
+}

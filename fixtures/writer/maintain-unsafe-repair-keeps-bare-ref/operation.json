@@ -1,0 +1,5 @@
+{
+  "description": "The Quote matches inside a code block whose end anchor cannot be placed without changing the parse (a thematic break follows it in a tight list item), so the repair is skipped and the bare Ref is left as written.",
+  "operation": "maintain",
+  "args": {}
+}

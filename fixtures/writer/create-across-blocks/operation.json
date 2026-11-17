@@ -1,0 +1,14 @@
+{
+  "description": "A range from one paragraph into the next (§5.2).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "from": "ends",
+      "to": "Second"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

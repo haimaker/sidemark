@@ -1,0 +1,92 @@
+{
+  "description": "SPEC §5.2: ranges of different threads may overlap or nest.",
+  "projection": "One two three four five six seven.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 3
+  },
+  "threads": [
+    {
+      "id": "c-out",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "two <a id=\"c-in\"></a>three<a id=\"c-in-end\"></a> four <a id=\"c-ov\"></a>five",
+      "rangeText": "two three four five",
+      "quote": {
+        "prefix": "One ",
+        "quote": "two three four five",
+        "suffix": " six seven.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "outer",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-in",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "three",
+      "rangeText": "three",
+      "quote": {
+        "prefix": "One two ",
+        "quote": "three",
+        "suffix": " four five six seven.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@b",
+          "date": "2026-11-17T10:01Z",
+          "dateParsed": "2026-11-17T10:01:00.000Z",
+          "comment": "inner",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-ov",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "five<a id=\"c-out-end\"></a> six",
+      "rangeText": "five six",
+      "quote": {
+        "prefix": "three four ",
+        "quote": "five six",
+        "suffix": " seven.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@c",
+          "date": "2026-11-17T10:02Z",
+          "dateParsed": "2026-11-17T10:02:00.000Z",
+          "comment": "overlaps outer",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

@@ -1,0 +1,44 @@
+{
+  "description": "A document with CRLF line endings throughout. Range text and projection are unaffected.",
+  "projection": "Title The quick brown fox jumps over the lazy dog.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-cr1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "quick brown fox",
+      "rangeText": "quick brown fox",
+      "quote": {
+        "prefix": "Title The ",
+        "quote": "quick brown fox",
+        "suffix": " jumps over the lazy dog.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@w",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "CRLF file",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

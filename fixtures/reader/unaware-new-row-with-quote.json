@@ -1,0 +1,44 @@
+{
+  "description": "SPEC §11 \"Add a row with a new ID and a Quote\": a hand-written thread with a plain Quote attaches when the text occurs exactly once.",
+  "projection": "We will move every tenant to the new cluster in Q3.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-new1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "every tenant",
+      "rangeText": "every tenant",
+      "quote": {
+        "prefix": "",
+        "quote": "every tenant",
+        "suffix": "",
+        "marker": "none"
+      },
+      "comments": [
+        {
+          "author": "sam",
+          "date": "2026-11-17",
+          "dateParsed": "2026-11-17T00:00:00.000Z",
+          "comment": "Including EU?",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

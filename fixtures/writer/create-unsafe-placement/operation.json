@@ -1,0 +1,14 @@
+{
+  "description": "A thematic break that is the first child of a tight list item: every anchor form would change how the list parses, so the writer refuses.",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "---"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  },
+  "expectError": "UNSAFE_PLACEMENT"
+}

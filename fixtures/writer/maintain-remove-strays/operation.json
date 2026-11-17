@@ -1,0 +1,5 @@
+{
+  "description": "Stray anchors of every kind are removed; inline ones exactly, anchor-only paragraphs with their blank line (§5.5, §9.6).",
+  "operation": "maintain",
+  "args": {}
+}

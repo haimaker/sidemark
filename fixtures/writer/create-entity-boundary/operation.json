@@ -1,0 +1,14 @@
+{
+  "description": "A boundary inside an entity or escape snaps outward to cover it.",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "from": "amp;",
+      "to": "cheap\\"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "New rows get empty cells for unknown columns (§6.6).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "text"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

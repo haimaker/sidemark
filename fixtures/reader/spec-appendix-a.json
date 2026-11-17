@@ -1,0 +1,119 @@
+{
+  "description": "The complete example from SPEC Appendix A: anchored+resolved, anchored to a code block, orphaned, document-level.",
+  "projection": "Migration plan We will move every tenant to the new cluster in Q3. ./migrate --all --window 2h Rollback is manual.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 5
+  },
+  "threads": [
+    {
+      "id": "c-x7k2m9",
+      "state": "resolved",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "move every tenant",
+      "rangeText": "move every tenant",
+      "quote": {
+        "prefix": "We will ",
+        "quote": "move every tenant",
+        "suffix": " to the new cluster in Q3.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@wayne",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "Including the EU tenants?",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "@alex",
+          "date": "2026-11-17T11:02Z",
+          "dateParsed": "2026-11-17T11:02:00.000Z",
+          "comment": "Yes, added a note below.",
+          "status": "resolved",
+          "statusValue": "resolved"
+        }
+      ]
+    },
+    {
+      "id": "c-4f9tq1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "\n\n```sh\n./migrate --all --window 2h\n```\n\n",
+      "rangeText": "./migrate --all --window 2h",
+      "quote": {
+        "prefix": "to the new cluster in Q3. ",
+        "quote": "./migrate --all --window 2h",
+        "suffix": " Rollback is manual.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@sam",
+          "date": "2026-11-17T12:40Z",
+          "dateParsed": "2026-11-17T12:40:00.000Z",
+          "comment": "Is 2h enough for the largest tenant?",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-9b2hd7",
+      "state": "open",
+      "attachment": "orphaned",
+      "anchoredBy": null,
+      "rangeSource": null,
+      "rangeText": null,
+      "quote": {
+        "prefix": "",
+        "quote": "the old cluster stays read-only for a week",
+        "suffix": "",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@sam",
+          "date": "2026-11-16T09:05Z",
+          "dateParsed": "2026-11-16T09:05:00.000Z",
+          "comment": "Do we still need this?",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-m3k8za",
+      "state": "open",
+      "attachment": "document",
+      "anchoredBy": null,
+      "rangeSource": null,
+      "rangeText": null,
+      "quote": null,
+      "comments": [
+        {
+          "author": "@wayne",
+          "date": "2026-11-17T13:00Z",
+          "dateParsed": "2026-11-17T13:00:00.000Z",
+          "comment": "Needs an owner before we circulate it.",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

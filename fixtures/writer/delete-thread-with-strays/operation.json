@@ -1,0 +1,7 @@
+{
+  "description": "Deleting a thread also removes its duplicate (stray) anchors.",
+  "operation": "deleteThread",
+  "args": {
+    "thread": "c-1"
+  }
+}

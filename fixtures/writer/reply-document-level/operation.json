@@ -1,0 +1,10 @@
+{
+  "description": "Replies to a document-level thread use the bare ID (§6.4).",
+  "operation": "addReply",
+  "args": {
+    "thread": "c-ddd444",
+    "author": "@b",
+    "comment": "Me.",
+    "date": "2026-11-17T10:32Z"
+  }
+}

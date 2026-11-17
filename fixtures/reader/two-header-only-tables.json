@@ -1,0 +1,19 @@
+{
+  "description": "SPEC §6.1: when no qualifying table has a valid row, the last header-only table is the comments table.",
+  "projection": "Body. Draft Ref Quote Author Date Comment Status",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 0
+  },
+  "threads": [],
+  "strayAnchors": [],
+  "malformedRows": []
+}

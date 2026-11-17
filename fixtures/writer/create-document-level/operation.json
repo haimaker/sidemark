@@ -1,0 +1,11 @@
+{
+  "description": "range null: no anchors, bare-ID Ref, row at the end of the table (§6.4, §9.2).",
+  "operation": "createThread",
+  "args": {
+    "range": null,
+    "author": "@wayne",
+    "comment": "Whole document.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

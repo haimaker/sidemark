@@ -1,0 +1,9 @@
+{
+  "description": "A hand-written row with missing cells gets the cells it needs.",
+  "operation": "editComment",
+  "args": {
+    "thread": "c-1",
+    "index": 0,
+    "comment": "Now with a comment."
+  }
+}

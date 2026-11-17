@@ -1,0 +1,14 @@
+{
+  "description": "A boundary inside a code span snaps outward to cover the whole span (§5.3).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "from": "all",
+      "to": "before"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "description": "SPEC §11 \"Strip all HTML from the file\": threads re-attach by Quote where the text is unique (including a code block) and are orphaned where it is not.",
+  "projection": "Plan The quick brown fox jumps over the lazy dog. ./migrate --all The dog sleeps. The dog sleeps.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 3
+  },
+  "threads": [
+    {
+      "id": "c-aaa111",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "quick brown fox",
+      "rangeText": "quick brown fox",
+      "quote": {
+        "prefix": "The ",
+        "quote": "quick brown fox",
+        "suffix": " jumps over the lazy dog.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@wayne",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "Red fox?",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-bbb222",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "./migrate --all",
+      "rangeText": "./migrate --all",
+      "quote": {
+        "prefix": "over the lazy dog. ",
+        "quote": "./migrate --all",
+        "suffix": " The dog sleeps.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@sam",
+          "date": "2026-11-17T12:40Z",
+          "dateParsed": "2026-11-17T12:40:00.000Z",
+          "comment": "Window?",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-ccc333",
+      "state": "open",
+      "attachment": "orphaned",
+      "anchoredBy": null,
+      "rangeSource": null,
+      "rangeText": null,
+      "quote": {
+        "prefix": "",
+        "quote": "The dog sleeps.",
+        "suffix": "",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@alex",
+          "date": "2026-11-17T13:00Z",
+          "dateParsed": "2026-11-17T13:00:00.000Z",
+          "comment": "Which one?",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

@@ -1,0 +1,5 @@
+{
+  "description": "Text inside the range changed: the Quote cell is refreshed (§9.6).",
+  "operation": "maintain",
+  "args": {}
+}

@@ -1,0 +1,52 @@
+{
+  "description": "SPEC §4/§6.4/§7.3: a bare-ID Ref (c-1), a Quote without emphasis, a date-only Date, an empty Author.",
+  "projection": "The quick brown fox jumps over the lazy dog.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 2
+  },
+  "threads": [
+    {
+      "id": "c-1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "lazy dog",
+      "rangeText": "lazy dog",
+      "quote": {
+        "prefix": "",
+        "quote": "lazy dog",
+        "suffix": "",
+        "marker": "none"
+      },
+      "comments": [
+        {
+          "author": "Bob",
+          "date": "2026-11-16",
+          "dateParsed": "2026-11-16T00:00:00.000Z",
+          "comment": "Is the dog lazy?",
+          "status": "",
+          "statusValue": null
+        },
+        {
+          "author": "",
+          "date": "2026-11-17",
+          "dateParsed": "2026-11-17T00:00:00.000Z",
+          "comment": "Very.",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

@@ -1,0 +1,11 @@
+{
+  "description": "Reopening adds a row with Status `open` and an explanation (§9.3).",
+  "operation": "setStatus",
+  "args": {
+    "thread": "c-ccc333",
+    "status": "open",
+    "author": "@c",
+    "comment": "Not fixed yet.",
+    "date": "2026-11-17T10:32Z"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "A range inside a fenced code block becomes own-paragraph anchors around the block (§5.4).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "--all"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

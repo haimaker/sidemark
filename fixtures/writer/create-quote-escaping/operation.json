@@ -1,0 +1,14 @@
+{
+  "description": "Markdown punctuation in the quoted text is backslash-escaped in the Quote cell so it reads back as the same text (§7.3).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "from": "a_b",
+      "to": "here"
+    },
+    "author": "@wayne",
+    "comment": "Pipes | and\nnewlines are escaped.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

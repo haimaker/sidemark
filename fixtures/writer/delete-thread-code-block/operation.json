@@ -1,0 +1,7 @@
+{
+  "description": "Deleting a thread anchored to a code block removes the anchor paragraphs and their blank lines.",
+  "operation": "deleteThread",
+  "args": {
+    "thread": "c-4f9tq1"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "description": "SPEC §11 \"Copy and paste a commented paragraph\": the thread stays on the first copy; the second copy's anchors are stray (\"duplicate\").",
+  "projection": "The quick brown fox jumps. The quick brown fox jumps.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-x7k2m9",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "quick brown fox",
+      "rangeText": "quick brown fox",
+      "quote": {
+        "prefix": "The ",
+        "quote": "quick brown fox",
+        "suffix": " jumps.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@wayne",
+          "date": "2026-11-17T10:32Z",
+          "dateParsed": "2026-11-17T10:32:00.000Z",
+          "comment": "Red fox?",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [
+    {
+      "id": "c-x7k2m9",
+      "end": false,
+      "raw": "<a id=\"c-x7k2m9\"></a>",
+      "reason": "duplicate"
+    },
+    {
+      "id": "c-x7k2m9",
+      "end": true,
+      "raw": "<a id=\"c-x7k2m9-end\"></a>",
+      "reason": "duplicate"
+    }
+  ],
+  "malformedRows": []
+}

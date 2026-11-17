@@ -1,0 +1,14 @@
+{
+  "description": "A quote longer than 80 code points is written as 40 + … + 40 (§7.2).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "from": "consectetur",
+      "to": "aliqua"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

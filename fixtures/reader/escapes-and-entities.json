@@ -1,0 +1,44 @@
+{
+  "description": "SPEC §7.1: escapes and entities are decoded in the projection; the fallback range maps back to the source characters.",
+  "projection": "Fish & chips cost $5 *each* — really.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 1
+  },
+  "threads": [
+    {
+      "id": "c-e1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "&amp; chips cost &#36;5 \\*each\\*",
+      "rangeText": "& chips cost $5 *each*",
+      "quote": {
+        "prefix": "Fish ",
+        "quote": "& chips cost $5 *each*",
+        "suffix": " — really.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "entity fallback",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

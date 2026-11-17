@@ -1,0 +1,116 @@
+{
+  "description": "SPEC §7.3: the quote may be marked with **, __, <strong> or <b>; only the first strong emphasis counts. All four threads fall back to the Quote.",
+  "projection": "Call foo(bar) and then baz(qux) twice: baz(qux).",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 4
+  },
+  "threads": [
+    {
+      "id": "c-s1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "foo(bar)",
+      "rangeText": "foo(bar)",
+      "quote": {
+        "prefix": "Call ",
+        "quote": "foo(bar)",
+        "suffix": " and",
+        "marker": "html"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "",
+          "dateParsed": null,
+          "comment": "html strong",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-s2",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "baz(qux)",
+      "rangeText": "baz(qux)",
+      "quote": {
+        "prefix": "then ",
+        "quote": "baz(qux)",
+        "suffix": " twice",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "",
+          "dateParsed": null,
+          "comment": "underscores",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-s3",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "baz(qux)",
+      "rangeText": "baz(qux)",
+      "quote": {
+        "prefix": "twice: ",
+        "quote": "baz(qux)",
+        "suffix": ".",
+        "marker": "html"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "",
+          "dateParsed": null,
+          "comment": "b tag",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-s4",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "Call",
+      "rangeText": "Call",
+      "quote": {
+        "prefix": "",
+        "quote": "Call",
+        "suffix": " foo(bar) and",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "",
+          "dateParsed": null,
+          "comment": "first strong wins",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

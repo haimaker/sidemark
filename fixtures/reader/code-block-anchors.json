@@ -1,0 +1,68 @@
+{
+  "description": "SPEC §5.4: anchors in paragraphs of their own around a code block inside a list item; and an indented code block re-attached by Quote.",
+  "projection": "Run this: make all Then: rm -rf build Done.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 2
+  },
+  "threads": [
+    {
+      "id": "c-cb",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "\n\n  ```sh\n  make all\n  ```\n\n  ",
+      "rangeText": "make all",
+      "quote": {
+        "prefix": "Run this: ",
+        "quote": "make all",
+        "suffix": " Then:",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "fenced",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-ic",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "rm -rf build",
+      "rangeText": "rm -rf build",
+      "quote": {
+        "prefix": "Then: ",
+        "quote": "rm -rf build",
+        "suffix": " Done.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "indented",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

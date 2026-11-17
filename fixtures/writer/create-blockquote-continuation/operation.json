@@ -1,0 +1,14 @@
+{
+  "description": "A range across a block quote continuation line; anchors go after the `> ` prefix.",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "from": "line",
+      "to": "continues"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

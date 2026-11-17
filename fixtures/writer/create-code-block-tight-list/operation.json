@@ -1,0 +1,13 @@
+{
+  "description": "A code block that is the first child of a tight list item: blank lines would make the list loose, so the anchors go in paragraphs of their own without blank lines.",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "make"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

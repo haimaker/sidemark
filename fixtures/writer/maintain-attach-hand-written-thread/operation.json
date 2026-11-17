@@ -1,0 +1,5 @@
+{
+  "description": "A hand-written thread whose plain Quote occurs once gets anchors, and its root row's bare Ref becomes a link (§9.6). The reply's bare Ref and the plain Quote are left as written.",
+  "operation": "maintain",
+  "args": {}
+}

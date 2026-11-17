@@ -1,0 +1,7 @@
+{
+  "description": "Removing the last row removes the table but keeps a heading whose text is not `Comments` (§6.2).",
+  "operation": "deleteThread",
+  "args": {
+    "thread": "c-1"
+  }
+}

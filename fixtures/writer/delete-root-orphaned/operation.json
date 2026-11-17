@@ -1,0 +1,8 @@
+{
+  "description": "Deleting the root of an orphaned thread copies the old Quote to the new root so the thread stays orphaned.",
+  "operation": "deleteComment",
+  "args": {
+    "thread": "c-o",
+    "index": 0
+  }
+}

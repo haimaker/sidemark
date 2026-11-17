@@ -1,0 +1,13 @@
+{
+  "description": "Own-paragraph anchors inside a block quote keep the `>` prefix (§5.4: same container).",
+  "operation": "createThread",
+  "args": {
+    "range": {
+      "text": "make"
+    },
+    "author": "@wayne",
+    "comment": "A comment.",
+    "id": "c-new001",
+    "date": "2026-11-17T10:32Z"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "description": "SPEC §6.1: a table with the header row and no body rows is the comments table.",
+  "projection": "Body text.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 0
+  },
+  "threads": [],
+  "strayAnchors": [],
+  "malformedRows": []
+}

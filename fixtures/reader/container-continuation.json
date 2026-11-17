@@ -1,0 +1,68 @@
+{
+  "description": "Fallback across continuation lines of a block quote and a list item, where node text and source are not 1:1.",
+  "projection": "The first line continues here and ends. A list item wraps onto a second line.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 2
+  },
+  "threads": [
+    {
+      "id": "c-q1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "line\n> continues here",
+      "rangeText": "line continues here",
+      "quote": {
+        "prefix": "The first ",
+        "quote": "line continues here",
+        "suffix": " and",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "quote",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-l1",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "quote",
+      "rangeSource": "item\n  wraps onto\n  a",
+      "rangeText": "item wraps onto a",
+      "quote": {
+        "prefix": "A list ",
+        "quote": "item wraps onto a",
+        "suffix": " second",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "list",
+          "status": "",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

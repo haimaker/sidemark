@@ -1,0 +1,5 @@
+{
+  "description": "Orphaned threads keep their Quote; nothing is deleted (§9.6).",
+  "operation": "maintain",
+  "args": {}
+}

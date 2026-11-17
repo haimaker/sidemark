@@ -1,0 +1,10 @@
+{
+  "description": "With non-contiguous rows the reply follows the thread's last row (§6.3, §9.3).",
+  "operation": "addReply",
+  "args": {
+    "thread": "c-a",
+    "author": "@e",
+    "comment": "a3",
+    "date": "2026-11-17T10:32Z"
+  }
+}

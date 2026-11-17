@@ -1,0 +1,76 @@
+{
+  "description": "SPEC §6.4: unrecognised Status values are ignored when computing state.",
+  "projection": "Some text and more.",
+  "table": {
+    "heading": "Comments",
+    "columns": [
+      "Ref",
+      "Quote",
+      "Author",
+      "Date",
+      "Comment",
+      "Status"
+    ],
+    "rowCount": 3
+  },
+  "threads": [
+    {
+      "id": "c-1",
+      "state": "resolved",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "text",
+      "rangeText": "text",
+      "quote": {
+        "prefix": "Some ",
+        "quote": "text",
+        "suffix": " and more.",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "Hello",
+          "status": "resolved",
+          "statusValue": "resolved"
+        },
+        {
+          "author": "@b",
+          "date": "2026-11-17T10:01Z",
+          "dateParsed": "2026-11-17T10:01:00.000Z",
+          "comment": "Hmm",
+          "status": "wontfix",
+          "statusValue": null
+        }
+      ]
+    },
+    {
+      "id": "c-2",
+      "state": "open",
+      "attachment": "anchored",
+      "anchoredBy": "anchors",
+      "rangeSource": "more",
+      "rangeText": "more",
+      "quote": {
+        "prefix": "Some text and ",
+        "quote": "more",
+        "suffix": ".",
+        "marker": "strong"
+      },
+      "comments": [
+        {
+          "author": "@a",
+          "date": "2026-11-17T10:00Z",
+          "dateParsed": "2026-11-17T10:00:00.000Z",
+          "comment": "Hi",
+          "status": "in-review",
+          "statusValue": null
+        }
+      ]
+    }
+  ],
+  "strayAnchors": [],
+  "malformedRows": []
+}

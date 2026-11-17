@@ -1,0 +1,8 @@
+{
+  "description": "Deleting the last row removes the table, its `Comments` heading and the thread's anchors (§6.2, §9.4).",
+  "operation": "deleteComment",
+  "args": {
+    "thread": "c-x7k2m9",
+    "index": 0
+  }
+}

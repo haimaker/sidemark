@@ -1,0 +1,9 @@
+{
+  "description": "Editing rewrites only the Comment cell; pipes are escaped and newlines become `<br>` (§6.4, §9.4).",
+  "operation": "editComment",
+  "args": {
+    "thread": "c-aaa111",
+    "index": 0,
+    "comment": "Changed: a | b\nsecond line"
+  }
+}

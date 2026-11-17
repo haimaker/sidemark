@@ -1,0 +1,8 @@
+{
+  "description": "SPEC §6.1: a table with the right header but body rows that all lack a valid Ref is not the comments table.",
+  "projection": "Body. Comments Ref Quote Author Date Comment Status x @a no ref",
+  "table": null,
+  "threads": [],
+  "strayAnchors": [],
+  "malformedRows": []
+}
