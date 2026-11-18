@@ -9,6 +9,6 @@ verbatim. If you change `commentmark.md`, update all three views in `index.html`
 
 - Preview: `python3 -m http.server 4318 --directory site/public`, then open http://localhost:4318/
 - Check (from the repository root, after building `packages/core`): `node site/check.mjs`
-- Deploy (Cloudflare Pages): `npx wrangler pages deploy site/public --project-name commentmark`
+- Deploy (Cloudflare Pages, from this folder): `npx wrangler pages deploy public --project-name commentmark --branch main`
 
 Archivo (`public/fonts/`) is under the SIL Open Font License; see `public/fonts/OFL.txt`.
