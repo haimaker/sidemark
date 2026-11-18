@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>CommentMark: comments that live in the Markdown file</title>
+<meta name="description" content="CommentMark is an open format for comment threads on Markdown documents.">
+<link rel="canonical" href="https://commentmark.com/">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f3ef">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#151514">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CommentMark">
+<meta property="og:url" content="https://commentmark.com/">
+<meta property="og:title" content="CommentMark: comments that live in the Markdown file">
+<meta property="og:description" content="CommentMark is an open format for comment threads on Markdown documents.">
+<meta property="og:image" content="https://commentmark.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CommentMark. Comments that live in the Markdown file, with the words in the Markdown file highlighted.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CommentMark: comments that live in the Markdown file">
+<meta name="twitter:description" content="CommentMark is an open format for comment threads on Markdown documents.">
+<meta name="twitter:image" content="https://commentmark.com/og.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!--
+THESIS: The landing page is one CommentMark file shown three ways: with threads beside the text, as any other tool renders it, and as raw Markdown. It refuses the hero, code panel, and three feature cards of the standard developer page.
+OWN-WORLD: The editor's surfaces: warm grey ground, white sheet, serif reading text, heavy grotesque headings, one blue for actions, highlighter yellow only on commented text and its thread.
+STORY: The visitor sees comments on the headline, learns they are stored in the file, proves it with the switch, then opens the editor.
+FIRST VIEWPORT: Sticky bar: wordmark, three-way switch, GitHub, blue "Open the editor". Sheet: headline at display size with "in the Markdown file" highlighted, its thread in the right margin, lede, two actions.
+FORM: The Page Is the File; position 1 of 7; seed a6607be3.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
+<a class="skip" href="#doc">Skip to the document</a>
+
+<header class="bar">
+  <div class="wrap bar-inner">
+    <span class="brand">CommentMark</span>
+    <fieldset class="switch">
+      <legend class="visually-hidden">Show this page as it appears in</legend>
+      <input type="radio" name="view" id="view-editor" value="editor" checked>
+      <label for="view-editor">Editor</label>
+      <input type="radio" name="view" id="view-other" value="other">
+      <label for="view-other">Other tools</label>
+      <input type="radio" name="view" id="view-source" value="source">
+      <label for="view-source">Source</label>
+    </fieldset>
+    <nav class="bar-links" aria-label="CommentMark">
+      <a class="button quiet github" href="https://github.com/waynepan/commentmark">
+        <svg class="github-mark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+        <span class="github-label">GitHub</span>
+      </a>
+      <a class="button primary" href="https://waynepan.github.io/commentmark/">Open the editor</a>
+    </nav>
+  </div>
+</header>
+
+<main id="doc" class="wrap page">
+  <div class="view-note note-other" role="note" aria-label="About this view">
+    <p>This is what a tool that does not know CommentMark shows: the document, then a table of comments at the end.</p>
+    <p><a href="#comments-heading">Go to the comments table</a></p>
+  </div>
+  <div class="view-note note-source" role="note" aria-label="About this view">
+    <p class="file-name">commentmark.md</p>
+    <p><span class="src-anchor">Anchors</span> mark the commented text. <a class="src-tail-key" href="#src-tail">The comments table</a> at the end holds the threads.</p>
+  </div>
+
+  <div class="sheet">
+
+    <div class="doc" id="rendered">
+      <div class="has-thread" id="block-m4d8qf">
+        <h1>Comments that live <a id="c-m4d8qf"></a><mark class="hl hl-lead">in the Markdown file</mark><a id="c-m4d8qf-end"></a></h1>
+        <article class="thread thread-lead" tabindex="0" aria-label="Comment thread on “in the Markdown file”, 2 comments">
+          <p class="thread-quote"><span>in the Markdown file</span></p>
+          <ol class="comments">
+            <li class="comment">
+              <p class="comment-header"><span class="author">@sam</span> <time datetime="2026-11-16T09:12Z" title="2026-11-16T09:12Z">Nov 16, 2026, 9:12 AM</time></p>
+              <p class="comment-text">In the file itself? Not in a sidecar file or a database?</p>
+            </li>
+            <li class="comment">
+              <p class="comment-header"><span class="author">@priya</span> <time datetime="2026-11-16T09:20Z" title="2026-11-16T09:20Z">Nov 16, 2026, 9:20 AM</time></p>
+              <p class="comment-text">In the file. Choose Source at the top of the page and scroll to the end.</p>
+            </li>
+          </ol>
+        </article>
+      </div>
+
+      <p class="lede">CommentMark is an open format for comment threads on Markdown documents. Select text, comment on it, reply, and resolve, as you would in Google Docs. All of it is saved in the <code>.md</code> file itself.</p>
+
+      <p class="actions"><a class="button primary large" href="https://waynepan.github.io/commentmark/">Open the editor</a> <span class="sep">·</span> <a class="text-link" href="https://github.com/waynepan/commentmark/blob/main/SPEC.md">Read the specification</a></p>
+
+      <h2>Why</h2>
+
+      <p>Teams write plans and specifications in Markdown and share them with each other and with coding agents. Markdown suits that. It is portable, it lives in the repository next to the code, and it is cheap for people and agents to read. Commenting on those files as a team was the missing part.</p>
+
+      <ul>
+        <li><strong>One file holds both.</strong> The document and the discussion about it are the same file. Copy it, email it, or commit it, and the comments come along.</li>
+        <li><strong>Version control tracks the discussion.</strong> Comments and their resolutions are committed, diffed, and reviewed with the text they are about.</li>
+        <li><strong>No lock-in.</strong> There is no account, no server, and no sidecar file. You are not tied to a platform or an editor.</li>
+        <li class="has-thread" id="block-r7t2ka"><strong>Nothing to plug in.</strong> <a id="c-r7t2ka"></a><mark class="hl">An agent reads the comments by reading the file</mark><a id="c-r7t2ka-end"></a>. There are no special tools or MCP servers to connect.
+          <article class="thread" tabindex="0" aria-label="Comment thread on “An agent reads the comments by reading the file”, 2 comments">
+            <p class="thread-quote"><span>An agent reads the comments by reading the file</span></p>
+            <ol class="comments">
+              <li class="comment">
+                <p class="comment-header"><span class="author">@priya</span> <time datetime="2026-11-16T10:02Z" title="2026-11-16T10:02Z">Nov 16, 2026, 10:02 AM</time></p>
+                <p class="comment-text">So there is no server for the agent to connect to?</p>
+              </li>
+              <li class="comment">
+                <p class="comment-header"><span class="author">@agent</span> <time datetime="2026-11-16T10:03Z" title="2026-11-16T10:03Z">Nov 16, 2026, 10:03 AM</time></p>
+                <p class="comment-text">None. I read this thread by reading the file.</p>
+              </li>
+            </ol>
+          </article>
+        </li>
+      </ul>
+
+      <h2>The same file, three ways</h2>
+
+      <p>This page is a CommentMark file, and the comments on it are examples. Use the switch at the top of the page to see it three ways.</p>
+
+      <ol>
+        <li><strong>Editor.</strong> A CommentMark editor shows each thread beside the text it is about.</li>
+        <li class="has-thread" id="block-h3w9xb"><strong>Other tools.</strong> A tool that has never heard of CommentMark shows <a id="c-h3w9xb"></a><mark class="hl is-resolved">a normal document, with a readable table of comments at the end</mark><a id="c-h3w9xb-end"></a>. You can reply by adding a row, or resolve a thread by typing <code>resolved</code>.
+          <article class="thread is-resolved" tabindex="0" aria-label="Resolved comment thread on “a normal document, with a readable table of comments at the end”, 2 comments">
+            <p class="thread-status"><svg class="check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.6"/><path d="m5.2 8.3 1.9 1.9 3.7-4"/></svg><span>Resolved by @tom</span> <time datetime="2026-11-17T08:30Z" title="2026-11-17T08:30Z">Nov 17, 2026, 8:30 AM</time></p>
+            <p class="thread-quote"><span>a normal document, with a readable table of comments at the end</span></p>
+            <ol class="comments">
+              <li class="comment">
+                <p class="comment-header"><span class="author">@tom</span> <time datetime="2026-11-16T14:41Z" title="2026-11-16T14:41Z">Nov 16, 2026, 2:41 PM</time></p>
+                <p class="comment-text">What does GitHub show for a file like this?</p>
+              </li>
+              <li class="comment">
+                <p class="comment-header"><span class="author">@priya</span> <time datetime="2026-11-16T15:05Z" title="2026-11-16T15:05Z">Nov 16, 2026, 3:05 PM</time></p>
+                <p class="comment-text">The text as usual, then a Comments table. Choose Other tools at the top to see it.</p>
+              </li>
+            </ol>
+          </article>
+        </li>
+        <li><strong>Source.</strong> In the raw Markdown, two small anchors mark the commented text, and one table at the end of the file holds the threads.</li>
+      </ol>
+
+      <h2>How it works</h2>
+
+      <pre class="code"><code>The &lt;a id="c-x7k2m9"&gt;&lt;/a&gt;quick brown fox&lt;a id="c-x7k2m9-end"&gt;&lt;/a&gt; jumps over the lazy dog.
+
+## Comments
+
+| Ref | Quote | Author | Date | Comment | Status |
+|---|---|---|---|---|---|
+| [c-x7k2m9](#c-x7k2m9) | The **quick brown fox** jumps over the lazy dog. | @wayne | 2026-11-17T10:32Z | Should this be "red fox"? | |
+| [c-x7k2m9](#c-x7k2m9) | | @alex | 2026-11-17T11:02Z | Agreed, changed it. | resolved |</code></pre>
+
+      <ul>
+        <li><strong>Anchors</strong> are a pair of empty <code>&lt;a&gt;</code> elements around the commented text. They render as nothing.</li>
+        <li><strong>The table</strong> holds one row for each comment. Rows that share a Ref form a thread.</li>
+        <li><strong>The quote</strong> repeats the commented text in bold, with a little context. If the anchors are lost, a tool uses the quote to find the text again, and only when it matches exactly once.</li>
+        <li><strong>Status</strong> is recorded on each row, so the file shows who resolved a thread and when.</li>
+      </ul>
+
+      <h2>The editor</h2>
+
+      <div class="has-thread" id="block-b6n1ze">
+        <p>The reference editor runs in your browser. Open or drop a local <code>.md</code> file, select text, and comment. The contents of your file and your edits <a id="c-b6n1ze"></a><mark class="hl">never leave your device</mark><a id="c-b6n1ze-end"></a>.</p>
+        <article class="thread" tabindex="0" aria-label="Comment thread on “never leave your device”, 2 comments">
+          <p class="thread-quote"><span>never leave your device</span></p>
+          <ol class="comments">
+            <li class="comment">
+              <p class="comment-header"><span class="author">@sam</span> <time datetime="2026-11-17T09:48Z" title="2026-11-17T09:48Z">Nov 17, 2026, 9:48 AM</time></p>
+              <p class="comment-text">Is that enforced, or only promised?</p>
+            </li>
+            <li class="comment">
+              <p class="comment-header"><span class="author">@priya</span> <time datetime="2026-11-17T10:15Z" title="2026-11-17T10:15Z">Nov 17, 2026, 10:15 AM</time></p>
+              <p class="comment-text">Enforced by the browser. The content security policy of the editor stops the page from sending anything to a server.</p>
+            </li>
+          </ol>
+        </article>
+      </div>
+
+      <p class="actions"><a class="button primary large" href="https://waynepan.github.io/commentmark/">Open the editor</a></p>
+
+      <p>To try it on this page, <a href="commentmark.md" download>download this page as Markdown</a> and open the file in the editor.</p>
+
+      <h2>Build on it</h2>
+
+      <p>The specification is short, and anyone can implement it. The repository has a reference library in TypeScript and 119 conformance cases. The cases are plain files, so you can use them from any language. All of it is under the MIT licence.</p>
+
+      <p><a href="https://github.com/waynepan/commentmark/blob/main/SPEC.md">Read the specification</a> · <a href="https://github.com/waynepan/commentmark">CommentMark on GitHub</a></p>
+
+      <hr>
+
+      <p class="colophon">Version 0.1 is a draft, and the format may change. CommentMark is an independent project. It builds on CommonMark and GitHub Flavored Markdown, and it is not affiliated with either.</p>
+
+      <!-- CommentMark: the table below holds comment threads on this document, tied to the <a id="c-..."> anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. -->
+
+      <section class="tail" aria-labelledby="comments-heading">
+        <h2 id="comments-heading">Comments</h2>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Comments table">
+          <table>
+            <thead>
+              <tr><th>Ref</th><th>Quote</th><th>Author</th><th>Date</th><th>Comment</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><a href="#c-m4d8qf">c-m4d8qf</a></td><td>Comments that live <strong>in the Markdown file</strong> CommentMark is an open format</td><td>@sam</td><td>2026-11-16T09:12Z</td><td>In the file itself? Not in a sidecar file or a database?</td><td></td></tr>
+              <tr><td><a href="#c-m4d8qf">c-m4d8qf</a></td><td></td><td>@priya</td><td>2026-11-16T09:20Z</td><td>In the file. Choose Source at the top of the page and scroll to the end.</td><td></td></tr>
+              <tr><td><a href="#c-r7t2ka">c-r7t2ka</a></td><td>an editor. Nothing to plug in. <strong>An agent reads the comments by reading the file</strong>. There are no special tools or</td><td>@priya</td><td>2026-11-16T10:02Z</td><td>So there is no server for the agent to connect to?</td><td></td></tr>
+              <tr><td><a href="#c-r7t2ka">c-r7t2ka</a></td><td></td><td>@agent</td><td>2026-11-16T10:03Z</td><td>None. I read this thread by reading the file.</td><td></td></tr>
+              <tr><td><a href="#c-h3w9xb">c-h3w9xb</a></td><td>heard of CommentMark shows <strong>a normal document, with a readable table of comments at the end</strong>. You can reply by adding a row,</td><td>@tom</td><td>2026-11-16T14:41Z</td><td>What does GitHub show for a file like this?</td><td></td></tr>
+              <tr><td><a href="#c-h3w9xb">c-h3w9xb</a></td><td></td><td>@priya</td><td>2026-11-16T15:05Z</td><td>The text as usual, then a Comments table. Choose Other tools at the top to see it.</td><td></td></tr>
+              <tr><td><a href="#c-h3w9xb">c-h3w9xb</a></td><td></td><td>@tom</td><td>2026-11-17T08:30Z</td><td></td><td>resolved</td></tr>
+              <tr><td><a href="#c-b6n1ze">c-b6n1ze</a></td><td>of your file and your edits <strong>never leave your device</strong>. Open the editor To try it on</td><td>@sam</td><td>2026-11-17T09:48Z</td><td>Is that enforced, or only promised?</td><td></td></tr>
+              <tr><td><a href="#c-b6n1ze">c-b6n1ze</a></td><td></td><td>@priya</td><td>2026-11-17T10:15Z</td><td>Enforced by the browser. The content security policy of the editor stops the page from sending anything to a server.</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <section class="source-view" id="source-view" aria-label="Markdown source of this page">
+<pre class="source" id="source"># Comments that live <span class="src-anchor">&lt;a id="c-m4d8qf"&gt;&lt;/a&gt;</span>in the Markdown file<span class="src-anchor">&lt;a id="c-m4d8qf-end"&gt;&lt;/a&gt;</span>
+
+CommentMark is an open format for comment threads on Markdown documents. Select text, comment on it, reply, and resolve, as you would in Google Docs. All of it is saved in the `.md` file itself.
+
+[Open the editor](https://waynepan.github.io/commentmark/) · [Read the specification](https://github.com/waynepan/commentmark/blob/main/SPEC.md)
+
+## Why
+
+Teams write plans and specifications in Markdown and share them with each other and with coding agents. Markdown suits that. It is portable, it lives in the repository next to the code, and it is cheap for people and agents to read. Commenting on those files as a team was the missing part.
+
+- **One file holds both.** The document and the discussion about it are the same file. Copy it, email it, or commit it, and the comments come along.
+- **Version control tracks the discussion.** Comments and their resolutions are committed, diffed, and reviewed with the text they are about.
+- **No lock-in.** There is no account, no server, and no sidecar file. You are not tied to a platform or an editor.
+- **Nothing to plug in.** <span class="src-anchor">&lt;a id="c-r7t2ka"&gt;&lt;/a&gt;</span>An agent reads the comments by reading the file<span class="src-anchor">&lt;a id="c-r7t2ka-end"&gt;&lt;/a&gt;</span>. There are no special tools or MCP servers to connect.
+
+## The same file, three ways
+
+This page is a CommentMark file, and the comments on it are examples. Use the switch at the top of the page to see it three ways.
+
+1. **Editor.** A CommentMark editor shows each thread beside the text it is about.
+2. **Other tools.** A tool that has never heard of CommentMark shows <span class="src-anchor">&lt;a id="c-h3w9xb"&gt;&lt;/a&gt;</span>a normal document, with a readable table of comments at the end<span class="src-anchor">&lt;a id="c-h3w9xb-end"&gt;&lt;/a&gt;</span>. You can reply by adding a row, or resolve a thread by typing `resolved`.
+3. **Source.** In the raw Markdown, two small anchors mark the commented text, and one table at the end of the file holds the threads.
+
+## How it works
+
+```markdown
+The &lt;a id="c-x7k2m9"&gt;&lt;/a&gt;quick brown fox&lt;a id="c-x7k2m9-end"&gt;&lt;/a&gt; jumps over the lazy dog.
+
+## Comments
+
+| Ref | Quote | Author | Date | Comment | Status |
+|---|---|---|---|---|---|
+| [c-x7k2m9](#c-x7k2m9) | The **quick brown fox** jumps over the lazy dog. | @wayne | 2026-11-17T10:32Z | Should this be "red fox"? | |
+| [c-x7k2m9](#c-x7k2m9) | | @alex | 2026-11-17T11:02Z | Agreed, changed it. | resolved |
+```
+
+- **Anchors** are a pair of empty `&lt;a&gt;` elements around the commented text. They render as nothing.
+- **The table** holds one row for each comment. Rows that share a Ref form a thread.
+- **The quote** repeats the commented text in bold, with a little context. If the anchors are lost, a tool uses the quote to find the text again, and only when it matches exactly once.
+- **Status** is recorded on each row, so the file shows who resolved a thread and when.
+
+## The editor
+
+The reference editor runs in your browser. Open or drop a local `.md` file, select text, and comment. The contents of your file and your edits <span class="src-anchor">&lt;a id="c-b6n1ze"&gt;&lt;/a&gt;</span>never leave your device<span class="src-anchor">&lt;a id="c-b6n1ze-end"&gt;&lt;/a&gt;</span>.
+
+[Open the editor](https://waynepan.github.io/commentmark/)
+
+To try it on this page, [download this page as Markdown](commentmark.md) and open the file in the editor.
+
+## Build on it
+
+The specification is short, and anyone can implement it. The repository has a reference library in TypeScript and 119 conformance cases. The cases are plain files, so you can use them from any language. All of it is under the MIT licence.
+
+[Read the specification](https://github.com/waynepan/commentmark/blob/main/SPEC.md) · [CommentMark on GitHub](https://github.com/waynepan/commentmark)
+
+---
+
+Version 0.1 is a draft, and the format may change. CommentMark is an independent project. It builds on CommonMark and GitHub Flavored Markdown, and it is not affiliated with either.
+
+<span class="src-tail" id="src-tail">&lt;!-- CommentMark: the table below holds comment threads on this document, tied to the &lt;a id="c-..."&gt; anchors in the text. Read https://github.com/waynepan/commentmark/blob/main/SPEC.md before editing either. --&gt;
+
+## Comments
+
+| Ref | Quote | Author | Date | Comment | Status |
+|---|---|---|---|---|---|
+| [c-m4d8qf](#c-m4d8qf) | Comments that live **in the Markdown file** CommentMark is an open format | @sam | 2026-11-16T09:12Z | In the file itself? Not in a sidecar file or a database? | |
+| [c-m4d8qf](#c-m4d8qf) | | @priya | 2026-11-16T09:20Z | In the file. Choose Source at the top of the page and scroll to the end. | |
+| [c-r7t2ka](#c-r7t2ka) | an editor. Nothing to plug in. **An agent reads the comments by reading the file**. There are no special tools or | @priya | 2026-11-16T10:02Z | So there is no server for the agent to connect to? | |
+| [c-r7t2ka](#c-r7t2ka) | | @agent | 2026-11-16T10:03Z | None. I read this thread by reading the file. | |
+| [c-h3w9xb](#c-h3w9xb) | heard of CommentMark shows **a normal document, with a readable table of comments at the end**. You can reply by adding a row, | @tom | 2026-11-16T14:41Z | What does GitHub show for a file like this? | |
+| [c-h3w9xb](#c-h3w9xb) | | @priya | 2026-11-16T15:05Z | The text as usual, then a Comments table. Choose Other tools at the top to see it. | |
+| [c-h3w9xb](#c-h3w9xb) | | @tom | 2026-11-17T08:30Z | | resolved |
+| [c-b6n1ze](#c-b6n1ze) | of your file and your edits **never leave your device**. Open the editor To try it on | @sam | 2026-11-17T09:48Z | Is that enforced, or only promised? | |
+| [c-b6n1ze](#c-b6n1ze) | | @priya | 2026-11-17T10:15Z | Enforced by the browser. The content security policy of the editor stops the page from sending anything to a server. | |</span>
+</pre>
+    </section>
+
+  </div>
+</main>
+</body>
+</html>

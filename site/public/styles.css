@@ -1,0 +1,1022 @@
+/* commentmark.com. One CommentMark file, shown three ways. No JavaScript:
+   the view switch is three radio inputs read with :has(). */
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('fonts/archivo-latin-wdth-normal.woff2') format('woff2-variations'),
+    url('fonts/archivo-latin-wdth-normal.woff2') format('woff2');
+}
+
+/* The highlight colour is a registered property so hover can ease into it. */
+@property --mark {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+:root {
+  /* The editor's tokens (editors/web/src/styles.css), unchanged. */
+  color-scheme: light dark;
+  --bg: light-dark(#f4f3ef, #151514);
+  --page: light-dark(#ffffff, #1d1d1b);
+  --text: light-dark(#1f1e1b, #e8e5dd);
+  --muted: light-dark(#6b675e, #a39e93);
+  --faint: light-dark(#736e65, #948f84);
+  --border: light-dark(#e2ded4, #33312d);
+  --border-strong: light-dark(#cfc9bc, #4a4740);
+  --accent: light-dark(#2c5d8a, #8db8e0);
+  --accent-text: light-dark(#ffffff, #10161c);
+  --ok: light-dark(#2f7d4f, #6cc28f);
+  --card: light-dark(#ffffff, #232321);
+  --sunken: light-dark(#e9e6df, #0e0e0d);
+  --hover: light-dark(rgb(31 30 27 / 0.06), rgb(232 229 221 / 0.08));
+  --selection: light-dark(rgb(44 93 138 / 0.2), rgb(141 184 224 / 0.28));
+  --code-bg: light-dark(#f3f1ec, #262624);
+  --hl: light-dark(rgb(246 196 36 / 0.3), rgb(230 180 40 / 0.2));
+  --hl-focus: light-dark(rgb(240 160 10 / 0.62), rgb(235 165 20 / 0.5));
+  --hl-line: light-dark(#c98a00, #e5b030);
+  --hl-pending: light-dark(rgb(44 93 138 / 0.18), rgb(141 184 224 / 0.22));
+  --card-focus-shadow:
+    0 1px 2px light-dark(rgb(40 34 20 / 0.06), rgb(0 0 0 / 0.4)),
+    0 12px 28px -12px light-dark(rgb(40 34 20 / 0.28), rgb(0 0 0 / 0.7)), 0 0 0 1px var(--border-strong);
+  --page-shadow:
+    0 1px 2px light-dark(rgb(40 34 20 / 0.04), rgb(0 0 0 / 0.3)), 0 16px 36px -20px light-dark(rgb(40 34 20 / 0.14), rgb(0 0 0 / 0.6));
+  --serif: 'Iowan Old Style', 'Charter', 'Bitstream Charter', 'Sitka Text', Cambria, Georgia, serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --display: 'Archivo', var(--sans);
+  --radius: 10px;
+  --radius-control: 7px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* This page. A resolved thread's highlight is half strength. */
+  --hl-resolved: color-mix(in srgb, var(--hl) 45%, transparent);
+  --sheet-w: 46rem;
+  --margin-w: 20rem;
+  --col-gap: 2.75rem;
+  --pad-x: clamp(20px, 4.4vw, 60px);
+  --pad-y: clamp(28px, 4.4vw, 60px);
+  --bar-h: 50px;
+  /* Wide blocks (code, the comments table) reach into the sheet's padding. */
+  --bleed: calc(var(--pad-x) * 0.6);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--border-strong) transparent;
+  /* Jumps to an anchor land below the sticky bar. */
+  scroll-padding-top: calc(var(--bar-h) + 24px);
+}
+
+::selection {
+  background: var(--selection);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  caret-color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  z-index: 40;
+  padding: 8px 14px;
+  border-radius: var(--radius-control);
+  background: var(--page);
+  box-shadow: var(--card-focus-shadow);
+  font-weight: 500;
+}
+
+.skip:focus {
+  top: 10px;
+}
+
+.wrap {
+  width: min(100% - 32px, var(--sheet-w));
+  margin-inline: auto;
+}
+
+/* --- Buttons (the editor's) ---------------------------------------------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 3px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--page);
+  color: inherit;
+  font: 500 14px/1.2 var(--sans);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.button.primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, var(--text));
+  border-color: transparent;
+}
+
+.button.quiet {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+}
+
+.button.quiet:hover {
+  background: var(--hover);
+}
+
+.button.large {
+  min-height: 46px;
+  padding: 0 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.github-mark {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+/* --- Top bar ------------------------------------------------------------- */
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.bar-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  min-height: var(--bar-h);
+  padding-block: 8px;
+}
+
+.brand {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 750;
+  font-stretch: 92%;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.bar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+/* The view switch: the editor's Document / Source control, as radios. */
+.switch {
+  position: relative;
+  display: inline-flex;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+  padding: 2px;
+  border: 0;
+  border-radius: calc(var(--radius-control) + 2px);
+  background: var(--sunken);
+}
+
+.switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.switch label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 2px 12px;
+  border-radius: var(--radius-control);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.switch label:hover {
+  color: var(--text);
+}
+
+.switch input:checked + label {
+  background: var(--page);
+  color: var(--text);
+  box-shadow:
+    0 1px 2px rgb(20 16 8 / 0.12),
+    0 0 0 1px var(--border);
+}
+
+.switch input:focus-visible + label {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* --- Page and sheet ------------------------------------------------------ */
+
+.page {
+  padding: 32px 0 112px;
+}
+
+.sheet {
+  position: relative;
+  min-width: 0;
+  padding: var(--pad-y) var(--pad-x);
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--page-shadow);
+}
+
+/* --- The rendered document ----------------------------------------------- */
+
+.doc {
+  font: 18px/1.65 var(--serif);
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  overflow-wrap: break-word;
+}
+
+.doc > :first-child,
+.doc > :first-child > :first-child {
+  margin-top: 0;
+}
+
+.doc p,
+.doc li {
+  max-width: 70ch;
+  text-wrap: pretty;
+}
+
+.doc p,
+.doc ul,
+.doc ol,
+.doc pre {
+  margin: 0 0 1em;
+}
+
+.doc ul,
+.doc ol {
+  padding-left: 1.5em;
+}
+
+.doc li + li {
+  margin-top: 0.45em;
+}
+
+.doc ol li::marker {
+  font-family: var(--display);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.doc h1,
+.doc h2 {
+  color: var(--text);
+  font-family: var(--display);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-wrap: balance;
+}
+
+.doc h1 {
+  margin: 0 0 0.42em;
+  font-size: clamp(2.5rem, 1.2rem + 5vw, 4.75rem);
+  font-weight: 800;
+  font-stretch: 90%;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.doc h2 {
+  margin: 2.1em 0 0.55em;
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-stretch: 96%;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.doc .lede {
+  font-size: 1.24rem;
+  line-height: 1.55;
+}
+
+.doc code {
+  padding: 0.1em 0.3em;
+  background: var(--code-bg);
+  border-radius: 4px;
+  font: 0.84em var(--mono);
+}
+
+.doc pre {
+  margin-inline: calc(var(--bleed) * -1);
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: var(--radius-control);
+  font: 13.5px/1.6 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  tab-size: 4;
+}
+
+.doc pre code {
+  padding: 0;
+  background: none;
+  font: inherit;
+}
+
+.doc hr {
+  margin: 3em 0 1.4em;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.doc .colophon {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+/* The two links of the second paragraph, and the editor link further down,
+   are the page's actions. The middle dot between them is set aside. */
+.doc .actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 22px;
+  margin: 1.5em 0 0;
+}
+
+.doc .actions + p {
+  margin-top: 1.25em;
+}
+
+.actions .sep {
+  display: none;
+}
+
+.text-link {
+  font: 500 16px/1.2 var(--sans);
+  padding-block: 12px;
+}
+
+/* --- Highlights ---------------------------------------------------------- */
+
+mark.hl {
+  --mark: var(--hl);
+  padding: 0.1em 0;
+  border-radius: 2px;
+  background: linear-gradient(var(--mark), var(--mark)) 0 50% / 100% var(--mark-h, 100%) no-repeat;
+  color: inherit;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    --mark 140ms ease,
+    box-shadow 140ms ease;
+}
+
+mark.hl.is-resolved {
+  --mark: var(--hl-resolved);
+}
+
+.doc h1 mark.hl {
+  /* Lines this tight would overlap a full-height highlight; keep the band
+     inside one line pitch. */
+  --mark-h: 0.96em;
+  padding: 0 0.04em;
+  border-radius: 4px;
+}
+
+/* A thread and its text find each other: hover or focus either one. */
+.has-thread:has(> .thread:hover, > .thread:focus-visible, mark.hl:hover) mark.hl {
+  --mark: var(--hl-focus);
+  box-shadow: inset 0 -2px 0 var(--hl-line);
+}
+
+/* The headline's band is shorter than its line box, so its underline is
+   drawn as text decoration, on the letters' baseline. */
+.doc h1:has(mark.hl) {
+  text-decoration-skip-ink: none;
+}
+
+.has-thread:has(> .thread:hover, > .thread:focus-visible, mark.hl:hover) h1 mark.hl {
+  box-shadow: none;
+  text-decoration: underline 0.05em var(--hl-line);
+  text-underline-offset: 0.1em;
+}
+
+.has-thread:has(> .thread:hover, > .thread:focus-visible, mark.hl:hover) > .thread {
+  border-color: transparent;
+  box-shadow: var(--card-focus-shadow);
+}
+
+/* --- Thread cards (the editor's card anatomy, without its controls) ------ */
+
+.thread {
+  position: relative;
+  margin: 14px 0 26px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: 14px/1.5 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  transition:
+    border-color 140ms ease,
+    box-shadow 180ms ease;
+}
+
+li > .thread {
+  margin: 12px 0 18px;
+}
+
+.thread:hover {
+  border-color: var(--border-strong);
+}
+
+.thread:focus-visible {
+  outline-offset: 3px;
+}
+
+.thread p {
+  max-width: none;
+  margin: 0;
+}
+
+.thread .thread-quote {
+  overflow: hidden;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font: 14.5px/1.5 var(--serif);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
+.thread-quote span {
+  padding: 0.1em 0.15em;
+  border-radius: 2px;
+  background: var(--hl);
+  color: var(--text);
+}
+
+.thread.is-resolved .thread-quote span {
+  background: var(--hl-resolved);
+}
+
+.thread .thread-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+  margin-bottom: 8px;
+  color: var(--ok);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.thread-status time {
+  color: var(--faint);
+  font-size: 12px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.check-icon {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+.doc .comments {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc .comments li {
+  max-width: none;
+  margin: 0;
+}
+
+.doc .comments li + li {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.comment-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+
+.author {
+  font-weight: 600;
+}
+
+.comment-header time {
+  color: var(--faint);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.thread .comment-text {
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+/* --- The comments table (Other tools) ------------------------------------ */
+
+.tail {
+  display: none;
+}
+
+/* The wrapper is the table's frame. When the table is wider than the
+   wrapper, a shadow at the clipped edge shows there is more to scroll to
+   (the cover gradients scroll with the content, the shadows do not). */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0 calc(var(--bleed) * -1) 0.5em;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background:
+    linear-gradient(to right, var(--page) 40%, transparent) left / 32px 100% no-repeat local,
+    linear-gradient(to left, var(--page) 40%, transparent) right / 32px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, light-dark(rgb(40 34 20 / 0.2), rgb(0 0 0 / 0.7)), transparent) left / 12px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, light-dark(rgb(40 34 20 / 0.2), rgb(0 0 0 / 0.7)), transparent) right / 12px 100% no-repeat scroll,
+    var(--page);
+  scrollbar-width: thin;
+}
+
+.tail table {
+  width: 100%;
+  min-width: 40rem;
+  border-collapse: collapse;
+  border-style: hidden;
+  font: 14px/1.45 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tail th,
+.tail td {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tail th {
+  font-weight: 600;
+}
+
+.tail tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+}
+
+.tail td:nth-child(1),
+.tail td:nth-child(3),
+.tail td:nth-child(4) {
+  white-space: nowrap;
+}
+
+.tail td:nth-child(4) {
+  font-variant-numeric: tabular-nums;
+}
+
+.tail td:nth-child(2),
+.tail td:nth-child(5) {
+  min-width: 9rem;
+}
+
+/* --- Source -------------------------------------------------------------- */
+
+.source-view {
+  display: none;
+}
+
+/* --- View notes: what the Other tools and Source views are showing ------ */
+
+.view-note {
+  display: none;
+  color: var(--muted);
+  font: 14px/1.55 var(--sans);
+  text-wrap: pretty;
+}
+
+.view-note p {
+  margin: 0;
+}
+
+.view-note p + p {
+  margin-top: 8px;
+}
+
+.view-note .file-name {
+  color: var(--text);
+  font: 500 13px/1.5 var(--mono);
+}
+
+.view-note .src-anchor {
+  padding: 0.1em 0.3em;
+  color: var(--text);
+}
+
+.source {
+  margin: 0;
+  color: var(--text);
+  font: 13.5px/1.65 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 4;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
+.src-anchor {
+  background: var(--hl);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.src-tail {
+  background: var(--hl-pending);
+}
+
+.src-tail-key {
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  background: var(--hl-pending);
+}
+
+/* --- The view switch ----------------------------------------------------- */
+
+/* Threads and the rendered document are hidden without display: none, so
+   their load animation does not run again on the way back to Editor.
+   visibility: hidden keeps them out of the accessibility tree and the tab
+   order; taking them out of the flow keeps them from holding space. */
+:root:has(#view-other:checked, #view-source:checked) .thread {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+:root:has(#view-other:checked) mark.hl {
+  --mark: transparent;
+  box-shadow: none;
+}
+
+:root:has(#view-other:checked) .tail {
+  display: block;
+}
+
+:root:has(#view-source:checked) .doc {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+:root:has(#view-other:checked) .note-other,
+:root:has(#view-source:checked) .note-source {
+  display: block;
+}
+
+:root:has(#view-source:checked) .source-view {
+  display: block;
+  animation: view-in 220ms ease-out;
+}
+
+/* A short fade into Other tools and Source. Editor, the default, shows at
+   once, on load and on the way back. */
+:root:has(#view-other:checked) .doc {
+  animation: view-in 220ms ease-out;
+}
+
+@keyframes view-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* --- The one authored moment: the headline is highlighted, then its
+       thread settles beside it. Both rest in their final state. ---------- */
+
+.hl-lead {
+  animation: sweep 640ms var(--ease-out) 240ms backwards;
+}
+
+.thread-lead {
+  animation: settle 560ms var(--ease-out) 720ms backwards;
+}
+
+@keyframes sweep {
+  from {
+    background-size: 0% var(--mark-h, 100%);
+  }
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* --- Wide: threads in the right margin ----------------------------------- */
+
+@media (min-width: 1000px) {
+  :root {
+    --margin-w: clamp(17rem, 22vw, 20rem);
+    --col-gap: clamp(2rem, 3vw, 2.75rem);
+  }
+
+  .wrap {
+    width: min(100% - 48px, var(--sheet-w) + var(--col-gap) + var(--margin-w));
+  }
+
+  .page {
+    display: grid;
+    grid-template-columns: minmax(0, var(--sheet-w)) var(--margin-w);
+    column-gap: var(--col-gap);
+    padding-top: 40px;
+  }
+
+  .sheet {
+    grid-area: 1 / 1;
+  }
+
+  /* The view notes wait in the empty margin, under the bar. */
+  .view-note {
+    grid-area: 1 / 2;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--bar-h) + 28px);
+    margin-top: var(--pad-y);
+    padding: 2px 0 2px 16px;
+    border-left: 1px solid var(--border-strong);
+  }
+
+  /* The bar follows the page grid: the switch is centred over the sheet. */
+  .bar-inner {
+    display: grid;
+    grid-template-columns: minmax(0, var(--sheet-w)) var(--margin-w);
+    column-gap: var(--col-gap);
+  }
+
+  .brand {
+    grid-area: 1 / 1;
+    justify-self: start;
+  }
+
+  .switch {
+    grid-area: 1 / 1;
+    justify-self: center;
+  }
+
+  .bar-links {
+    grid-area: 1 / 2;
+    justify-self: end;
+  }
+
+  /* Each card is taken out of the flow and hung in the margin, level with
+     the top of its block. Every block reaches the sheet's right content
+     edge, so 100% plus the sheet's padding and border lands in the margin. */
+  .has-thread {
+    position: relative;
+  }
+
+  .has-thread > .thread {
+    position: absolute;
+    top: 0;
+    left: calc(100% + var(--pad-x) + 1px + var(--col-gap));
+    width: var(--margin-w);
+    margin: 0;
+  }
+
+  .has-thread > .thread.thread-lead {
+    top: 0.35rem;
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0;
+      transform: translateX(14px);
+    }
+  }
+}
+
+/* --- Narrow ------------------------------------------------------------- */
+
+/* Below the margin layout the sheet becomes the ground: the page colour
+   runs edge to edge, so the inline thread cards are the only cards. */
+@media (max-width: 999px) {
+  .wrap.page {
+    width: 100%;
+    padding: 0 0 72px;
+    background: var(--page);
+  }
+
+  .sheet {
+    max-width: var(--sheet-w);
+    margin-inline: auto;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .view-note {
+    width: min(100% - 2 * var(--pad-x), var(--sheet-w) - 2 * var(--pad-x));
+    margin-inline: auto;
+    padding: 20px 0 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .view-note + .view-note {
+    margin-top: 0;
+  }
+
+  :root:has(#view-other:checked, #view-source:checked) .sheet {
+    padding-top: 24px;
+  }
+}
+
+@media (max-width: 719px) {
+  :root {
+    --bar-h: 92px;
+  }
+
+  .bar-inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 12px;
+  }
+
+  .brand {
+    grid-area: 1 / 1;
+  }
+
+  .bar-links {
+    grid-area: 1 / 2;
+  }
+
+  .switch {
+    grid-area: 2 / 1 / 3 / 3;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .switch label {
+    min-height: 32px;
+    padding-inline: 6px;
+  }
+
+  .github {
+    width: 36px;
+    padding: 0;
+  }
+
+  .github-mark {
+    width: 18px;
+    height: 18px;
+  }
+
+  .github-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+
+  .doc {
+    font-size: 17px;
+  }
+
+  .doc .lede {
+    font-size: 1.15rem;
+  }
+
+  .doc h2 {
+    font-size: 1.45rem;
+  }
+
+  .doc pre {
+    padding: 14px;
+    font-size: 12.5px;
+  }
+
+  .source {
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 359px) {
+  .brand {
+    font-size: 17px;
+  }
+
+  .bar-links .button.primary {
+    padding-inline: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
